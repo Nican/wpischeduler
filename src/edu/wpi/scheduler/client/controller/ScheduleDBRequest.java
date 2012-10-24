@@ -7,7 +7,6 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
 import com.google.gwt.xml.client.NodeList;
@@ -25,35 +24,61 @@ public class ScheduleDBRequest {
 	
 	public RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, "/sched.xml");
 	
-	private RequestCallback callbackRequest = new RequestCallback() {
+	protected DBRequestCallback callback;
+	
+	
+	private RequestCallback XHRCallback = new RequestCallback() {
 		
 		@Override
 		public void onResponseReceived(Request request, Response response) {
-			parseXML(XMLParser.parse(response.getText()));
+			try{
+				ScheduleDB db = parseDB(XMLParser.parse(response.getText()));
+				callback.OnSuccess(db);				
+			} catch( Exception e ){
+				callback.OnFailure(e);
+			}
 		}
 		
 		@Override
 		public void onError(Request request, Throwable exception) {
-			//TODO: Properly handle the exception
-			Window.alert(exception.getMessage());
+			callback.OnFailure(exception);
 		}
 	};
 	
+	/**
+	 * 
+	 */
 	public ScheduleDBRequest(){		
-		builder.setCallback(callbackRequest);
+		builder.setCallback(XHRCallback);
 	}
 	
+	/**
+	 * Sends the request for the server, and waits for the response
+	 * Make sure there is a valid callback before sending the request
+	 * @throws RequestException
+	 */
 	public void send() throws RequestException
 	{
+		if( callback == null )
+			throw new IllegalStateException("Sending request to get the database, but we do not have a callback!");
+		
 		builder.send();	
 	}
+	
+	/**
+	 * Sets a callback to when the request is complete
+	 * @param callback
+	 */
+	public void setCallback( DBRequestCallback callback ){
+		this.callback = callback;
+	}	
 	
 	/**
 	 * <schedb xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.wpischeduler.org" xsi:schemaLocation="http://www.wpischeduler.org schedb.xsd" generated="WED OCT 03 14:13:39 2012" minutes-per-block="30">
 	 * @param document
 	 * @return
 	 */
-	public ScheduleDB parseXML(Document document)
+	public ScheduleDB parseDB(Document document)
 	{
 		ScheduleDB scheduleDB = new ScheduleDB();
 		
@@ -73,6 +98,7 @@ public class ScheduleDBRequest {
 	}
 	
 	/**
+	 * Parses a department
 	 * <dept abbrev="AB" name="ARABIC">
 	 * @param scheduleDB
 	 * @param node
@@ -174,6 +200,12 @@ public class ScheduleDBRequest {
 		return period;	
 	}
 	
+	/**
+	 * Get the correct period type for the given string name
+	 * Check the @PeriodType for possible values
+	 * @param name
+	 * @return
+	 */
 	private PeriodType getPeriodType(String name){
 		
 		for( PeriodType type : PeriodType.values() ){
@@ -184,6 +216,11 @@ public class ScheduleDBRequest {
 		throw new IllegalStateException("Non-existent period type: " + name );
 	}
 	
+	/**
+	 * Gets a list of all possible days of the week.
+	 * @param value
+	 * @return
+	 */
 	private EnumSet<DaysOfWeek> getDaysOfWeek(String value){
 		EnumSet<DaysOfWeek> days = EnumSet.noneOf(DaysOfWeek.class);
 		

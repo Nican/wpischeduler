@@ -1,6 +1,8 @@
 package edu.wpi.scheduler.client;
 
+import edu.wpi.scheduler.client.controller.DBRequestCallback;
 import edu.wpi.scheduler.client.controller.ScheduleDBRequest;
+import edu.wpi.scheduler.client.model.ScheduleDB;
 import edu.wpi.scheduler.shared.FieldVerifier;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -44,6 +46,20 @@ public class Scheduler implements EntryPoint {
 		
 		ScheduleDBRequest request = new ScheduleDBRequest();
 		try {
+			request.setCallback( new DBRequestCallback() {
+				
+				@Override
+				public void OnSuccess(ScheduleDB database) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void OnFailure(Throwable failure) {
+					// TODO Auto-generated method stub
+					
+				}
+			} );
 			request.send();
 		} catch (RequestException e) {
 			// TODO Auto-generated catch block
