@@ -24,6 +24,13 @@ import edu.wpi.scheduler.shared.model.PeriodType;
 import edu.wpi.scheduler.shared.model.ScheduleDB;
 import edu.wpi.scheduler.shared.model.Section;
 
+/**
+ * Two steps to making a request of the database:
+ * 1. Checks if the server already has the cached @ScheduleDB object, if it does, it gives it to the client.
+ * 2. If does not exist, the client requests the XML from the server, and parses it. (slow), and then saved the @ScheduleDB on the server.
+ * @author Nican
+ *
+ */
 public class ScheduleDBRequest {
 
 	/**
@@ -37,7 +44,11 @@ public class ScheduleDBRequest {
 			"/sched.xml");
 
 	protected DBRequestCallback callback;
-
+	
+	/**
+	 * Callback from when requesting the XML from the server. 
+	 * On success, parses the file, saves the object on the server, and calls the callback
+	 */
 	private RequestCallback XMLCallback = new RequestCallback() {
 
 		@Override
@@ -73,7 +84,11 @@ public class ScheduleDBRequest {
 			callback.OnFailure(exception);
 		}
 	};
-
+	
+	/**
+	 * Initial callback from the server.
+	 * If the database is not saved on the server, make a new XML request.
+	 */
 	private AsyncCallback<ScheduleDB> dbCallback = new AsyncCallback<ScheduleDB>() {
 
 		@Override
