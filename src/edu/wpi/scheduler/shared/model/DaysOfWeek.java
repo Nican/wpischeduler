@@ -1,6 +1,8 @@
-package edu.wpi.scheduler.client.model;
+package edu.wpi.scheduler.shared.model;
 
-public enum DaysOfWeek {
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public enum DaysOfWeek implements IsSerializable {
 	
 	SUNDAY("sun","Sunday"),
 	MONDAY("mon","Monday"),

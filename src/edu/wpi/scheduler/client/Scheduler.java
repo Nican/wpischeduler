@@ -1,9 +1,5 @@
 package edu.wpi.scheduler.client;
 
-import edu.wpi.scheduler.client.controller.DBRequestCallback;
-import edu.wpi.scheduler.client.controller.ScheduleDBRequest;
-import edu.wpi.scheduler.client.model.ScheduleDB;
-import edu.wpi.scheduler.shared.FieldVerifier;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -11,7 +7,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.http.client.RequestException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -20,6 +15,11 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+
+import edu.wpi.scheduler.client.controller.DBRequestCallback;
+import edu.wpi.scheduler.client.controller.ScheduleDBRequest;
+import edu.wpi.scheduler.shared.FieldVerifier;
+import edu.wpi.scheduler.shared.model.ScheduleDB;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -34,7 +34,8 @@ public class Scheduler implements EntryPoint {
 			+ "connection and try again.";
 
 	/**
-	 * Create a remote service proxy to talk to the server-side Greeting service.
+	 * Create a remote service proxy to talk to the server-side Greeting
+	 * service.
 	 */
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
@@ -43,29 +44,26 @@ public class Scheduler implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		
+
 		ScheduleDBRequest request = new ScheduleDBRequest();
-		try {
-			request.setCallback( new DBRequestCallback() {
+		request.setCallback(new DBRequestCallback() {
+
+			@Override
+			public void OnSuccess(ScheduleDB database) {
+				// TODO Auto-generated method stub
+				System.out.println("Got success: ");
 				
-				@Override
-				public void OnSuccess(ScheduleDB database) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void OnFailure(Throwable failure) {
-					// TODO Auto-generated method stub
-					
-				}
-			} );
-			request.send();
-		} catch (RequestException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+			}
+
+			@Override
+			public void OnFailure(Throwable failure) {
+				// TODO Auto-generated method stub
+				System.out.println("Unable to receive request: " + failure.getMessage());
+
+			}
+		});
+		request.send();
+
 		final Button sendButton = new Button("Send");
 		final TextBox nameField = new TextBox();
 		nameField.setText("GWT User");
@@ -131,7 +129,8 @@ public class Scheduler implements EntryPoint {
 			}
 
 			/**
-			 * Send the name from the nameField to the server and wait for a response.
+			 * Send the name from the nameField to the server and wait for a
+			 * response.
 			 */
 			private void sendNameToServer() {
 				// First, we validate the input.

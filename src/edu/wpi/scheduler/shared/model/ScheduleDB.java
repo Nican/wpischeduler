@@ -1,14 +1,14 @@
-package edu.wpi.scheduler.client.model;
+package edu.wpi.scheduler.shared.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
-public class ScheduleDB {
-
-	public List<Department> departments = new ArrayList<Department>();
+@SuppressWarnings("serial")
+public class ScheduleDB implements Serializable {
+	
+	public ArrayList<Department> departments = new ArrayList<Department>();
 	public int SchoolYear;
-	public Date generated;
+	//public Date generated;
 	
 	
 	/**
@@ -24,7 +24,7 @@ public class ScheduleDB {
 					if( section.crn == crn )
 						return section;
 				}
-			}			
+			}
 		}
 		
 		return null;

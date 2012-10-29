@@ -1,7 +1,9 @@
-package edu.wpi.scheduler.client.model;
+package edu.wpi.scheduler.shared.model;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 
-public enum PeriodType {
+public enum PeriodType implements IsSerializable {
 	LECTURE("Lecture"),
 	WEB("Web"),
 	LABORATORY("Lab"), 

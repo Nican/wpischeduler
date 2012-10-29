@@ -1,9 +1,11 @@
-package edu.wpi.scheduler.client.model;
+package edu.wpi.scheduler.shared.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Section {
+@SuppressWarnings("serial")
+public class Section implements Serializable{
 	
 	public int crn;
 	public String number;
@@ -14,5 +16,9 @@ public class Section {
 	public String note; //TODO: What? Example = "Need special approval"
 	
 	public List<Period> periods = new ArrayList<Period>();
+	
+	public Section()
+	{
+	}
 	
 }

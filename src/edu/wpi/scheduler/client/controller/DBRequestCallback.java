@@ -1,6 +1,6 @@
 package edu.wpi.scheduler.client.controller;
 
-import edu.wpi.scheduler.client.model.ScheduleDB;
+import edu.wpi.scheduler.shared.model.ScheduleDB;
 
 public interface DBRequestCallback {
 	
