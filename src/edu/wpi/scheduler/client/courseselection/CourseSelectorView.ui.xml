@@ -1,0 +1,27 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:c="urn:import:edu.wpi.scheduler.client.courseselection">
+	<g:DockLayoutPanel unit='EM'>
+
+
+		<g:center>
+			<g:SplitLayoutPanel>
+
+				<g:east size='192'>
+					<g:Label>And a main body for all the class list</g:Label>
+				</g:east>
+
+
+				<g:center>
+					<g:SimplePanel ui:field="courseListHolder" />
+				</g:center>
+
+			</g:SplitLayoutPanel>
+		</g:center>
+
+		<g:north size='2'>
+			<g:ListBox ui:field="departmentList" />
+		</g:north>
+
+	</g:DockLayoutPanel>
+</ui:UiBinder>
