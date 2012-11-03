@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 import edu.wpi.scheduler.client.controller.DBRequestCallback;
 import edu.wpi.scheduler.client.controller.ScheduleDBRequest;
+import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.courseselection.CourseSelectorView;
 import edu.wpi.scheduler.shared.model.ScheduleDB;
 
@@ -35,7 +36,9 @@ public class Scheduler implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-
+		
+		final StudentSchedule studentSchedule = new StudentSchedule();
+		
 		ScheduleDBRequest request = new ScheduleDBRequest();
 		request.setCallback(new DBRequestCallback() {
 
@@ -45,7 +48,7 @@ public class Scheduler implements EntryPoint {
 				System.out.println("Got success: ");
 				scheduleDB = database;
 				
-				RootPanel.get().add(new CourseSelectorView());
+				RootPanel.get().add(new CourseSelectorView(studentSchedule));
 				
 			}
 

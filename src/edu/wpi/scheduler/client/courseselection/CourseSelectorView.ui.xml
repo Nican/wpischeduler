@@ -12,7 +12,7 @@
 				</g:east>
 
 
-				<g:center>
+				<g:center >
 					<g:SimplePanel ui:field="courseListHolder" />
 				</g:center>
 

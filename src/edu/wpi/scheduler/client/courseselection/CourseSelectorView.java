@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -16,13 +17,15 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 import edu.wpi.scheduler.client.Scheduler;
+import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.shared.model.Department;
 
 /**
  * @author Nican
  * 
  */
-public class CourseSelectorView extends Composite {
+public class CourseSelectorView extends Composite implements
+		CourseSelectedEventHandler {
 
 	private static CourseSelectorViewUiBinder uiBinder = GWT
 			.create(CourseSelectorViewUiBinder.class);
@@ -31,11 +34,17 @@ public class CourseSelectorView extends Composite {
 			UiBinder<DockLayoutPanel, CourseSelectorView> {
 	}
 
+	final StudentSchedule studentSchedule;
+
 	@UiField
 	ListBox departmentList;
 
 	@UiField
 	SimplePanel courseListHolder;
+
+	CourseList courseList;
+
+	HandlerRegistration courseListRegistration = null;
 
 	/**
 	 * Because this class has a default constructor, it can be used as a binder
@@ -45,10 +54,14 @@ public class CourseSelectorView extends Composite {
 	 * <g:**UserClassName**>Hello!</g:**UserClassName> </ui:UiBinder> Note that
 	 * depending on the widget that is used, it may be necessary to implement
 	 * HasHTML instead of HasText.
+	 * 
+	 * @param studentSchedule
 	 */
-	public CourseSelectorView() {
+	public CourseSelectorView(StudentSchedule studentSchedule) {
 		initWidget(uiBinder.createAndBindUi(this));
-		
+
+		this.studentSchedule = studentSchedule;
+
 		getElement().getStyle().setLeft(0, Unit.PX);
 		getElement().getStyle().setRight(0, Unit.PX);
 		getElement().getStyle().setTop(0, Unit.PX);
@@ -93,14 +106,33 @@ public class CourseSelectorView extends Composite {
 
 	}
 
+	/**
+	 * Choose the new department from the dropdown menu, and display the
+	 * corresponding body.
+	 * 
+	 * @param department
+	 */
 	public void updateCourseList(Department department) {
 		
+		//Clear the body from any existing elements
 		courseListHolder.clear();
 		
-		CourseList list = new CourseList(department);
-		
-		courseListHolder.add(list);
-		
+		//If we are already listening to something, remove the listener
+		if (courseListRegistration != null) {
+			courseListRegistration.removeHandler();
+			courseListRegistration = null;
+		}
+
+		courseList = new CourseList(studentSchedule, department);
+		courseListRegistration = courseList.addCourseSelectedListner(this);
+
+		courseListHolder.add(courseList);
+
+	}
+
+	@Override
+	public void onCourseSelected(CourseSelectedEvent event) {
+		// Window.alert("Course changed!");
 	}
 
 }
