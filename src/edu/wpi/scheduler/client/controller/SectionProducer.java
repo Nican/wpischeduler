@@ -9,7 +9,7 @@ public class SectionProducer {
 		this.course = course;
 	}
 
-	public Object getCourse() {
+	public Course getCourse() {
 		return course;
 	}
 	

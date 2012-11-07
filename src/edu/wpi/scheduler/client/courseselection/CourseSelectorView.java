@@ -41,6 +41,12 @@ public class CourseSelectorView extends Composite implements
 
 	@UiField
 	SimplePanel courseListHolder;
+	
+	@UiField
+	CourseDescription courseDescription;
+	
+	@UiField(provided=true)
+	CourseSelection courseSelection;
 
 	CourseList courseList;
 
@@ -58,6 +64,8 @@ public class CourseSelectorView extends Composite implements
 	 * @param studentSchedule
 	 */
 	public CourseSelectorView(StudentSchedule studentSchedule) {
+		courseSelection = new CourseSelection(studentSchedule);
+		
 		initWidget(uiBinder.createAndBindUi(this));
 
 		this.studentSchedule = studentSchedule;
@@ -129,10 +137,14 @@ public class CourseSelectorView extends Composite implements
 		courseListHolder.add(courseList);
 
 	}
-
+	
+	/**
+	 * Called when a course is selected in the main view
+	 */
 	@Override
 	public void onCourseSelected(CourseSelectedEvent event) {
-		// Window.alert("Course changed!");
+		//Update the description box with the latest course
+		courseDescription.setCourse(event.getCourse());
 	}
 
 }

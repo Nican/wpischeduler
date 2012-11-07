@@ -2,13 +2,19 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:c="urn:import:edu.wpi.scheduler.client.courseselection">
 	<g:DockLayoutPanel unit='EM'>
-
-
+		<g:north size='2'>
+			<g:ListBox ui:field="departmentList" />
+		</g:north>
 		<g:center>
 			<g:SplitLayoutPanel>
 
-				<g:east size='192'>
-					<g:Label>And a main body for all the class list</g:Label>
+				<g:east size='250'>
+					<g:DockLayoutPanel>
+						<g:center><c:CourseDescription ui:field="courseDescription" /></g:center>
+						<g:south size="250"><c:CourseSelection ui:field="courseSelection" /></g:south>
+					</g:DockLayoutPanel>
+					
+					
 				</g:east>
 
 
@@ -19,9 +25,7 @@
 			</g:SplitLayoutPanel>
 		</g:center>
 
-		<g:north size='2'>
-			<g:ListBox ui:field="departmentList" />
-		</g:north>
+		
 
 	</g:DockLayoutPanel>
 </ui:UiBinder>

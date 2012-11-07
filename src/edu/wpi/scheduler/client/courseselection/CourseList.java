@@ -18,10 +18,12 @@ import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 import edu.wpi.scheduler.client.controller.StudentSchedule;
+import edu.wpi.scheduler.client.controller.StudentScheduleEvent;
+import edu.wpi.scheduler.client.controller.StudentScheduleEventHandler;
 import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.Department;
 
-public class CourseList extends Composite implements Handler {
+public class CourseList extends Composite implements Handler, StudentScheduleEventHandler {
 
 	private static CourseListUiBinder uiBinder = GWT
 			.create(CourseListUiBinder.class);
@@ -31,6 +33,8 @@ public class CourseList extends Composite implements Handler {
 
 	@UiField
 	DataGrid<Course> dataGrid;
+	
+	public final StudentSchedule studentSchedule;
 
 	/**
 	 * Creates a selection model for the datagrid, such that we can select
@@ -41,7 +45,9 @@ public class CourseList extends Composite implements Handler {
 	public CourseList(final StudentSchedule studentSchedule,
 			Department department) {
 		initWidget(uiBinder.createAndBindUi(this));
-
+		
+		this.studentSchedule = studentSchedule;
+		
 		/*
 		 * Course number (Ex. CS2201)
 		 */
@@ -89,9 +95,6 @@ public class CourseList extends Composite implements Handler {
 					studentSchedule.addCourse(course);
 				else
 					studentSchedule.removeCourse(course);
-
-				// Redraw so we update the "ADD/REMOVE" button
-				dataGrid.redraw();
 			}
 		});
 
@@ -136,6 +139,25 @@ public class CourseList extends Composite implements Handler {
 	public HandlerRegistration addCourseSelectedListner(
 			CourseSelectedEventHandler handler) {
 		return this.addHandler(handler, CourseSelectedEvent.TYPE);
+	}
+	
+	/**
+	 * Add listeners when the object is added to the document/dom tree
+	 */
+	@Override
+	protected void onLoad(){
+		studentSchedule.addStudentScheduleHandler(this);
+	}
+	
+	@Override
+	protected void onUnload(){
+		studentSchedule.removeStudentScheduleHandler(this);
+	}
+
+	@Override
+	public void onCoursesChanged(StudentScheduleEvent studentScheduleEvent) {
+		// Redraw so we update the "ADD/REMOVE" button
+		dataGrid.redraw();	
 	}
 
 }

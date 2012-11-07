@@ -12,7 +12,7 @@ import edu.wpi.scheduler.shared.model.Course;
 
 public class StudentSchedule implements HasHandlers {
 	
-	List<SectionProducer> sectionProducers = new ArrayList<SectionProducer>();
+	public final List<SectionProducer> sectionProducers = new ArrayList<SectionProducer>();
 	
 	private HandlerManager handlerManager = new HandlerManager(this);
 	
@@ -20,6 +20,8 @@ public class StudentSchedule implements HasHandlers {
 		SectionProducer producer = new SectionProducer(course);
 		
 		sectionProducers.add(producer);
+		
+		this.fireEvent(new StudentScheduleEvent(course));
 		
 		return producer;
 	}
@@ -41,6 +43,7 @@ public class StudentSchedule implements HasHandlers {
 		if( course != null )
 			sectionProducers.remove( producer );
 		
+		this.fireEvent(new StudentScheduleEvent(course));
 	}
 
 	@Override
@@ -50,6 +53,10 @@ public class StudentSchedule implements HasHandlers {
 	
 	public HandlerRegistration addStudentScheduleHandler( StudentScheduleEventHandler handler ){
 		return handlerManager.addHandler(StudentScheduleEvent.TYPE, handler);
+	}
+	
+	public void removeStudentScheduleHandler( StudentScheduleEventHandler handler ){
+		handlerManager.removeHandler(StudentScheduleEvent.TYPE, handler);
 	}
 	
 }
