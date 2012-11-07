@@ -23,7 +23,14 @@ import edu.wpi.scheduler.client.controller.StudentScheduleEventHandler;
 import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.Department;
 
-public class CourseList extends Composite implements Handler, StudentScheduleEventHandler {
+/**
+ * Show a list of all courses given the department
+ * 
+ * @author Nican
+ * 
+ */
+public class CourseList extends Composite implements Handler,
+		StudentScheduleEventHandler {
 
 	private static CourseListUiBinder uiBinder = GWT
 			.create(CourseListUiBinder.class);
@@ -33,7 +40,7 @@ public class CourseList extends Composite implements Handler, StudentScheduleEve
 
 	@UiField
 	DataGrid<Course> dataGrid;
-	
+
 	public final StudentSchedule studentSchedule;
 
 	/**
@@ -45,9 +52,9 @@ public class CourseList extends Composite implements Handler, StudentScheduleEve
 	public CourseList(final StudentSchedule studentSchedule,
 			Department department) {
 		initWidget(uiBinder.createAndBindUi(this));
-		
+
 		this.studentSchedule = studentSchedule;
-		
+
 		/*
 		 * Course number (Ex. CS2201)
 		 */
@@ -79,8 +86,9 @@ public class CourseList extends Composite implements Handler, StudentScheduleEve
 			@Override
 			public String getValue(Course course) {
 				// If the course is in there, we add it, otherwise we remove it.
-				return studentSchedule.getSectionProducer(course) == null ? "ADD"
-						: "REMOVE";
+				// TODO: Replace String with Image
+				return studentSchedule.getSectionProducer(course) == null ? "+"
+						: "-";
 			}
 		};
 
@@ -90,7 +98,7 @@ public class CourseList extends Composite implements Handler, StudentScheduleEve
 			public void update(int index, Course course, String value) {
 
 				// When it is clicked, add/remove the course, depended if it is
-				// in already
+				// in student schedule already
 				if (studentSchedule.getSectionProducer(course) == null)
 					studentSchedule.addCourse(course);
 				else
@@ -140,24 +148,26 @@ public class CourseList extends Composite implements Handler, StudentScheduleEve
 			CourseSelectedEventHandler handler) {
 		return this.addHandler(handler, CourseSelectedEvent.TYPE);
 	}
-	
+
 	/**
 	 * Add listeners when the object is added to the document/dom tree
 	 */
 	@Override
-	protected void onLoad(){
+	protected void onLoad() {
 		studentSchedule.addStudentScheduleHandler(this);
+
+		dataGrid.redraw();
 	}
-	
+
 	@Override
-	protected void onUnload(){
+	protected void onUnload() {
 		studentSchedule.removeStudentScheduleHandler(this);
 	}
 
 	@Override
 	public void onCoursesChanged(StudentScheduleEvent studentScheduleEvent) {
 		// Redraw so we update the "ADD/REMOVE" button
-		dataGrid.redraw();	
+		dataGrid.redraw();
 	}
 
 }
