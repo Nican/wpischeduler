@@ -5,7 +5,6 @@ import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
@@ -41,7 +40,7 @@ public class CourseList extends Composite implements Handler,
 	@UiField
 	DataGrid<Course> dataGrid;
 
-	public final StudentSchedule studentSchedule;
+	public final CourseSelectionController selectionController;
 
 	/**
 	 * Creates a selection model for the datagrid, such that we can select
@@ -49,11 +48,11 @@ public class CourseList extends Composite implements Handler,
 	 */
 	SingleSelectionModel<Course> selectionModel = new SingleSelectionModel<Course>();
 
-	public CourseList(final StudentSchedule studentSchedule,
+	public CourseList(final CourseSelectionController selectionController,
 			Department department) {
 		initWidget(uiBinder.createAndBindUi(this));
 
-		this.studentSchedule = studentSchedule;
+		this.selectionController = selectionController;
 
 		/*
 		 * Course number (Ex. CS2201)
@@ -87,8 +86,8 @@ public class CourseList extends Composite implements Handler,
 			public String getValue(Course course) {
 				// If the course is in there, we add it, otherwise we remove it.
 				// TODO: Replace String with Image
-				return studentSchedule.getSectionProducer(course) == null ? "+"
-						: "-";
+				return selectionController.getStudentSchedule()
+						.getSectionProducer(course) == null ? "+" : "-";
 			}
 		};
 
@@ -96,7 +95,8 @@ public class CourseList extends Composite implements Handler,
 		addColumn.setFieldUpdater(new FieldUpdater<Course, String>() {
 			@Override
 			public void update(int index, Course course, String value) {
-
+				StudentSchedule studentSchedule = selectionController.getStudentSchedule();
+				
 				// When it is clicked, add/remove the course, depended if it is
 				// in student schedule already
 				if (studentSchedule.getSectionProducer(course) == null)
@@ -134,19 +134,8 @@ public class CourseList extends Composite implements Handler,
 	public void onSelectionChange(SelectionChangeEvent event) {
 		Course course = selectionModel.getSelectedObject();
 		if (course != null) {
-			this.fireEvent(new CourseSelectedEvent(course));
+			selectionController.fireEvent(new CourseSelectedEvent(course));
 		}
-	}
-
-	/**
-	 * Add a listener to this widget to when a new course is selected
-	 * 
-	 * @param handler
-	 * @return
-	 */
-	public HandlerRegistration addCourseSelectedListner(
-			CourseSelectedEventHandler handler) {
-		return this.addHandler(handler, CourseSelectedEvent.TYPE);
 	}
 
 	/**
@@ -154,14 +143,14 @@ public class CourseList extends Composite implements Handler,
 	 */
 	@Override
 	protected void onLoad() {
-		studentSchedule.addStudentScheduleHandler(this);
+		selectionController.getStudentSchedule().addStudentScheduleHandler(this);
 
 		dataGrid.redraw();
 	}
 
 	@Override
 	protected void onUnload() {
-		studentSchedule.removeStudentScheduleHandler(this);
+		selectionController.getStudentSchedule().removeStudentScheduleHandler(this);
 	}
 
 	@Override

@@ -7,7 +7,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -35,22 +34,21 @@ public class CourseSelectorView extends Composite implements
 	}
 
 	final StudentSchedule studentSchedule;
+	final CourseSelectionController selectionController;
 
 	@UiField
 	ListBox departmentList;
 
 	@UiField
 	SimplePanel courseListHolder;
-	
+
 	@UiField
 	CourseDescription courseDescription;
-	
-	@UiField(provided=true)
+
+	@UiField(provided = true)
 	CourseSelection courseSelection;
 
 	CourseList courseList;
-
-	HandlerRegistration courseListRegistration = null;
 
 	/**
 	 * Because this class has a default constructor, it can be used as a binder
@@ -65,7 +63,8 @@ public class CourseSelectorView extends Composite implements
 	 */
 	public CourseSelectorView(StudentSchedule studentSchedule) {
 		courseSelection = new CourseSelection(studentSchedule);
-		
+		selectionController = new CourseSelectionController(studentSchedule);
+
 		initWidget(uiBinder.createAndBindUi(this));
 
 		this.studentSchedule = studentSchedule;
@@ -77,6 +76,8 @@ public class CourseSelectorView extends Composite implements
 		getElement().getStyle().setPosition(Position.ABSOLUTE);
 
 		updateDepartments();
+		
+		selectionController.addCourseSelectedListner(this);
 	}
 
 	public void updateDepartments() {
@@ -121,29 +122,21 @@ public class CourseSelectorView extends Composite implements
 	 * @param department
 	 */
 	public void updateCourseList(Department department) {
-		
-		//Clear the body from any existing elements
+
+		// Clear the body from any existing elements
 		courseListHolder.clear();
-		
-		//If we are already listening to something, remove the listener
-		if (courseListRegistration != null) {
-			courseListRegistration.removeHandler();
-			courseListRegistration = null;
-		}
 
-		courseList = new CourseList(studentSchedule, department);
-		courseListRegistration = courseList.addCourseSelectedListner(this);
-
+		courseList = new CourseList(selectionController, department);
 		courseListHolder.add(courseList);
 
 	}
-	
+
 	/**
 	 * Called when a course is selected in the main view
 	 */
 	@Override
 	public void onCourseSelected(CourseSelectedEvent event) {
-		//Update the description box with the latest course
+		// Update the description box with the latest course
 		courseDescription.setCourse(event.getCourse());
 	}
 

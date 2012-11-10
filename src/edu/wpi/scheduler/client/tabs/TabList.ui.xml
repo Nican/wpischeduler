@@ -4,7 +4,5 @@
 	<ui:style>
 		
 	</ui:style>
-	<g:FlowPanel>
-	
-	</g:FlowPanel>
+	<g:HorizontalPanel ui:field="horizontalPanel" />
 </ui:UiBinder> 
