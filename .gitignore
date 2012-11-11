@@ -6,4 +6,8 @@
 */web-app/gwt
 */web-app/WEB-INF/classes
 target
-
+.gwt
+war/WEB-INF/classes/edu/wpi/scheduler/client
+war/WEB-INF/deploy
+war/scheduler
+gwt-unitCache

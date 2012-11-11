@@ -1,2 +1,0 @@
-serviceClass: edu.wpi.scheduler.client.GreetingService
-path: 86D797E18713AF2F0CE87C8044525827.gwt.rpc
