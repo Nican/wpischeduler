@@ -45,6 +45,12 @@ public class StudentSchedule implements HasHandlers {
 		
 		this.fireEvent(new StudentScheduleEvent(course));
 	}
+	
+	public void getSchedulePermutations(){
+		
+		
+		
+	}
 
 	@Override
 	public void fireEvent(GwtEvent<?> event) {

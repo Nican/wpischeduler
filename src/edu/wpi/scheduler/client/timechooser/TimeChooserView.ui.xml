@@ -19,6 +19,14 @@
 						<div>foo2</div>
 					</g:cell>
 				</g:row>
+				<g:row>
+					<g:cell>
+						<div>foo3</div>
+					</g:cell>
+					<g:cell>
+						<div>foo4</div>
+					</g:cell>
+				</g:row>
 			</g:Grid>
 		</g:center>
 		<g:east size="250">
