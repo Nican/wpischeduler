@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import edu.wpi.scheduler.shared.model.DaysOfWeek;
+import edu.wpi.scheduler.shared.model.DayOfWeek;
 import edu.wpi.scheduler.shared.model.Period;
 import edu.wpi.scheduler.shared.model.Section;
 
@@ -65,8 +65,8 @@ public class SchedulePermutationProducer {
 
 	private boolean hasConflitcs(Period period, Period newPeriod) {
 		
-		for( DaysOfWeek day : period.days ){
-			for( DaysOfWeek day2 : newPeriod.days ){
+		for( DayOfWeek day : period.days ){
+			for( DayOfWeek day2 : newPeriod.days ){
 				if( day2 == day ){
 					return false;
 				}
