@@ -17,7 +17,7 @@ import com.google.gwt.xml.client.XMLParser;
 import edu.wpi.scheduler.client.GreetingService;
 import edu.wpi.scheduler.client.GreetingServiceAsync;
 import edu.wpi.scheduler.shared.model.Course;
-import edu.wpi.scheduler.shared.model.DaysOfWeek;
+import edu.wpi.scheduler.shared.model.DayOfWeek;
 import edu.wpi.scheduler.shared.model.Department;
 import edu.wpi.scheduler.shared.model.Period;
 import edu.wpi.scheduler.shared.model.PeriodType;
@@ -230,7 +230,7 @@ public class ScheduleDBRequest {
 	 * @return a new section for the corresponding XML node
 	 */
 	private Section readSectionNode(Course course, Element node) {
-		Section section = new Section();
+		Section section = new Section(course);
 
 		section.crn = Integer.parseInt(node.getAttribute("crn"));
 		section.number = node.getAttribute("number");
@@ -304,11 +304,11 @@ public class ScheduleDBRequest {
 	 * @param value
 	 * @return
 	 */
-	private HashSet<DaysOfWeek> getDaysOfWeek(String value) {
-		HashSet<DaysOfWeek> days = new HashSet<DaysOfWeek>();
+	private HashSet<DayOfWeek> getDaysOfWeek(String value) {
+		HashSet<DayOfWeek> days = new HashSet<DayOfWeek>();
 
 		for (String day : value.split(",")) {
-			days.add(DaysOfWeek.getByShortName(day));
+			days.add(DayOfWeek.getByShortName(day));
 		}
 
 		return days;

@@ -3,23 +3,38 @@ package edu.wpi.scheduler.shared.model;
 import java.io.Serializable;
 import java.util.HashSet;
 
+/**
+ * A Period has the days of the week it is scheduled for
+ * Note: No period can be offered more than one day a week at different times
+ */
 @SuppressWarnings("serial")
 public class Period implements Serializable{
 	
+	/** Section this period is apart of */
+	public Section section;
+	/** Period type; e.g. lecture, lab */
+	public PeriodType type;
+	/** Professor of this period */
+	public String professor;
+	/** Days of the week this period is scheduled for */
+	public HashSet<DayOfWeek> days = new HashSet<DayOfWeek>();
+	/** Start time of the period */
+	public String startTime;
+	/** End time of the period */
+	public String endTime;
+	/** Location period is taught; e.g. FL320 */
+	public String location;
 	
+	/**
+	 * Construct a period with a reference to the section it is apart of
+	 * @param section Section the period belongs to
+	 */
 	public Period(Section section) {
 		this.section = section;
 	}
 	
-	public Period(){
-	}
-	
-	public Section section;
-	public PeriodType type;
-	public String professor;
-	public HashSet<DaysOfWeek> days = new HashSet<DaysOfWeek>();
-	public String startTime;
-	public String endTime;
-	public String location;
-	
+	/**
+	 * Default period constructor
+	 */
+	public Period(){}
 }
