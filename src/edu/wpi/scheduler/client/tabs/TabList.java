@@ -27,6 +27,7 @@ public class TabList extends Composite {
 	final MainView mainView;
 	
 	final CourseSelectionTab courseSelection;
+	final TimeTab timeChooser;
 
 	public TabList( MainView mainView, StudentSchedule studentSchedule ) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -34,9 +35,10 @@ public class TabList extends Composite {
 		this.mainView = mainView;
 		
 		courseSelection = new CourseSelectionTab(studentSchedule);
+		timeChooser = new TimeTab(studentSchedule);
 		
 		addTab( courseSelection  );
-		addTab( new TimeTab(studentSchedule)  );
+		addTab(  timeChooser );
 	}
 	
 	public Widget getHomeView(){
