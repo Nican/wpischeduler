@@ -5,5 +5,6 @@
 		
 	</ui:style>
 	<g:HTMLPanel>
+		<g:VerticalPanel ui:field="thumbList" />
 	</g:HTMLPanel>
 </ui:UiBinder> 
