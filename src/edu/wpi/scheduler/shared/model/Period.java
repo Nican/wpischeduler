@@ -19,9 +19,9 @@ public class Period implements Serializable{
 	/** Days of the week this period is scheduled for */
 	public HashSet<DayOfWeek> days = new HashSet<DayOfWeek>();
 	/** Start time of the period */
-	public String startTime;
+	public Time startTime;
 	/** End time of the period */
-	public String endTime;
+	public Time endTime;
 	/** Location period is taught; e.g. FL320 */
 	public String location;
 	

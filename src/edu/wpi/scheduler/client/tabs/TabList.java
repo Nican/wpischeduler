@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Widget;
 import edu.wpi.scheduler.client.MainView;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.courseselection.CourseSelectionTab;
+import edu.wpi.scheduler.client.permutation.PermutationTab;
 import edu.wpi.scheduler.client.timechooser.TimeTab;
 
 public class TabList extends Composite {
@@ -37,6 +38,7 @@ public class TabList extends Composite {
 		
 		addTab( courseSelection  );
 		addTab( new TimeTab(studentSchedule)  );
+		addTab( new PermutationTab(studentSchedule)  );
 	}
 	
 	public Widget getHomeView(){
@@ -51,6 +53,7 @@ public class TabList extends Composite {
 			@Override
 			public void onClick(ClickEvent event) {
 				mainView.setBody( baseTab.getBody() );
+				baseTab.updateView();
 			}
 		});
 	}

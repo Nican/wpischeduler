@@ -1,109 +1,109 @@
 package edu.wpi.scheduler.client.controller;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import edu.wpi.scheduler.shared.model.DayOfWeek;
 import edu.wpi.scheduler.shared.model.Period;
 import edu.wpi.scheduler.shared.model.Section;
-
+import edu.wpi.scheduler.shared.model.Time;
 
 public class SchedulePermutationProducer {
-	
+
 	private StudentSchedule studentSchedule;
 	private List<SchedulePermutation> permutations = new ArrayList<SchedulePermutation>();
 
-	public SchedulePermutationProducer(StudentSchedule studentSchedule ){
-		this.studentSchedule =studentSchedule;
+	public SchedulePermutationProducer(StudentSchedule studentSchedule) {
+		this.studentSchedule = studentSchedule;
+		
+		generate();
 	}
 	
-	private void generate(){
-		generate( 0, Collections.<Section> emptyList() );
-		
-		
+	public List<SchedulePermutation> getPermutations(){
+		return permutations;
 	}
-	
-	public void generate( int index, List<Section> studentSections ){
-		
-		if( index >= getProducers().size() ){
+
+	private void generate() {
+		generate(0, new ArrayList<Section>());
+	}
+
+	private void generate(int index, List<Section> studentSections) {
+
+		if (index > getProducers().size()) {
 			return;
 		}
-		
-		SectionProducer producer = getProducers().get(index);	
-		
-		for( Section sections : producer.getSections() ){
-			
-			
-			
+
+		SectionProducer producer = getProducers().get(index);
+
+		for (Section section : producer.getSections()) {
+
+			if (hasConflicts(section, studentSections)) {
+				continue;
+			}
+
+			List<Section> newStudentSections = new ArrayList<Section>(
+					studentSections);
+
+			newStudentSections.add(section);
+
+			if (index == getProducers().size() - 1) {
+				SchedulePermutation permutation = new SchedulePermutation();
+				permutation.sections = newStudentSections;
+				permutations.add(permutation);
+			} else {
+				generate(index + 1, newStudentSections);
+			}
+
 		}
-		
+
 	}
-	
-	public boolean hasConflicts( Section newSection, List<Section> studentSections ){
-		for( Section section : studentSections ){
-			if( hasConflicts( newSection, section ))
+
+	public boolean hasConflicts(Section newSection,
+			List<Section> studentSections) {
+		for (Section section : studentSections) {
+			if (hasConflicts(newSection, section))
 				return true;
-			
+
 		}
 		return false;
 	}
-	
-	
+
 	private boolean hasConflicts(Section newSection, Section section) {
-		
-		for( Period period : section.periods ){
-			for( Period newPeriod : newSection.periods ){
-				if( hasConflitcs( period, newPeriod ))
+
+		for (Period period : section.periods) {
+			for (Period newPeriod : newSection.periods) {
+				if (hasConflitcs(period, newPeriod))
 					return true;
 			}
 		}
-		
+
 		return false;
-		
+
 	}
 
 	private boolean hasConflitcs(Period period, Period newPeriod) {
-		
-		for( DayOfWeek day : period.days ){
-			for( DayOfWeek day2 : newPeriod.days ){
-				if( day2 == day ){
+
+		for (DayOfWeek day : period.days) {
+			for (DayOfWeek day2 : newPeriod.days) {
+				if (day2 == day) {
 					return false;
 				}
 			}
 		}
 		
-		double periodStart = parseTime( period.startTime );
-		double periodEnd = parseTime( period.endTime );
+		Time periodStart = period.startTime;
+		Time periodEnd = period.endTime;
+
+		Time otherStart = newPeriod.startTime;
+		Time otherEnd = newPeriod.endTime;
 		
-		double otherStart = parseTime( newPeriod.startTime );
-		double otherEnd = parseTime( newPeriod.endTime );
-		
-		return  (otherStart >= periodStart && otherStart <= periodEnd ) ||
-				 (otherEnd >= periodStart && otherEnd <= periodEnd) || 
-				 (otherStart <= periodStart && otherEnd >= periodEnd);
-	}
-	
-	private double parseTime( String time ){
-		boolean meridian = time.substring( time.length() - 2).equals("AM");
-		double hour = Float.valueOf( time );
-		double minutes = Float.valueOf( time.substring(time.length() - 4, time.length() - 2) );
-		double value = hour;
-		
-		if( meridian || hour == 12)
-			value -= 8.0f;
-		else
-			value += 12.0f - 8.0f;
-		
-		value += minutes / 60;
-		
-		return value / 14;		
+		return (otherStart.compareTo(periodStart) >= 0 && otherStart.compareTo(periodEnd) <= 0)
+				|| (otherEnd.compareTo(periodStart) >= 0 && otherEnd.compareTo(periodEnd) <= 0)
+				|| (otherStart.compareTo(periodStart) <= 0 && otherEnd.compareTo(periodEnd) >= 0);
 	}
 
-	private List<SectionProducer> getProducers(){
+	private List<SectionProducer> getProducers() {
 		return studentSchedule.sectionProducers;
 	}
-	
-	
-	
+
 }

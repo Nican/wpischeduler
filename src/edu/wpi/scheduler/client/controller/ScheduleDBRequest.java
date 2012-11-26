@@ -23,6 +23,7 @@ import edu.wpi.scheduler.shared.model.Period;
 import edu.wpi.scheduler.shared.model.PeriodType;
 import edu.wpi.scheduler.shared.model.ScheduleDB;
 import edu.wpi.scheduler.shared.model.Section;
+import edu.wpi.scheduler.shared.model.Time;
 
 /**
  * Two steps to making a request of the database:
@@ -266,8 +267,8 @@ public class ScheduleDBRequest {
 
 		period.type = getPeriodType(node.getAttribute("type"));
 		period.professor = node.getAttribute("professor");
-		period.startTime = node.getAttribute("starts");
-		period.endTime = node.getAttribute("ends");
+		period.startTime = new Time(node.getAttribute("starts"));
+		period.endTime = new Time(node.getAttribute("ends"));
 		period.location = node.getAttribute("building")
 				+ node.getAttribute("room");
 

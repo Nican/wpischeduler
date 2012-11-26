@@ -18,5 +18,9 @@ public abstract class BaseTab extends Button {
 	}
 
 	public abstract Widget getBody();
+	
+	public void updateView() {
+		
+	}
 
 }

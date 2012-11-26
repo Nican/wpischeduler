@@ -46,8 +46,10 @@ public class StudentSchedule implements HasHandlers {
 		this.fireEvent(new StudentScheduleEvent(course));
 	}
 	
-	public void getSchedulePermutations(){
+	public List<SchedulePermutation> getSchedulePermutations(){
 		
+		SchedulePermutationProducer producer = new SchedulePermutationProducer(this);
+		return producer.getPermutations();
 		
 		
 	}
