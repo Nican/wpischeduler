@@ -10,6 +10,7 @@ import com.google.gwt.event.shared.HasHandlers;
 
 import edu.wpi.scheduler.shared.model.Course;
 
+// FIXME should we put this in the model somewhere? It's confusing me that it's in the controller folder
 public class StudentSchedule implements HasHandlers {
 	
 	public final List<SectionProducer> sectionProducers = new ArrayList<SectionProducer>();
