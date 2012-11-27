@@ -1,14 +1,12 @@
 package edu.wpi.scheduler.client.courseselection;
 
-import com.google.gwt.cell.client.ButtonCell;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.DataGrid;
+import com.google.gwt.user.cellview.client.IdentityColumn;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -16,7 +14,6 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.controller.StudentScheduleEvent;
 import edu.wpi.scheduler.client.controller.StudentScheduleEventHandler;
 import edu.wpi.scheduler.shared.model.Course;
@@ -80,31 +77,9 @@ public class CourseList extends Composite implements Handler,
 		/*
 		 * Add column Add/Remove the course from the @StudentSchedule.
 		 */
-		final Column<Course, String> addColumn = new Column<Course, String>(
-				new ButtonCell()) {
-			@Override
-			public String getValue(Course course) {
-				// If the course is in there, we add it, otherwise we remove it.
-				// TODO: Replace String with Image
-				return selectionController.getStudentSchedule()
-						.getSectionProducer(course) == null ? "+" : "-";
-			}
-		};
 
-		// The field updater is called every time the button is clicked
-		addColumn.setFieldUpdater(new FieldUpdater<Course, String>() {
-			@Override
-			public void update(int index, Course course, String value) {
-				StudentSchedule studentSchedule = selectionController.getStudentSchedule();
-				
-				// When it is clicked, add/remove the course, depended if it is
-				// in student schedule already
-				if (studentSchedule.getSectionProducer(course) == null)
-					studentSchedule.addCourse(course);
-				else
-					studentSchedule.removeCourse(course);
-			}
-		});
+		final IdentityColumn<Course> addColumn = new IdentityColumn<Course>(
+				new CourseActionCell(selectionController));
 
 		addColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		dataGrid.addColumn(addColumn, "ADD");
@@ -143,14 +118,16 @@ public class CourseList extends Composite implements Handler,
 	 */
 	@Override
 	protected void onLoad() {
-		selectionController.getStudentSchedule().addStudentScheduleHandler(this);
+		selectionController.getStudentSchedule()
+				.addStudentScheduleHandler(this);
 
 		dataGrid.redraw();
 	}
 
 	@Override
 	protected void onUnload() {
-		selectionController.getStudentSchedule().removeStudentScheduleHandler(this);
+		selectionController.getStudentSchedule().removeStudentScheduleHandler(
+				this);
 	}
 
 	@Override

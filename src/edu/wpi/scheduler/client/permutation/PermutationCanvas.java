@@ -2,7 +2,6 @@ package edu.wpi.scheduler.client.permutation;
 
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.canvas.dom.client.FillStrokeStyle;
 
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
 import edu.wpi.scheduler.shared.model.DayOfWeek;
@@ -31,10 +30,13 @@ public class PermutationCanvas {
 		int total = DayOfWeek.values().length;
 		Context2d context = canvas.getContext2d();
 
-		double columnWidth = 150.0 / ((double) total);
-		double hourHeight = 150.0 / 24.0;
-		
+		double columnWidth = ((double) canvas.getCoordinateSpaceWidth())
+				/ ((double) total);
+		double hourHeight = ((double) canvas.getCoordinateSpaceHeight()) / 24.0;
+
 		context.setFillStyle("black");
+		
+		System.out.println( columnWidth + " " + hourHeight );
 
 		for (Section section : this.permutation.sections) {
 			for (DayOfWeek day : DayOfWeek.values()) {
@@ -42,11 +44,6 @@ public class PermutationCanvas {
 					if (period.days.contains(day)) {
 						double start = getDayProgress(period.startTime);
 						double end = getDayProgress(period.endTime);
-
-						System.out.println("Drawing: " + day.ordinal()
-								* columnWidth + " " + start * hourHeight + " "
-								+ columnWidth + " " + (end - start)
-								* hourHeight);
 
 						context.fillRect(day.ordinal() * columnWidth, start
 								* hourHeight, columnWidth, (end - start)

@@ -1,7 +1,5 @@
 package edu.wpi.scheduler.client.courseselection;
 
-import com.google.gwt.cell.client.ButtonCell;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -13,7 +11,6 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.controller.SectionProducer;
-import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.controller.StudentScheduleEvent;
 import edu.wpi.scheduler.client.controller.StudentScheduleEventHandler;
 import edu.wpi.scheduler.shared.model.Course;
@@ -33,12 +30,15 @@ public class CourseSelection extends Composite implements
 	interface CourseSelectionUiBinder extends UiBinder<Widget, CourseSelection> {
 	}
 
-	public final StudentSchedule studentSchedule;
+	public final CourseSelectionController selectionController;
 
-	public CourseSelection(final StudentSchedule studentSchedule) {
+	@UiField
+	DataGrid<SectionProducer> dataGrid;
+
+	public CourseSelection(final CourseSelectionController selectionController) {
 		initWidget(uiBinder.createAndBindUi(this));
 
-		this.studentSchedule = studentSchedule;
+		this.selectionController = selectionController;
 
 		TextColumn<SectionProducer> courseName = new TextColumn<SectionProducer>() {
 			@Override
@@ -51,35 +51,22 @@ public class CourseSelection extends Composite implements
 		dataGrid.addColumn(courseName);
 
 		// TODO: remove duplicate code from @CourseList
-		final Column<SectionProducer, String> addColumn = new Column<SectionProducer, String>(
-				new ButtonCell()) {
+		Column<SectionProducer, Course> addColumn = new Column<SectionProducer, Course>(new CourseActionCell(selectionController)) {
 			@Override
-			public String getValue(SectionProducer course) {
-				// TODO: Replace String with Image
-				return "-";
+			public Course getValue(SectionProducer producer) {
+				return producer.getCourse();
 			}
 		};
-
-		// The field updater is called every time the button is clicked
-		addColumn.setFieldUpdater(new FieldUpdater<SectionProducer, String>() {
-			@Override
-			public void update(int index, SectionProducer producer, String value) {
-				studentSchedule.removeCourse(producer.getCourse());
-			}
-		});
 		addColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		dataGrid.addColumn(addColumn);
 
 		this.refreshList();
 	}
 
-	@UiField
-	DataGrid<SectionProducer> dataGrid;
-
 	public void refreshList() {
 		// Set the data to be the right size, and add in all the data
-		dataGrid.setRowCount(studentSchedule.sectionProducers.size(), true);
-		dataGrid.setRowData(0, studentSchedule.sectionProducers);
+		dataGrid.setRowCount(selectionController.getStudentSchedule().sectionProducers.size(), true);
+		dataGrid.setRowData(0, selectionController.getStudentSchedule().sectionProducers);
 	}
 
 	/**
@@ -87,14 +74,14 @@ public class CourseSelection extends Composite implements
 	 */
 	@Override
 	protected void onLoad() {
-		studentSchedule.addStudentScheduleHandler(this);
+		selectionController.getStudentSchedule().addStudentScheduleHandler(this);
 
 		this.refreshList();
 	}
 
 	@Override
 	protected void onUnload() {
-		studentSchedule.removeStudentScheduleHandler(this);
+		selectionController.getStudentSchedule().removeStudentScheduleHandler(this);
 	}
 
 	@Override

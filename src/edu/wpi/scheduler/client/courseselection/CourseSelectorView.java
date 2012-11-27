@@ -62,8 +62,8 @@ public class CourseSelectorView extends Composite implements
 	 * @param studentSchedule
 	 */
 	public CourseSelectorView(StudentSchedule studentSchedule) {
-		courseSelection = new CourseSelection(studentSchedule);
 		selectionController = new CourseSelectionController(studentSchedule);
+		courseSelection = new CourseSelection(selectionController);
 
 		initWidget(uiBinder.createAndBindUi(this));
 

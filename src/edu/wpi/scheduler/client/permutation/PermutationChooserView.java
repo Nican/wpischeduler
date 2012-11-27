@@ -1,9 +1,12 @@
 package edu.wpi.scheduler.client.permutation;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -31,6 +34,12 @@ public class PermutationChooserView extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		this.studentSchedule = studentSchedule;
+		
+		getElement().getStyle().setLeft(0, Unit.PX);
+		getElement().getStyle().setRight(0, Unit.PX);
+		getElement().getStyle().setTop(0, Unit.PX);
+		getElement().getStyle().setBottom(0, Unit.PX);
+		getElement().getStyle().setPosition(Position.ABSOLUTE);
 	}
 
 	
@@ -48,10 +57,9 @@ public class PermutationChooserView extends Composite {
 			canvas.setSize("150px", "150px");
 			canvas.paint();
 			
-			System.out.println("Found permutation!");
-			
 			thumbList.add(canvas.canvas);
 		}
+		
 		
 	}
 }

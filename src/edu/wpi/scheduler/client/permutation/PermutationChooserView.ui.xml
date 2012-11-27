@@ -4,7 +4,17 @@
 	<ui:style>
 		
 	</ui:style>
-	<g:HTMLPanel>
-		<g:VerticalPanel ui:field="thumbList" />
-	</g:HTMLPanel>
-</ui:UiBinder> 
+	<g:DockLayoutPanel>
+		<g:west size="164">
+			<g:ScrollPanel>
+				<g:VerticalPanel ui:field="thumbList" />
+			</g:ScrollPanel>
+		</g:west>
+		<g:center>
+			<g:Label>Body + Description</g:Label>
+		</g:center>
+		<g:east size="160">
+			<g:Label>Classes list!</g:Label>
+		</g:east>
+	</g:DockLayoutPanel>
+</ui:UiBinder>
