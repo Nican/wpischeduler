@@ -239,8 +239,10 @@ public class ScheduleDBRequest {
 		section.seatsAvailable = Integer.parseInt(node
 				.getAttribute("availableseats"));
 		section.note = node.getAttribute("note");
+		
 
 		// TODO (Nican): Read term information (How is this working?!)
+		section.term = node.getAttribute("part-of-term");
 
 		NodeList periods = node.getChildNodes();
 

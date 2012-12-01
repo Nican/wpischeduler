@@ -35,8 +35,6 @@ public class PermutationCanvas {
 		double hourHeight = ((double) canvas.getCoordinateSpaceHeight()) / 24.0;
 
 		context.setFillStyle("black");
-		
-		System.out.println( columnWidth + " " + hourHeight );
 
 		for (Section section : this.permutation.sections) {
 			for (DayOfWeek day : DayOfWeek.values()) {

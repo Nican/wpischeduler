@@ -32,3 +32,31 @@ h1 {
 #closeButton {
   margin: 15px 6px 6px;
 }
+
+.courseList {
+	width: 100%;
+	border-spacing: 0px;
+}
+
+.courseList > tr:nth-child(even) {
+	background: #F3F7FB;
+}
+
+.courseList > tr:nth-child(odd) {
+	background: #FFF;
+}
+
+.courseList > tr:hover {
+	background: #EEE;
+}
+
+.courseList td {
+	padding: 3px;
+}
+
+.termView td {
+	border-color: grey;
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 10px;
+}

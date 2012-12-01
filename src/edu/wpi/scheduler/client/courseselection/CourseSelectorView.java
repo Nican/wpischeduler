@@ -48,8 +48,6 @@ public class CourseSelectorView extends Composite implements
 	@UiField(provided = true)
 	CourseSelection courseSelection;
 
-	CourseList courseList;
-
 	/**
 	 * Because this class has a default constructor, it can be used as a binder
 	 * template. In other words, it can be used in other *.ui.xml files as
@@ -126,7 +124,7 @@ public class CourseSelectorView extends Composite implements
 		// Clear the body from any existing elements
 		courseListHolder.clear();
 
-		courseList = new CourseList(selectionController, department);
+		CourseList courseList = new CourseList(selectionController, department);
 		courseListHolder.add(courseList);
 
 	}

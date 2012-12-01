@@ -19,7 +19,7 @@
 
 
 				<g:center >
-					<g:SimplePanel ui:field="courseListHolder" />
+					<g:ScrollPanel ui:field="courseListHolder" />
 				</g:center>
 
 			</g:SplitLayoutPanel>

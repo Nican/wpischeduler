@@ -6,6 +6,7 @@ import java.util.List;
 import edu.wpi.scheduler.shared.model.DayOfWeek;
 import edu.wpi.scheduler.shared.model.Period;
 import edu.wpi.scheduler.shared.model.Section;
+import edu.wpi.scheduler.shared.model.Term;
 import edu.wpi.scheduler.shared.model.Time;
 
 public class SchedulePermutationProducer {
@@ -69,6 +70,22 @@ public class SchedulePermutationProducer {
 	}
 
 	private boolean hasConflicts(Section newSection, Section section) {
+		List<Term> newTerms = newSection.getTerms();
+		List<Term> terms = section.getTerms();
+		boolean conflictingTerms = false;
+		
+		//Checks if any terms exists in both sections
+		for( Term term : terms ){
+			if( newTerms.contains(term) ){
+				conflictingTerms = true;
+			}
+		}
+		
+		//The classes are not even in the same days of the year
+		//There are no conflict here
+		if( conflictingTerms == false )
+			return false;
+		
 
 		for (Period period : section.periods) {
 			for (Period newPeriod : newSection.periods) {
