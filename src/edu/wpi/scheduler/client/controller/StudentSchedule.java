@@ -18,11 +18,11 @@ public class StudentSchedule implements HasHandlers {
 	private HandlerManager handlerManager = new HandlerManager(this);
 	
 	public SectionProducer addCourse( Course course ){
-		SectionProducer producer = new SectionProducer(course);
+		SectionProducer producer = new SectionProducer(this, course);
 		
 		sectionProducers.add(producer);
 		
-		this.fireEvent(new StudentScheduleEvent(course));
+		this.fireEvent(new StudentScheduleEvent(course, StudentScheduleEvents.ADD));
 		
 		return producer;
 	}
@@ -44,7 +44,7 @@ public class StudentSchedule implements HasHandlers {
 		if( course != null )
 			sectionProducers.remove( producer );
 		
-		this.fireEvent(new StudentScheduleEvent(course));
+		this.fireEvent(new StudentScheduleEvent(course, StudentScheduleEvents.REMOVE));
 	}
 	
 	public List<SchedulePermutation> getSchedulePermutations(){
@@ -66,6 +66,10 @@ public class StudentSchedule implements HasHandlers {
 	
 	public void removeStudentScheduleHandler( StudentScheduleEventHandler handler ){
 		handlerManager.removeHandler(StudentScheduleEvent.TYPE, handler);
+	}
+
+	public void courseUpdated(Course course) {
+		this.fireEvent(new StudentScheduleEvent(course, StudentScheduleEvents.UPDATE));
 	}
 	
 }

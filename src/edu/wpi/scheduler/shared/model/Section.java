@@ -7,9 +7,13 @@ import java.util.List;
 /**
  * A section has a list of class periods
  */
-@SuppressWarnings("serial")
 public class Section implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8236270010874393110L;
+	
 	/** Reference to parent course */
 	public Course course;
 	/** Course Registration Number */

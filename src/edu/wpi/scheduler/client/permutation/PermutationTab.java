@@ -37,7 +37,7 @@ public class PermutationTab extends BaseTab implements StudentScheduleEventHandl
 	
 	@Override
 	public void updateView() {
-		permutationView.updatePermutations();
+		permutationView.update();
 	}
 	
 

@@ -1,20 +1,22 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:p="urn:import:edu.wpi.scheduler.client.permutation">
 	<ui:style>
 		
 	</ui:style>
-	<g:DockLayoutPanel>
-		<g:west size="164">
+	<g:SplitLayoutPanel>
+		<g:west size="200">
+			<g:ScrollPanel>
+				<g:VerticalPanel ui:field="courseList" />
+			</g:ScrollPanel>
+		</g:west>
+		<g:west size="200">
 			<g:ScrollPanel>
 				<g:VerticalPanel ui:field="thumbList" />
 			</g:ScrollPanel>
 		</g:west>
 		<g:center>
-			<g:Label>Body + Description</g:Label>
-		</g:center>
-		<g:east size="160">
-			<g:Label>Classes list!</g:Label>
-		</g:east>
-	</g:DockLayoutPanel>
+			<g:SimplePanel ui:field="body" />
+		</g:center> 
+	</g:SplitLayoutPanel>
 </ui:UiBinder>

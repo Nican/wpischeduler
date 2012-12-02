@@ -82,13 +82,18 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		if( !schedDbFile.exists() )
 			return null;
 		
-		ScheduleDB db;
+		ScheduleDB db = null ;
 		
-		FileInputStream fileIn = new FileInputStream(schedDbFile);
-		ObjectInputStream in = new ObjectInputStream(fileIn);
-		db = (ScheduleDB) in.readObject();
-		in.close();
-		fileIn.close();
+		try {
+			FileInputStream fileIn = new FileInputStream(schedDbFile);
+			ObjectInputStream in = new ObjectInputStream(fileIn);
+			db = (ScheduleDB) in.readObject();
+			in.close();
+			fileIn.close();
+		} catch(Exception e ){
+			System.out.println("Unable to parse DB: " + e.getMessage() );
+			return null;
+		}
 		
 		return db;
 	}

@@ -60,3 +60,10 @@ h1 {
 	border-width: 1px;
 	border-radius: 10px;
 }
+
+.permutationCourseItem {
+	border-width: 0px 0px 1px 0px;
+	border-color: black;
+	border-style: solid;
+	width: 100%;
+}

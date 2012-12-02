@@ -1,7 +1,6 @@
 package edu.wpi.scheduler.client.courseselection;
 
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
@@ -23,12 +22,11 @@ public class CourseListItemBase extends ComplexPanel implements ClickHandler {
 		this.setElement(DOM.createTR());
 		
 		Element addButton = this.add("36px", new CourseButton(selectionController.getStudentSchedule(), course));
-		addButton.getStyle().setTextAlign(TextAlign.CENTER);
+		addButton.getStyle().setProperty("textAlign", "center");
 		
 		Element courseAbbr = this.add("100px", new Label(course.department.abbreviation + course.number));
-		courseAbbr.getStyle().setTextAlign(TextAlign.CENTER);
-		
-		this.add("100px", new TermView(course, selectionController.getStudentSchedule()));
+		courseAbbr.getStyle().setProperty("textAlign", "center");
+
 		
 		this.addDomHandler(this, ClickEvent.getType());
 	}

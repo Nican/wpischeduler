@@ -9,7 +9,10 @@ public class StudentScheduleEvent  extends GwtEvent<StudentScheduleEventHandler>
 	public static Type<StudentScheduleEventHandler> TYPE = new Type<StudentScheduleEventHandler>();
 	private Course course;
 	
-	public StudentScheduleEvent(Course course){
+	public final StudentScheduleEvents event;
+	
+	public StudentScheduleEvent(Course course, StudentScheduleEvents event){
+		this.event = event;
 		this.course = course;
 	}
 	

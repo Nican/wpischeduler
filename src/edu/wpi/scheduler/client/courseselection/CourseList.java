@@ -17,6 +17,7 @@ public class CourseList extends ComplexPanel {
 		for( Course course : department.courses ){
 			CourseListItemBase item = new CourseListItemBase(selectionController, course);
 			
+			item.add("100px", new TermView(course));
 			item.add(null, new Label(course.name));
 			item.add(null, new Label(course.sections.get(0).term));
 			
