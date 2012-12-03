@@ -6,6 +6,8 @@ public class PeriodItem extends Label{
 	
 	public PeriodItem( String text ){
 		super(text);
+		
+		this.setStyleName("permutationPeriodItem");
 	}
 	
 }

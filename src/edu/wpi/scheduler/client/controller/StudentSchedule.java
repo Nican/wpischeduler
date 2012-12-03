@@ -18,6 +18,12 @@ public class StudentSchedule implements HasHandlers {
 	private HandlerManager handlerManager = new HandlerManager(this);
 	
 	public SectionProducer addCourse( Course course ){
+		for( SectionProducer producer : sectionProducers ){
+			if( producer.getCourse().equals(course)){
+				throw new UnsupportedOperationException("The course it already in the list of producers!");
+			}
+		}
+		
 		SectionProducer producer = new SectionProducer(this, course);
 		
 		sectionProducers.add(producer);

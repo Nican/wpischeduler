@@ -59,6 +59,7 @@ public class CourseButton extends Button implements StudentScheduleEventHandler,
 
 	@Override
 	public void onClick(ClickEvent event) {
+		System.out.println("Adding course");
 		if (schedule.getSectionProducer(course) != null)
 			schedule.removeCourse(course);
 		else

@@ -10,7 +10,7 @@
 				<g:VerticalPanel ui:field="courseList" />
 			</g:ScrollPanel>
 		</g:west>
-		<g:west size="200">
+		<g:west size="170">
 			<g:ScrollPanel>
 				<g:VerticalPanel ui:field="thumbList" />
 			</g:ScrollPanel>

@@ -4,30 +4,26 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.ui.CellPanel;
+import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Label;
 
 import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.Section;
 import edu.wpi.scheduler.shared.model.Term;
 
-public class TermView extends CellPanel {
+public class TermView extends ComplexPanel {
 
 	public Course course;
-	private Element tableRow;
 	public HashMap<Term, Label> terms = new HashMap<Term, Label>();
 
 	public TermView(Course course) {
 		this.course = course;
-		
-		tableRow = DOM.createTR();
-	    DOM.appendChild(getBody(), tableRow);
+		setElement(DOM.createDiv());
 	
 		for (Term term : Term.values())
 			this.addTerm(term);
 
-		DOM.setElementProperty(getTable(), "cellSpacing", "2");
+		//DOM.setElementProperty(getTable(), "cellSpacing", "2");
 
 		this.setStyleName("termView");
 	}
@@ -42,23 +38,13 @@ public class TermView extends CellPanel {
 		return false;
 	}
 
-	public Element addTerm(Term term) {
+	public Label addTerm(Term term) {
+		Label label = new Label(term.name);
 		
-		Element element = DOM.createTD();
-		
-		element.setInnerText(term.name);
-		
-		tableRow.appendChild(element);
-		
-		return element;
-		
-		/*Label label = new Label(term.name);
-
-		this.add(label);
+		this.add(label, getElement());
 		terms.put(term, label);
 
 		return label;
-		*/
 	}
 
 	public void update() {
@@ -71,7 +57,7 @@ public class TermView extends CellPanel {
 		if (!hasTerm(term)) {
 			label.getElement().getStyle().setOpacity(0.2);
 		} else {
-			label.getElement().getParentElement().getStyle().setBackgroundColor("#DFFFDF");
+			label.getElement().getStyle().setBackgroundColor("#DFFFDF");
 		}
 	}
 
