@@ -54,7 +54,10 @@ h1 {
 	padding: 3px;
 }
 
-.termView td {
+.termView div {
+	margin: 2px;
+	padding: 2px;
+	float: left;
 	border-color: grey;
 	border-style: solid;
 	border-width: 1px;
@@ -66,4 +69,11 @@ h1 {
 	border-color: black;
 	border-style: solid;
 	width: 100%;
+}
+
+.permutationPeriodItem{
+	border-color: grey;
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 10px;
 }
