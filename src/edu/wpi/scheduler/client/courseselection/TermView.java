@@ -4,21 +4,26 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.ui.CellPanel;
 import com.google.gwt.user.client.ui.Label;
 
 import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.Section;
 import edu.wpi.scheduler.shared.model.Term;
 
-public class TermView extends HorizontalPanel {
+public class TermView extends CellPanel {
 
 	public Course course;
+	private Element tableRow;
 	public HashMap<Term, Label> terms = new HashMap<Term, Label>();
 
 	public TermView(Course course) {
 		this.course = course;
-
+		
+		tableRow = DOM.createTR();
+	    DOM.appendChild(getBody(), tableRow);
+	
 		for (Term term : Term.values())
 			this.addTerm(term);
 
@@ -37,19 +42,23 @@ public class TermView extends HorizontalPanel {
 		return false;
 	}
 
-	public Label addTerm(Term term) {
-		Label label = new Label(term.name);
+	public Element addTerm(Term term) {
+		
+		Element element = DOM.createTD();
+		
+		element.setInnerText(term.name);
+		
+		tableRow.appendChild(element);
+		
+		return element;
+		
+		/*Label label = new Label(term.name);
 
 		this.add(label);
 		terms.put(term, label);
 
 		return label;
-	}
-
-	public Label getTermLabe(String title) {
-		Label label = new Label(title);
-
-		return label;
+		*/
 	}
 
 	public void update() {
