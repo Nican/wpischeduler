@@ -35,28 +35,48 @@ public class SchedulePermutationProducer {
 		}
 
 		SectionProducer producer = getProducers().get(index);
+		boolean noCourses = true;
 
 		for (Section section : producer.getSections()) {
 
 			if (hasConflicts(section, studentSections)) {
 				continue;
 			}
+			//Check if we get at least one course without conflict, otherwise we must keep generating!
+			noCourses = false;
 
 			List<Section> newStudentSections = new ArrayList<Section>(
 					studentSections);
 
 			newStudentSections.add(section);
-
+			
+			/*
 			if (index == getProducers().size() - 1) {
 				SchedulePermutation permutation = new SchedulePermutation();
 				permutation.sections = newStudentSections;
 				permutations.add(permutation);
 			} else {
 				generate(index + 1, newStudentSections);
-			}
+			} */
+			generateAdd( index, newStudentSections );
 
 		}
+		
+		if( noCourses )
+			generateAdd( index, studentSections );
 
+	}
+	
+	private void generateAdd( int index, List<Section> studentSections ){
+		
+		if (index == getProducers().size() - 1) {
+			SchedulePermutation permutation = new SchedulePermutation();
+			permutation.sections = studentSections;
+			permutations.add(permutation);
+		} else {
+			generate(index + 1, studentSections);
+		}
+		
 	}
 
 	public boolean hasConflicts(Section newSection,

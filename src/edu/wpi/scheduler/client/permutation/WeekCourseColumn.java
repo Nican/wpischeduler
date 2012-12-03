@@ -28,6 +28,19 @@ public class WeekCourseColumn extends ComplexPanel {
 		this.permutation = permutation;
 		this.day = day;
 
+		this.getElement().getStyle().setHeight(100.0, Unit.PCT);
+		this.getElement().getStyle().setPosition(Position.RELATIVE);
+
+		Label title = new Label(day.name());
+		title.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+
+		this.add(title, getElement());
+	}
+
+	@Override
+	protected void onLoad() {
+		this.clear();
+
 		for (Section section : this.permutation.sections) {
 			for (Period period : section.periods) {
 
@@ -37,30 +50,46 @@ public class WeekCourseColumn extends ComplexPanel {
 			}
 		}
 
-		Label title = new Label(day.name());
-		title.getElement().getStyle().setTextAlign(TextAlign.CENTER);
-
-		this.add(title, getElement());
 	}
 
 	private void addPeriod(Period period) {
 
 		PeriodItem item = new PeriodItem(period.professor);
 		Term term = period.section.getTerms().get(0);
+		double termId = term.ordinal();
 
 		Style periodStyle = item.getElement().getStyle();
+		double height = (double) this.getElement().getClientHeight();
 
 		periodStyle.setPosition(Position.ABSOLUTE);
-		periodStyle.setTop(((double) (period.startTime.hour - startHour)) / ((double) (endHour - startHour)) * 100.0, Unit.PCT);
-		periodStyle.setHeight((getTimeProgress(period.endTime) - getTimeProgress(period.startTime)) * 20.0, Unit.PX);
-
-		//periodStyle.setLeft(term.ordinal() * 10, Unit.PX);
+		periodStyle.setTop(getTimeProgress(period.startTime) * height + termId * 5, Unit.PX);
+		periodStyle.setHeight((getTimeProgress(period.endTime) - getTimeProgress(period.startTime)) * height, Unit.PX);
+		periodStyle.setWidth(100.0 - termId * 10.0, Unit.PCT);
+		periodStyle.setLeft(termId * 10, Unit.PCT);
+		periodStyle.setBackgroundColor(getTermColor(term));
 
 		add(item, getElement());
 	}
 
 	private double getTimeProgress(Time time) {
-		return ((double) time.hour) + ((double) time.minutes) / 60.0;
+		double start = (double) (time.hour - startHour);
+
+		return (start + ((double) time.minutes) / 60.0) / (endHour - startHour);
+	}
+
+	private String getTermColor(Term term) {
+		switch (term) {
+		case A:
+			return "#FFFFFF";
+		case B:
+			return "#EEFFFF";
+		case C:
+			return "#FFEEFF";
+		case D:
+			return "#FFFFEE";
+		default:
+			return "#EEFFEE";
+		}
 	}
 
 }
