@@ -77,3 +77,18 @@ h1 {
 	border-width: 1px;
 	border-radius: 10px;
 }
+
+.permutationCanvas{
+	border-radius: 10px;
+	border: 1px #CCCCCC solid;
+}
+
+.permutationHourMarker {
+	border-bottom: 1px dotted #ddd;
+	border-top: 1px solid #ddd;
+	width: 100%;
+}
+
+.permutationHourLabel {
+	border: 1px solid #ddd;
+}

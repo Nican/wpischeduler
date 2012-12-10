@@ -16,11 +16,11 @@ public class SchedulePermutationProducer {
 
 	public SchedulePermutationProducer(StudentSchedule studentSchedule) {
 		this.studentSchedule = studentSchedule;
-		
+
 		generate();
 	}
-	
-	public List<SchedulePermutation> getPermutations(){
+
+	public List<SchedulePermutation> getPermutations() {
 		return permutations;
 	}
 
@@ -42,33 +42,31 @@ public class SchedulePermutationProducer {
 			if (hasConflicts(section, studentSections)) {
 				continue;
 			}
-			//Check if we get at least one course without conflict, otherwise we must keep generating!
+			// Check if we get at least one course without conflict, otherwise
+			// we must keep generating!
 			noCourses = false;
 
-			List<Section> newStudentSections = new ArrayList<Section>(
-					studentSections);
+			List<Section> newStudentSections = new ArrayList<Section>(studentSections);
 
 			newStudentSections.add(section);
-			
+
 			/*
-			if (index == getProducers().size() - 1) {
-				SchedulePermutation permutation = new SchedulePermutation();
-				permutation.sections = newStudentSections;
-				permutations.add(permutation);
-			} else {
-				generate(index + 1, newStudentSections);
-			} */
-			generateAdd( index, newStudentSections );
+			 * if (index == getProducers().size() - 1) { SchedulePermutation
+			 * permutation = new SchedulePermutation(); permutation.sections =
+			 * newStudentSections; permutations.add(permutation); } else {
+			 * generate(index + 1, newStudentSections); }
+			 */
+			generateAdd(index, newStudentSections);
 
 		}
-		
-		if( noCourses )
-			generateAdd( index, studentSections );
+
+		if (noCourses)
+			generateAdd(index, studentSections);
 
 	}
-	
-	private void generateAdd( int index, List<Section> studentSections ){
-		
+
+	private void generateAdd(int index, List<Section> studentSections) {
+
 		if (index == getProducers().size() - 1) {
 			SchedulePermutation permutation = new SchedulePermutation();
 			permutation.sections = studentSections;
@@ -76,7 +74,7 @@ public class SchedulePermutationProducer {
 		} else {
 			generate(index + 1, studentSections);
 		}
-		
+
 	}
 
 	public boolean hasConflicts(Section newSection,
@@ -93,19 +91,18 @@ public class SchedulePermutationProducer {
 		List<Term> newTerms = newSection.getTerms();
 		List<Term> terms = section.getTerms();
 		boolean conflictingTerms = false;
-		
-		//Checks if any terms exists in both sections
-		for( Term term : terms ){
-			if( newTerms.contains(term) ){
+
+		// Checks if any terms exists in both sections
+		for (Term term : terms) {
+			if (newTerms.contains(term)) {
 				conflictingTerms = true;
 			}
 		}
-		
-		//The classes are not even in the same days of the year
-		//There are no conflict here
-		if( conflictingTerms == false )
+
+		// The classes are not even in the same days of the year
+		// There are no conflict here
+		if (conflictingTerms == false)
 			return false;
-		
 
 		for (Period period : section.periods) {
 			for (Period newPeriod : newSection.periods) {
@@ -127,13 +124,13 @@ public class SchedulePermutationProducer {
 				}
 			}
 		}
-		
+
 		Time periodStart = period.startTime;
 		Time periodEnd = period.endTime;
 
 		Time otherStart = newPeriod.startTime;
 		Time otherEnd = newPeriod.endTime;
-		
+
 		return (otherStart.compareTo(periodStart) >= 0 && otherStart.compareTo(periodEnd) <= 0)
 				|| (otherEnd.compareTo(periodStart) >= 0 && otherEnd.compareTo(periodEnd) <= 0)
 				|| (otherStart.compareTo(periodStart) <= 0 && otherEnd.compareTo(periodEnd) >= 0);

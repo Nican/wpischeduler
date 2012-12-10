@@ -1,10 +1,10 @@
 package edu.wpi.scheduler.client.permutation;
 
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -18,7 +18,7 @@ import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.controller.StudentScheduleEvent;
 import edu.wpi.scheduler.client.controller.StudentScheduleEventHandler;
 
-public class PermutationChooserView extends Composite implements StudentScheduleEventHandler {
+public class PermutationChooserView extends Composite implements StudentScheduleEventHandler, PermutationSelectEventHandler {
 
 	private static PermutationChooserViewUiBinder uiBinder = GWT
 			.create(PermutationChooserViewUiBinder.class);
@@ -27,8 +27,8 @@ public class PermutationChooserView extends Composite implements StudentSchedule
 			UiBinder<Widget, PermutationChooserView> {
 	}
 
-	@UiField
-	public VerticalPanel thumbList;
+	@UiField(provided=true)
+	public PermutationCanvasList thumbList;
 
 	@UiField
 	public SimplePanel body;
@@ -41,9 +41,13 @@ public class PermutationChooserView extends Composite implements StudentSchedule
 	boolean initalized = false;
 
 	private final StudentSchedule studentSchedule;
+	public final PermutationController permutationController;
+	
 
 	public PermutationChooserView(StudentSchedule studentSchedule) {
+		this.permutationController = new PermutationController(studentSchedule);
 		this.studentSchedule = studentSchedule;
+		this.thumbList = new PermutationCanvasList(permutationController);
 
 		initWidget(uiBinder.createAndBindUi(this));
 
@@ -67,45 +71,31 @@ public class PermutationChooserView extends Composite implements StudentSchedule
 	}
 
 	public void updatePermutations() {
-
 		thumbList.clear();
 		body.clear();
 		weekCourseView = null;
 
 		int count = 0;
+		
+		List<SchedulePermutation> permutations = studentSchedule.getSchedulePermutations();
+		
+		permutationController.updateTimeRange(permutations);
 
-		for (SchedulePermutation permutation : studentSchedule.getSchedulePermutations()) {
-			addPermutation(permutation);
+		for (SchedulePermutation permutation : permutations) {
+			thumbList.addPermutation(permutation);
 
 			if (count++ > 30)
 				break;
-		}
-
-	}
-
-	private void addPermutation(final SchedulePermutation permutation) {
-		PermutationCanvas canvas = new PermutationCanvas(permutation);
-		canvas.setSize("150px", "150px");
-		canvas.paint();
-
-		thumbList.add(canvas.canvas);
-
-		canvas.canvas.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				setPermutation(permutation);
-			}
-		});
-
-		if (weekCourseView == null) {
-			setPermutation(permutation);
-		}
+		}	
+		
+		if( permutations.size() > 0 )
+			permutationController.selectPermutation(permutations.get(0));
+		
 	}
 
 	public void setPermutation(SchedulePermutation permutation) {
 		body.clear();
-		weekCourseView = new WeekCourseView(permutation);
+		weekCourseView = new WeekCourseView(permutationController, permutation);
 		body.add(weekCourseView);
 	}
 
@@ -118,15 +108,22 @@ public class PermutationChooserView extends Composite implements StudentSchedule
 	@Override
 	protected void onLoad() {
 		studentSchedule.addStudentScheduleHandler(this);
+		permutationController.addSelectListner(this);
 	}
 
 	@Override
 	protected void onUnload() {
 		studentSchedule.removeStudentScheduleHandler(this);
+		permutationController.removeSelectListner(this);
 	}
 
 	@Override
 	public void onCoursesChanged(StudentScheduleEvent studentScheduleEvent) {
 		this.updatePermutations();
+	}
+
+	@Override
+	public void onPermutationSelected(PermutationSelectEvent permutation) {
+		setPermutation(permutationController.selectedPermutation);
 	}
 }

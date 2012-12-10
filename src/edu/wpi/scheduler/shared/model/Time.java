@@ -53,6 +53,10 @@ public class Time implements Comparable<Time>, Serializable{
 		return (hour - 12) + ":" + minutes + "PM";
 	}
 	
+	public double getValue(){
+		return ((double) this.hour) + ((double) this.minutes) / 60.0;
+	}
+	
 	/**
 	 * the value 0 if x == y; a value less than 0 if x < y (Earlier on the day); and a value greater than 0 if x > y (Later on the day)
 	 */

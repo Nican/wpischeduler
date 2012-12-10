@@ -15,7 +15,6 @@ public class CourseSelectedEvent extends GwtEvent<CourseSelectedEventHandler> {
 	
 	@Override
 	public com.google.gwt.event.shared.GwtEvent.Type<CourseSelectedEventHandler> getAssociatedType() {
-		// TODO Auto-generated method stub
 		return TYPE;
 	}
 
