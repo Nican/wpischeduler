@@ -3,8 +3,8 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	
 	<g:DockLayoutPanel unit='EM'>
-		<g:center size="500">
-			<g:SimplePanel ui:field="timeChooserPanel" />
+		<g:center>
+				<g:SimplePanel ui:field="timeChooserPanel"/>
 		</g:center>
 	</g:DockLayoutPanel>
 </ui:UiBinder> 

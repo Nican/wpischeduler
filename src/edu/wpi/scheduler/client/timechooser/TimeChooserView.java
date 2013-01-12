@@ -13,13 +13,14 @@ import edu.wpi.scheduler.client.controller.StudentSchedule;
 
 public class TimeChooserView extends Composite {
 
+	
 	private static TimeChooserViewUiBinder uiBinder = GWT
 			.create(TimeChooserViewUiBinder.class);
-	@UiField SimplePanel timeChooserPanel;
 
 	interface TimeChooserViewUiBinder extends UiBinder<Widget, TimeChooserView> {
 	}
-	TimeChooser timeChooser = new TimeChooser();
+	
+	@UiField SimplePanel timeChooserPanel;
 	
 	public TimeChooserView(StudentSchedule studentSchedule) {
 		
@@ -29,7 +30,8 @@ public class TimeChooserView extends Composite {
 		getElement().getStyle().setTop(0, Unit.PX);
 		getElement().getStyle().setBottom(0, Unit.PX);
 		getElement().getStyle().setPosition(Position.ABSOLUTE);
-		timeChooserPanel.add(timeChooser);
+		timeChooserPanel.add(new TimeChooser());
+		
 	}
 
 }
