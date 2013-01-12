@@ -14,12 +14,12 @@
 			</g:ScrollPanel>
 		</g:west>
 		<g:west size="170">
-			<g:ScrollPanel>
+			<g:ScrollPanel ui:field="thumbScroll">
 				<g:VerticalPanel ui:field="thumbList" />
 			</g:ScrollPanel>
 		</g:west>
 		<g:center>
-			<g:SimplePanel ui:field="body" />
+			<p:PermutationScheduleView ui:field="body" />
 		</g:center> 
 	</g:SplitLayoutPanel>
 </ui:UiBinder>

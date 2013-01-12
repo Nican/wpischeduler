@@ -9,7 +9,10 @@ import edu.wpi.scheduler.shared.model.Term;
 
 public class SectionProducer {
 	Course course;
+	
 	List<Term> deniedTerms = new ArrayList<Term>();
+	List<Section> deniedSections = new ArrayList<Section>();
+	
 	private StudentSchedule schedule;
 
 	public SectionProducer(StudentSchedule schedule, Course course) {
@@ -23,6 +26,10 @@ public class SectionProducer {
 
 	public boolean isTermDenied(Term term) {
 		return deniedTerms.contains(term);
+	}
+	
+	public boolean isSectionDenied(Section section){
+		return deniedSections.contains(section);
 	}
 
 	public void denyTerm(Term term) {
@@ -56,6 +63,20 @@ public class SectionProducer {
 
 		schedule.courseUpdated(this.course);
 	}
+	
+	public void denySection(Section section){
+		if( !deniedSections.contains(section) ){
+			deniedSections.add(section);
+			schedule.courseUpdated(this.course);
+		}
+	}
+	
+	public void removeDenySection(Section section){
+		if( deniedSections.contains(section) ){
+			deniedSections.remove(section);
+			schedule.courseUpdated(this.course);
+		}
+	}
 
 	public List<Section> getSections() {
 		List<Section> sections = new ArrayList<Section>();
@@ -67,11 +88,16 @@ public class SectionProducer {
 
 		return sections;
 	}
+	
+	public boolean deniesSectionByTerm( Section section ){
+		return deniedTerms.contains(Term.getTermByName(section.term));
+	}
 
-	protected boolean acceptSection(Section section) {
-		// TODO: Add term/class/professor checking
-
-		if (deniedTerms.contains(Term.getTermByName(section.term)))
+	public boolean acceptSection(Section section) {
+		if (deniesSectionByTerm(section))
+			return false;
+		
+		if(deniedSections.contains(section))
 			return false;
 
 		return true;

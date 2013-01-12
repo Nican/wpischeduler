@@ -5,20 +5,23 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
+import edu.wpi.scheduler.client.controller.SchedulePermutationController;
 import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.controller.StudentScheduleEvent;
 import edu.wpi.scheduler.client.controller.StudentScheduleEventHandler;
 
-public class PermutationChooserView extends Composite implements StudentScheduleEventHandler, PermutationSelectEventHandler {
+public class PermutationChooserView extends Composite implements StudentScheduleEventHandler, PermutationSelectEventHandler, ScrollHandler {
 
 	private static PermutationChooserViewUiBinder uiBinder = GWT
 			.create(PermutationChooserViewUiBinder.class);
@@ -29,29 +32,35 @@ public class PermutationChooserView extends Composite implements StudentSchedule
 
 	@UiField(provided=true)
 	public PermutationCanvasList thumbList;
-
+	
 	@UiField
-	public SimplePanel body;
+	public ScrollPanel thumbScroll;
+
+	@UiField(provided=true)
+	public PermutationScheduleView body;
 
 	@UiField
 	public VerticalPanel courseList;
-
-	public WeekCourseView weekCourseView;
 
 	boolean initalized = false;
 
 	private final StudentSchedule studentSchedule;
 	public final PermutationController permutationController;
 	
+	public SchedulePermutationController producer;
+	
 
 	public PermutationChooserView(StudentSchedule studentSchedule) {
 		this.permutationController = new PermutationController(studentSchedule);
 		this.studentSchedule = studentSchedule;
 		this.thumbList = new PermutationCanvasList(permutationController);
-
+		this.body = new PermutationScheduleView(permutationController);
+		
 		initWidget(uiBinder.createAndBindUi(this));
 
 		courseList.setWidth("100%");
+		
+		thumbScroll.addScrollHandler(this);
 
 		getElement().getStyle().setLeft(0, Unit.PX);
 		getElement().getStyle().setRight(0, Unit.PX);
@@ -72,21 +81,19 @@ public class PermutationChooserView extends Composite implements StudentSchedule
 
 	public void updatePermutations() {
 		thumbList.clear();
-		body.clear();
-		weekCourseView = null;
 
 		int count = 0;
 		
-		List<SchedulePermutation> permutations = studentSchedule.getSchedulePermutations();
+		producer = new SchedulePermutationController( studentSchedule );
+		List<SchedulePermutation> permutations = producer.getPermutations();
 		
 		permutationController.updateTimeRange(permutations);
 
 		for (SchedulePermutation permutation : permutations) {
 			thumbList.addPermutation(permutation);
-
-			if (count++ > 30)
-				break;
-		}	
+		}
+		
+		System.out.println("Found a total of " + count + " permutations.");
 		
 		if( permutations.size() > 0 )
 			permutationController.selectPermutation(permutations.get(0));
@@ -94,9 +101,7 @@ public class PermutationChooserView extends Composite implements StudentSchedule
 	}
 
 	public void setPermutation(SchedulePermutation permutation) {
-		body.clear();
-		weekCourseView = new WeekCourseView(permutationController, permutation);
-		body.add(weekCourseView);
+		body.setPermutation(permutation);
 	}
 
 	public void update() {
@@ -125,5 +130,34 @@ public class PermutationChooserView extends Composite implements StudentSchedule
 	@Override
 	public void onPermutationSelected(PermutationSelectEvent permutation) {
 		setPermutation(permutationController.selectedPermutation);
+	}
+
+	/**
+	 * If we are near the end of the scroll, we are going to check if there are any more images to be loaded 
+	 */
+	@Override
+	public void onScroll(ScrollEvent event) {
+		
+		System.out.println(thumbScroll.getVerticalScrollPosition() + " - " + thumbScroll.getMaximumVerticalScrollPosition());
+		
+		if( thumbScroll.getVerticalScrollPosition() + 300 < thumbScroll.getMaximumVerticalScrollPosition() )
+			return;
+		
+		List<SchedulePermutation> permutations = producer.getPermutations();
+		int thumbSize = thumbList.childCount();
+		int permutationSize = permutations.size();
+		
+		System.out.println(thumbSize + " - " + permutationSize);
+		
+		if( permutationSize <= thumbSize )
+			return;
+		
+		int limit = Math.min( thumbSize + 10 , permutationSize );
+		
+		for( int i = thumbSize; i < limit; i++ ){
+			thumbList.addPermutation(permutations.get(i));
+		}
+		
+
 	}
 }

@@ -52,14 +52,13 @@ public class StudentSchedule implements HasHandlers {
 		
 		this.fireEvent(new StudentScheduleEvent(course, StudentScheduleEvents.REMOVE));
 	}
-	
+	/*
 	public List<SchedulePermutation> getSchedulePermutations(){
 		
-		SchedulePermutationProducer producer = new SchedulePermutationProducer(this);
+		SchedulePermutationController producer = new SchedulePermutationController(this);
 		return producer.getPermutations();
-		
-		
 	}
+	*/
 
 	@Override
 	public void fireEvent(GwtEvent<?> event) {

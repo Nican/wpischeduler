@@ -32,6 +32,10 @@ public class PermutationCanvasList extends VerticalPanel implements TimeRangeCha
 		});
 
 	}
+	
+	public int childCount(){
+		return this.getChildren().size();
+	}
 
 	@Override
 	protected void onLoad() {

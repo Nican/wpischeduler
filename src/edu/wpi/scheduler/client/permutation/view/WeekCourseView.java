@@ -1,4 +1,4 @@
-package edu.wpi.scheduler.client.permutation;
+package edu.wpi.scheduler.client.permutation.view;
 
 import java.util.List;
 
@@ -14,7 +14,9 @@ import com.google.gwt.user.client.ui.CellPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
+import edu.wpi.scheduler.client.permutation.PermutationController;
 import edu.wpi.scheduler.shared.model.DayOfWeek;
+import edu.wpi.scheduler.shared.model.Term;
 
 public class WeekCourseView extends CellPanel implements ResizeHandler {
 
@@ -25,16 +27,22 @@ public class WeekCourseView extends CellPanel implements ResizeHandler {
 	private SchedulePermutation permutation;
 	private PermutationController controller;
 	private HandlerRegistration resizeHandle;
+	private List<Term> allowedTerms;
 
 	public WeekCourseView(PermutationController controller, SchedulePermutation permutation) {
+		this(controller, permutation, null);
+	}
+
+	public WeekCourseView(PermutationController controller, SchedulePermutation permutation, List<Term> terms) {
 		DOM.setElementProperty(getTable(), "cellSpacing", "0");
 		DOM.setElementProperty(getTable(), "cellPadding", "0");
 
 		this.permutation = permutation;
 		this.controller = controller;
+		this.allowedTerms = terms;
 
 		updateTimeColumn();
-		
+
 		tableRow.appendChild(timeLabelsColumn);
 		timeLabelsColumn.getStyle().setWidth(40, Unit.PX);
 
@@ -51,22 +59,23 @@ public class WeekCourseView extends CellPanel implements ResizeHandler {
 		this.getElement().getStyle().setProperty("height", "100%");
 		this.getElement().getStyle().setPosition(Position.ABSOLUTE);
 
-		timeTableRow.getStyle().setHeight(0.0, Unit.PX);
+		timeTableRow.getStyle().setHeight(1.0, Unit.PX);
 
-		DOM.appendChild(getBody(), timeTableRow);		
+		DOM.appendChild(getBody(), timeTableRow);
 		DOM.appendChild(getBody(), tableRow);
 	}
 
 	private void updateTimeColumn() {
-		while(timeLabelsColumn.hasChildNodes())
+		while (timeLabelsColumn.hasChildNodes())
 			timeLabelsColumn.removeChild(timeLabelsColumn.getLastChild());
-		
+
 		Element timeCells = DOM.createTD();
 		Element hourMarkers = DOM.createDiv();
 
-		timeCells.setAttribute("colspan", "5");
+		timeCells.setAttribute("colspan", "6");
 		hourMarkers.getStyle().setPosition(Position.ABSOLUTE);
 		hourMarkers.getStyle().setWidth(100, Unit.PCT);
+		hourMarkers.getStyle().setTop(0.0, Unit.PX);
 
 		double start = controller.getStartHour();
 		double end = controller.getEndHour();
@@ -84,7 +93,7 @@ public class WeekCourseView extends CellPanel implements ResizeHandler {
 			marker.setClassName("permutationHourMarker");
 
 			DOM.appendChild(hourMarkers, marker);
-			
+
 			Element label = DOM.createDiv();
 			label.getStyle().setHeight(heightPerHour, Unit.PX);
 			label.getStyle().setPosition(Position.ABSOLUTE);
@@ -92,7 +101,7 @@ public class WeekCourseView extends CellPanel implements ResizeHandler {
 			label.getStyle().setWidth(40.0, Unit.PX);
 			label.setInnerText(Double.toString(Math.floor(i)));
 			label.setClassName("permutationHourLabel");
-			
+
 			DOM.appendChild(timeLabelsColumn, label);
 		}
 
@@ -117,7 +126,7 @@ public class WeekCourseView extends CellPanel implements ResizeHandler {
 	}
 
 	private WeekCourseColumn addColumn(DayOfWeek day) {
-		WeekCourseColumn courseColumn = new WeekCourseColumn(controller, permutation, day);
+		WeekCourseColumn courseColumn = new WeekCourseColumn(controller, permutation, day, allowedTerms);
 
 		this.add(courseColumn, tableRow);
 
