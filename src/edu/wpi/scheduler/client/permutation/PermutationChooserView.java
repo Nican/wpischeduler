@@ -16,12 +16,13 @@ import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
 import edu.wpi.scheduler.client.controller.SchedulePermutationController;
+import edu.wpi.scheduler.client.controller.SchedulePermutationController.PermutationUpdateEventHandler;
 import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.controller.StudentScheduleEvent;
 import edu.wpi.scheduler.client.controller.StudentScheduleEventHandler;
 
-public class PermutationChooserView extends Composite implements StudentScheduleEventHandler, PermutationSelectEventHandler, ScrollHandler {
+public class PermutationChooserView extends Composite implements StudentScheduleEventHandler, PermutationSelectEventHandler, ScrollHandler, PermutationUpdateEventHandler {
 
 	private static PermutationChooserViewUiBinder uiBinder = GWT
 			.create(PermutationChooserViewUiBinder.class);
@@ -30,13 +31,13 @@ public class PermutationChooserView extends Composite implements StudentSchedule
 			UiBinder<Widget, PermutationChooserView> {
 	}
 
-	@UiField(provided=true)
+	@UiField(provided = true)
 	public PermutationCanvasList thumbList;
-	
+
 	@UiField
 	public ScrollPanel thumbScroll;
 
-	@UiField(provided=true)
+	@UiField(provided = true)
 	public PermutationScheduleView body;
 
 	@UiField
@@ -46,20 +47,19 @@ public class PermutationChooserView extends Composite implements StudentSchedule
 
 	private final StudentSchedule studentSchedule;
 	public final PermutationController permutationController;
-	
+
 	public SchedulePermutationController producer;
-	
 
 	public PermutationChooserView(StudentSchedule studentSchedule) {
 		this.permutationController = new PermutationController(studentSchedule);
 		this.studentSchedule = studentSchedule;
 		this.thumbList = new PermutationCanvasList(permutationController);
 		this.body = new PermutationScheduleView(permutationController);
-		
+
 		initWidget(uiBinder.createAndBindUi(this));
 
 		courseList.setWidth("100%");
-		
+
 		thumbScroll.addScrollHandler(this);
 
 		getElement().getStyle().setLeft(0, Unit.PX);
@@ -81,23 +81,29 @@ public class PermutationChooserView extends Composite implements StudentSchedule
 
 	public void updatePermutations() {
 		thumbList.clear();
-
 		int count = 0;
-		
-		producer = new SchedulePermutationController( studentSchedule );
+
+		if (producer != null) {
+			producer.cancel();
+			producer.removeUpdateHandler(this);
+			producer = null;
+		}
+
+		producer = new SchedulePermutationController(studentSchedule);
 		List<SchedulePermutation> permutations = producer.getPermutations();
-		
+
+		producer.addUpdateHandler(this);
 		permutationController.updateTimeRange(permutations);
 
 		for (SchedulePermutation permutation : permutations) {
 			thumbList.addPermutation(permutation);
 		}
-		
+
 		System.out.println("Found a total of " + count + " permutations.");
-		
-		if( permutations.size() > 0 )
+
+		if (permutations.size() > 0)
 			permutationController.selectPermutation(permutations.get(0));
-		
+
 	}
 
 	public void setPermutation(SchedulePermutation permutation) {
@@ -133,31 +139,41 @@ public class PermutationChooserView extends Composite implements StudentSchedule
 	}
 
 	/**
-	 * If we are near the end of the scroll, we are going to check if there are any more images to be loaded 
+	 * If we are near the end of the scroll, we are going to check if there are
+	 * any more images to be loaded
 	 */
 	@Override
 	public void onScroll(ScrollEvent event) {
-		
+
 		System.out.println(thumbScroll.getVerticalScrollPosition() + " - " + thumbScroll.getMaximumVerticalScrollPosition());
-		
-		if( thumbScroll.getVerticalScrollPosition() + 300 < thumbScroll.getMaximumVerticalScrollPosition() )
+
+		if (thumbScroll.getVerticalScrollPosition() + 300 < thumbScroll.getMaximumVerticalScrollPosition())
 			return;
-		
+
+		updateThumbnails();
+	}
+
+	@Override
+	public void onPermutationUpdated() {
+		if (thumbList.childCount() < 20)
+			updateThumbnails();
+	}
+
+	public void updateThumbnails() {
 		List<SchedulePermutation> permutations = producer.getPermutations();
 		int thumbSize = thumbList.childCount();
 		int permutationSize = permutations.size();
 		
-		System.out.println(thumbSize + " - " + permutationSize);
-		
-		if( permutationSize <= thumbSize )
+		System.out.println("Found " + permutationSize + " permutations");
+
+		if (permutationSize <= thumbSize)
 			return;
-		
-		int limit = Math.min( thumbSize + 10 , permutationSize );
-		
-		for( int i = thumbSize; i < limit; i++ ){
+
+		int limit = Math.min(thumbSize + 10, permutationSize);
+
+		for (int i = thumbSize; i < limit; i++) {
 			thumbList.addPermutation(permutations.get(i));
 		}
-		
-
 	}
+
 }
