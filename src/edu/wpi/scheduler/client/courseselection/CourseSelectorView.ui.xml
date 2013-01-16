@@ -1,31 +1,31 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:c="urn:import:edu.wpi.scheduler.client.courseselection">
-	<g:DockLayoutPanel unit='EM'>
-		<g:north size='2'>
-			<g:ListBox ui:field="departmentList" />
-		</g:north>
-		<g:center>
-			<g:SplitLayoutPanel>
-
-				<g:east size='250'>
-					<g:DockLayoutPanel>
-						<g:center><c:CourseDescription ui:field="courseDescription" /></g:center>
-						<g:south size="250"><c:CourseSelection ui:field="courseSelection" /></g:south>
-					</g:DockLayoutPanel>
-					
-					
-				</g:east>
 
 
-				<g:center >
-					<g:ScrollPanel ui:field="courseListHolder" />
+	<g:SplitLayoutPanel>
+		<g:west size="250">
+			<g:ListBox ui:field="departmentList"></g:ListBox>
+		</g:west>
+
+		<g:east size='250'>
+			<g:DockLayoutPanel>
+				<g:center>
+					<c:CourseDescription ui:field="courseDescription" />
 				</g:center>
+				<g:south size="250">
+					<c:CourseSelection ui:field="courseSelection" />
+				</g:south>
+			</g:DockLayoutPanel>
+		</g:east>
 
-			</g:SplitLayoutPanel>
+		<g:center>
+			<g:ScrollPanel>
+				<c:CourseList ui:field="courseList"></c:CourseList>
+			</g:ScrollPanel>
 		</g:center>
 
-		
+	</g:SplitLayoutPanel>
 
-	</g:DockLayoutPanel>
+
 </ui:UiBinder>

@@ -83,8 +83,6 @@ public class WeekCourseColumn extends ComplexPanel {
 	}
 	
 	public boolean allowTerm( Term term ){
-		if( allowedTerms == null )
-			return true;
 		return allowedTerms.contains(term);
 	}
 

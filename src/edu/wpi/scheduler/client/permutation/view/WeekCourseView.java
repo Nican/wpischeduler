@@ -1,5 +1,6 @@
 package edu.wpi.scheduler.client.permutation.view;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.gwt.dom.client.Style.Position;
@@ -29,11 +30,13 @@ public class WeekCourseView extends CellPanel implements ResizeHandler {
 	private HandlerRegistration resizeHandle;
 	private List<Term> allowedTerms;
 
-	public WeekCourseView(PermutationController controller, SchedulePermutation permutation) {
-		this(controller, permutation, null);
+	public WeekCourseView(PermutationController controller,
+			SchedulePermutation permutation) {
+		this(controller, permutation, Arrays.asList(Term.values()));
 	}
 
-	public WeekCourseView(PermutationController controller, SchedulePermutation permutation, List<Term> terms) {
+	public WeekCourseView(PermutationController controller,
+			SchedulePermutation permutation, List<Term> terms) {
 		DOM.setElementProperty(getTable(), "cellSpacing", "0");
 		DOM.setElementProperty(getTable(), "cellPadding", "0");
 
@@ -105,6 +108,24 @@ public class WeekCourseView extends CellPanel implements ResizeHandler {
 			DOM.appendChild(timeLabelsColumn, label);
 		}
 
+		if (allowedTerms != null) {
+			StringBuilder builder = new StringBuilder();
+			
+			for( Term term : allowedTerms )
+				builder.append(term.name);
+			
+			Element termLabel = DOM.createDiv();
+			termLabel.setInnerHTML(builder.toString());
+			termLabel.getStyle().setProperty("opacity", "0.05");
+			termLabel.getStyle().setProperty("fontSize", "325px");
+			termLabel.getStyle().setProperty("position", "absolute");
+			termLabel.getStyle().setProperty("right", "128px");
+			termLabel.getStyle().setProperty("lineHeight", "325px");
+			termLabel.getStyle().setProperty("bottom", "0px");
+
+			timeLabelsColumn.appendChild(termLabel);
+		}
+
 		DOM.appendChild(timeCells, hourMarkers);
 
 		if (timeTableRow.hasChildNodes())
@@ -126,7 +147,8 @@ public class WeekCourseView extends CellPanel implements ResizeHandler {
 	}
 
 	private WeekCourseColumn addColumn(DayOfWeek day) {
-		WeekCourseColumn courseColumn = new WeekCourseColumn(controller, permutation, day, allowedTerms);
+		WeekCourseColumn courseColumn = new WeekCourseColumn(controller,
+				permutation, day, allowedTerms);
 
 		this.add(courseColumn, tableRow);
 

@@ -3,6 +3,8 @@
  */
 package edu.wpi.scheduler.client.courseselection;
 
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
@@ -13,7 +15,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.SimplePanel;
 
 import edu.wpi.scheduler.client.Scheduler;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
@@ -36,11 +37,11 @@ public class CourseSelectorView extends Composite implements
 	final StudentSchedule studentSchedule;
 	final CourseSelectionController selectionController;
 
-	@UiField
+	@UiField(provided = true)
 	ListBox departmentList;
 
-	@UiField
-	SimplePanel courseListHolder;
+	@UiField(provided=true)
+	CourseList courseList;
 
 	@UiField
 	CourseDescription courseDescription;
@@ -62,6 +63,8 @@ public class CourseSelectorView extends Composite implements
 	public CourseSelectorView(StudentSchedule studentSchedule) {
 		selectionController = new CourseSelectionController(studentSchedule);
 		courseSelection = new CourseSelection(selectionController);
+		departmentList = new ListBox(true);
+		courseList = new CourseList(selectionController);
 
 		initWidget(uiBinder.createAndBindUi(this));
 
@@ -74,7 +77,7 @@ public class CourseSelectorView extends Composite implements
 		getElement().getStyle().setPosition(Position.ABSOLUTE);
 
 		updateDepartments();
-		
+
 		selectionController.addCourseSelectedListner(this);
 	}
 
@@ -82,35 +85,19 @@ public class CourseSelectorView extends Composite implements
 
 		departmentList.clear();
 
-		for (Department dept : Scheduler.getDatabase().departments) {
-			departmentList.addItem(dept.name);
+		List<Department> departments = Scheduler.getDatabase().departments;
+
+		for (int i = 0; i < departments.size(); i++) {
+			departmentList.insertItem(departments.get(i).name, i);
 		}
 
-		updateCourseList(getSelectedDepartment());
+		updateCourseList();
 
 	}
 
 	@UiHandler("departmentList")
 	public void dropdownEvent(ChangeEvent event) {
-		updateCourseList(getSelectedDepartment());
-	}
-
-	public Department getSelectedDepartment() {
-		// Get the current selected event name
-		int index = departmentList.getSelectedIndex();
-		String name = departmentList.getItemText(index);
-
-		// Find the corresponding department
-		for (Department dept : Scheduler.getDatabase().departments) {
-			if (dept.name.equals(name)) {
-				return dept;
-			}
-		}
-
-		// Make sure we actually found the corresponding department
-		throw new IllegalStateException(
-				"Could not find the department with name '" + name + "'");
-
+		updateCourseList();
 	}
 
 	/**
@@ -119,14 +106,20 @@ public class CourseSelectorView extends Composite implements
 	 * 
 	 * @param department
 	 */
-	public void updateCourseList(Department department) {
+	public void updateCourseList() {
 
 		// Clear the body from any existing elements
-		courseListHolder.clear();
+		courseList.clear();
 
-		CourseList courseList = new CourseList(selectionController, department);
-		courseListHolder.add(courseList);
-
+		List<Department> departments = Scheduler.getDatabase().departments;
+		
+		for (int i = 0; i < departments.size(); i++) {
+			if(departmentList.isItemSelected(i))
+				courseList.addDeparment(departments.get(i));
+		}
+		
+		courseList.sort();
+		
 	}
 
 	/**

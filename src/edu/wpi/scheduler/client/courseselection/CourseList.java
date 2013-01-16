@@ -1,38 +1,73 @@
 package edu.wpi.scheduler.client.courseselection;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.ComplexPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.Department;
 
 public class CourseList extends ComplexPanel {
+	
+	private final CourseSelectionController selectionController;
+	
+	private static class CourseComparator implements Comparator<CourseListItemBase>{
 
-	public CourseList(final CourseSelectionController selectionController, Department department) {
+		@Override
+		public int compare(CourseListItemBase o1, CourseListItemBase o2) {
+			Course course1 = o1.getCourse();
+			Course course2 = o2.getCourse();
+			
+			return course1.number.compareToIgnoreCase(course2.number);			
+		}
+		
+	}
 
+	public CourseList(CourseSelectionController selectionController) {
 		this.setElement(DOM.createTable());
+		this.selectionController = selectionController;
 
+		this.setStyleName("courseList");
+	}
+	
+	public void addDeparment( Department department ){
 		for( Course course : department.courses ){
 			CourseListItemBase item = new CourseListItemBase(selectionController, course);
 			
 			item.add("128px", new TermView(course));
-			item.add(null, new Label(fixCase(course.name)));
-			item.add(null, new Label(course.sections.get(0).term));
+			item.add(null, fixCase(course.name));
+			item.add(null, course.sections.get(0).term);
 
 			this.add( item );
 		}
-
-		this.setStyleName("courseList");
-
+	}
+	
+	public void sort(){
+		ArrayList<CourseListItemBase> widgets = new ArrayList<CourseListItemBase>();
+		
+		for( Widget widget : this.getChildren() ){
+			widgets.add( (CourseListItemBase) widget );
+		}
+		
+		Collections.sort(widgets, new CourseComparator() );
+		
+		this.clear();
+		
+		for( Widget widget : widgets ){
+			this.add(widget);
+		}		
 	}
 
 	@Override
 	public void add( Widget child ){
 		this.add( child, this.getElement() );
 	}
+	
 	public static String fixCase(String input){
 		RegExp reg = RegExp.compile("^I+V*$");
 		// Break it into words
