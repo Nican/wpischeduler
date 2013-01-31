@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
 import edu.wpi.scheduler.client.controller.SchedulePermutationController;
 import edu.wpi.scheduler.client.controller.SchedulePermutationController.PermutationUpdateEventHandler;
+import edu.wpi.scheduler.client.controller.ScheduleConflictController;
 import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.controller.StudentScheduleEvent;
@@ -74,7 +75,7 @@ public class PermutationChooserView extends Composite implements StudentSchedule
 		courseList.clear();
 
 		for (SectionProducer producer : studentSchedule.sectionProducers) {
-			courseList.add(new CourseItem(studentSchedule, producer));
+			courseList.add(new CourseItem(permutationController, producer));
 		}
 
 	}
@@ -111,9 +112,9 @@ public class PermutationChooserView extends Composite implements StudentSchedule
 	}
 
 	public void update() {
+		permutationController.update();
 		updateCourses();
 		updatePermutations();
-
 	}
 
 	@Override

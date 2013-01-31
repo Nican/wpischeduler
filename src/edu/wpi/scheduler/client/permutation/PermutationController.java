@@ -10,7 +10,9 @@ import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 
+import edu.wpi.scheduler.client.controller.ScheduleConflictController;
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
+import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.shared.model.DayOfWeek;
 import edu.wpi.scheduler.shared.model.Period;
@@ -32,6 +34,8 @@ public class PermutationController implements HasHandlers {
 	protected SchedulePermutation selectedPermutation;
 
 	public final Map<Term, String> termColor = new HashMap<Term, String>();
+	
+	private ScheduleConflictController conflictController = new ScheduleConflictController();
 
 	public PermutationController(StudentSchedule studentSchedule) {
 		this.studentSchedule = studentSchedule;
@@ -125,5 +129,11 @@ public class PermutationController implements HasHandlers {
 		this.selectedPermutation = permutation;
 
 		this.fireEvent(new PermutationSelectEvent());
+	}
+
+	public void update() {
+		for (SectionProducer producer : studentSchedule.sectionProducers) {
+			conflictController.addCourse(producer.getCourse());
+		}
 	}
 }

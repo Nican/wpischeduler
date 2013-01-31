@@ -153,6 +153,7 @@ public class SchedulePermutationController implements HasHandlers {
 
 		// Can we move down the tree?
 		if (treeSize < producedSections.size()) {
+			
 			// Move a step down and compare the current state
 			addState(0);
 
@@ -166,7 +167,7 @@ public class SchedulePermutationController implements HasHandlers {
 			int newId = lastId + 1;
 			int sectionsSize = producedSections.get(treeSearchState.size()).size();
 
-			if (sectionsSize > newId) {
+			if (sectionsSize > newId && !hasStateConflicts()) {
 				addState(newId);
 				return;
 			}
@@ -183,11 +184,12 @@ public class SchedulePermutationController implements HasHandlers {
 
 			if (hasConflicts(newSection, section)) {
 				hasConflicts = true;
-				addConflicts(newSection, section);
-				addConflicts(section, newSection);
+				break;
+				//addConflicts(newSection, section);
+				//addConflicts(section, newSection);
 			}
 		}
-
+		
 		treeSearchState.add(new TreeStateItem( newId, hasConflicts ));
 
 
@@ -231,7 +233,7 @@ public class SchedulePermutationController implements HasHandlers {
 		list.add(section);
 	}
 
-	private boolean hasConflicts(Section newSection, Section section) {
+	public static boolean hasConflicts(Section newSection, Section section) {
 		List<Term> newTerms = newSection.getTerms();
 		List<Term> terms = section.getTerms();
 		boolean conflictingTerms = false;
@@ -268,7 +270,7 @@ public class SchedulePermutationController implements HasHandlers {
 		return false;
 	}
 
-	private boolean hasConflitcs(Period period, Period newPeriod) {
+	private static boolean hasConflitcs(Period period, Period newPeriod) {
 
 		//No days in common, no conflicts		
 		if(!containsAny(period.days, newPeriod.days))

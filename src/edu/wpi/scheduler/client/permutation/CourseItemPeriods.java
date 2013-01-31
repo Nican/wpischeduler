@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 import edu.wpi.scheduler.client.controller.SectionProducer;
-import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.controller.StudentScheduleEvent;
 import edu.wpi.scheduler.client.controller.StudentScheduleEventHandler;
 import edu.wpi.scheduler.shared.model.Section;
@@ -23,12 +22,12 @@ import edu.wpi.scheduler.shared.model.Section;
  */
 public class CourseItemPeriods extends FlowPanel implements StudentScheduleEventHandler {
 
-	public final StudentSchedule studentSchedule;
+	public final PermutationController permutationController;
 	public final SectionProducer producer;
 	public final HashMap<Section, CheckBox> sectionCheckbox = new HashMap<Section, CheckBox>();
 
-	public CourseItemPeriods(StudentSchedule studentSchedule, final SectionProducer producer) {
-		this.studentSchedule = studentSchedule;
+	public CourseItemPeriods(PermutationController permutationController, final SectionProducer producer) {
+		this.permutationController = permutationController;
 		this.producer = producer;
 
 		for (final Section section : producer.getCourse().sections) {
@@ -58,12 +57,12 @@ public class CourseItemPeriods extends FlowPanel implements StudentScheduleEvent
 
 	@Override
 	protected void onLoad() {
-		studentSchedule.addStudentScheduleHandler(this);
+		permutationController.getStudentSchedule().addStudentScheduleHandler(this);
 	}
 
 	@Override
 	protected void onUnload() {
-		studentSchedule.removeStudentScheduleHandler(this);
+		permutationController.getStudentSchedule().removeStudentScheduleHandler(this);
 	}
 
 	@Override

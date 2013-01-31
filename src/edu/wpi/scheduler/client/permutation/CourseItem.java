@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CellPanel;
 
 import edu.wpi.scheduler.client.controller.SectionProducer;
-import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.courseselection.TermViewSelection;
 import edu.wpi.scheduler.shared.model.Course;
 
@@ -21,13 +20,13 @@ import edu.wpi.scheduler.shared.model.Course;
 public class CourseItem extends CellPanel implements ClickHandler {
 
 	public final SectionProducer producer;
-	public final StudentSchedule studentSchedule;
+	public final PermutationController permutationController;
 
 	private Element periodsRow = null;
 	private CourseItemPeriods itemPeriods = null;
 
-	public CourseItem(StudentSchedule studentSchedule, SectionProducer producer) {
-		this.studentSchedule = studentSchedule;
+	public CourseItem(PermutationController permutationController, SectionProducer producer) {
+		this.permutationController = permutationController;
 		this.producer = producer;
 
 		this.setStyleName("permutationCourseItem");
@@ -50,7 +49,7 @@ public class CourseItem extends CellPanel implements ClickHandler {
 
 		nameCell.setInnerText(getName());
 
-		this.add(new TermViewSelection(producer.getCourse(), studentSchedule), termsCell);
+		this.add(new TermViewSelection(producer.getCourse(), permutationController.getStudentSchedule()), termsCell);
 
 		DOM.appendChild(getBody(), titleRow);
 	}
@@ -71,7 +70,7 @@ public class CourseItem extends CellPanel implements ClickHandler {
 		if (periodsRow == null) {
 			periodsRow = DOM.createTR();
 			Element periodsCell = DOM.createTD();
-			itemPeriods = new CourseItemPeriods(this.studentSchedule, this.producer);
+			itemPeriods = new CourseItemPeriods(permutationController, this.producer);
 			
 			periodsRow.getStyle().setDisplay(Display.NONE);
 			periodsCell.setAttribute("colspan", "3");
