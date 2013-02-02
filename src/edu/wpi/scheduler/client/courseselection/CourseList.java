@@ -1,13 +1,11 @@
 package edu.wpi.scheduler.client.courseselection;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.ComplexPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.WidgetCollection;
 
 import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.Department;
@@ -27,6 +25,8 @@ public class CourseList extends ComplexPanel {
 		}
 		
 	}
+	
+	private static final CourseComparator comparator = new CourseComparator();
 
 	public CourseList(CourseSelectionController selectionController) {
 		this.setElement(DOM.createTable());
@@ -47,24 +47,17 @@ public class CourseList extends ComplexPanel {
 		}
 	}
 	
-	public void sort(){
-		ArrayList<CourseListItemBase> widgets = new ArrayList<CourseListItemBase>();
+	public void add( CourseListItemBase child ){		
+		WidgetCollection children = getChildren();
 		
-		for( Widget widget : this.getChildren() ){
-			widgets.add( (CourseListItemBase) widget );
+		for( int i = 0; i < children.size(); i++ ){
+			if( comparator.compare(child, (CourseListItemBase) children.get(i) ) == -1){
+				this.insert(child, this.getElement(), i, true);
+				return;
+			}
 		}
 		
-		Collections.sort(widgets, new CourseComparator() );
-		
-		this.clear();
-		
-		for( Widget widget : widgets ){
-			this.add(widget);
-		}		
-	}
-
-	@Override
-	public void add( Widget child ){
+		//Could not find a place to insert, put it at the end!
 		this.add( child, this.getElement() );
 	}
 	

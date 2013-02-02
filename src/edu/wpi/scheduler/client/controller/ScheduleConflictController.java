@@ -30,6 +30,7 @@ public class ScheduleConflictController {
 			generate();
 
 			if (!canGenerate()) {
+				System.out.println("Found all conflicts!");
 				this.cancel();
 			}
 		}

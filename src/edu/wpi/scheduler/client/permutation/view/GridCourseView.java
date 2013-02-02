@@ -43,8 +43,8 @@ public class GridCourseView extends CellPanel {
 		secondRow.appendChild(thirdCell);
 		secondRow.appendChild(forthCell);
 
-		DOM.appendChild(getBody(), firstRow);
-		DOM.appendChild(getBody(), secondRow);
+		getBody().appendChild(firstRow);
+		getBody().appendChild(secondRow);
 
 		addView(Collections.singletonList(Term.A), firstCell);
 		addView(Collections.singletonList(Term.B), secondCell);

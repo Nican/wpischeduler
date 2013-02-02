@@ -38,7 +38,7 @@ public class WeekCourseColumn extends ComplexPanel {
 		this.getElement().getStyle().setVerticalAlign(VerticalAlign.TOP);
 		body.getStyle().setPosition(Position.RELATIVE);
 
-		DOM.appendChild(getElement(), body);
+		getElement().appendChild(body);
 		
 		this.createPeriods();
 	}
@@ -62,15 +62,16 @@ public class WeekCourseColumn extends ComplexPanel {
 			}
 		}
 		
-		this.updatePeriods();
+		if( this.isAttached() )
+			this.updatePeriods();
 	}
 
 	public void updatePeriods() {
+		double height = (double) this.getElement().getClientHeight();
+		
 		for (Widget widget : this.getChildren()) {
 			PeriodItem item = (PeriodItem) widget;
 			Style periodStyle = item.getElement().getStyle();
-			//double termId = item.term.ordinal();
-			double height = (double) this.getElement().getClientHeight();
 
 			periodStyle.setPosition(Position.ABSOLUTE);
 			periodStyle.setTop(getTimeProgress(item.period.startTime) * height, Unit.PX);

@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.Section;
@@ -41,10 +42,15 @@ public class TermView extends ComplexPanel {
 	public Label addTerm(Term term) {
 		Label label = new Label(term.name);
 		
-		this.add(label, getElement());
+		this.add(label);
 		terms.put(term, label);
 
 		return label;
+	}
+	
+	@Override
+	public void add( Widget child ){		
+		this.add( child, this.getElement() );
 	}
 
 	public void update() {

@@ -76,7 +76,7 @@ public class CourseItemPeriods extends FlowPanel implements StudentScheduleEvent
 	public void update() {
 		for (Entry<Section, CheckBox> entry : sectionCheckbox.entrySet()) {	
 			entry.getValue().setValue(!producer.isSectionDenied(entry.getKey()));
-			entry.getValue().setEnabled(!producer.deniesSectionByTerm(entry.getKey()));			
+			entry.getValue().setVisible(!producer.deniesSectionByTerm(entry.getKey()));
 		}
 	}
 

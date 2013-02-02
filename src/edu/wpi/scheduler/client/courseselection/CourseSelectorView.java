@@ -118,8 +118,6 @@ public class CourseSelectorView extends Composite implements
 				courseList.addDeparment(departments.get(i));
 		}
 		
-		courseList.sort();
-		
 	}
 
 	/**
