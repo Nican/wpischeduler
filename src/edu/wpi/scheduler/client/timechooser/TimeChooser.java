@@ -1,12 +1,13 @@
 package edu.wpi.scheduler.client.timechooser;
 
-import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 
-public class TimeChooser extends AbsolutePanel{
-	
-	final int numDays = 5;
-	final int numHours = 10;
+import edu.wpi.scheduler.client.controller.StudentSchedule;
+
+public class TimeChooser extends AbsolutePanel
+{
+	final int numColumns = StudentSchedule.NUM_DAYS;
+	final int numRows = StudentSchedule.NUM_HOURS * StudentSchedule.GRIDS_PER_HOUR;
 	final int width = 700;
 	final int height = 700;
 	
@@ -14,14 +15,11 @@ public class TimeChooser extends AbsolutePanel{
 	Grid grid;
 	Fill fill;
 	
-	public TimeChooser(){
-		fill = new Fill(width, height, numDays, numHours);
-		grid = new Grid(width, height, numDays, numHours);
-		control = new Control(this, width, height, numDays, numHours);
+	public TimeChooser(StudentSchedule studentSchedule)
+	{
+		fill = new Fill(width, height, numColumns, numRows);
+		grid = new Grid(width, height, numColumns, numRows);
+		control = new Control(this, width, height, numColumns, numRows, studentSchedule);
 		this.add(control.canvas);
 	}
-	
-	
-	
-
 }

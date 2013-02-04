@@ -1,11 +1,9 @@
 package edu.wpi.scheduler.client.timechooser;
 
 import com.google.gwt.canvas.client.Canvas;
-import com.google.gwt.user.client.ui.SimplePanel;
-
 
 /**
- * Panel containing time choosing canvas
+ * Canvas representing selected times filled in
  * @author Ryan Danas
  *
  */
@@ -41,10 +39,11 @@ public class Fill {
 	 * @param i2
 	 * @param j2
 	 */
-	void fillTimes(int i1, int j1, int i2, int j2){
+	void fillTimes(int i1, int j1, int i2, int j2, boolean isSelected){
 		int w = width / numDays;
 		int h = height / numHours;
-		canvas.getContext2d().setFillStyle("red");
+		if(isSelected) canvas.getContext2d().setFillStyle("white");
+		else  canvas.getContext2d().setFillStyle("red");
 		// Fill area given
 		for( int i = i1; i < i2; i++){
 			for( int j = j1; j < j2; j++){

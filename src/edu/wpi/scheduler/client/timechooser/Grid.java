@@ -1,11 +1,9 @@
 package edu.wpi.scheduler.client.timechooser;
 
 import com.google.gwt.canvas.client.Canvas;
-import com.google.gwt.user.client.ui.SimplePanel;
-
 
 /**
- * Panel containing time choosing canvas
+ * Static time grid canvas
  * @author Ryan Danas
  *
  */

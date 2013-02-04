@@ -30,7 +30,7 @@ public class TimeChooserView extends Composite {
 		getElement().getStyle().setTop(0, Unit.PX);
 		getElement().getStyle().setBottom(0, Unit.PX);
 		getElement().getStyle().setPosition(Position.ABSOLUTE);
-		timeChooserPanel.add(new TimeChooser());
+		timeChooserPanel.add(new TimeChooser(studentSchedule));
 		
 	}
 

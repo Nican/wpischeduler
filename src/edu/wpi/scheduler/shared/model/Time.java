@@ -80,5 +80,41 @@ public class Time implements Comparable<Time>, Serializable {
 
 		return this.hour < o.hour ? -1 : 1;
 	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj == null || obj.getClass() != getClass()){
+            return false;
+		}
+        if (obj == this){
+            return true;
+        }
+        else
+        {
+        	return ((Time)obj).hour == hour && ((Time)obj).minutes == minutes;
+        }
+	}
+	
+
+	public Time increment(int byHours, int byMinutes)
+	{
+		hour += byHours;
+		minutes += byMinutes;
+		// Convert 60 minutes to 1 hour
+		while(minutes >= 60)
+		{
+			hour += 1;
+			minutes -= 60;
+		}
+		// Deal with hour overflow
+		while(hour >= 24)
+		{
+			hour -= 24;
+		}
+		// Time should be valid
+		assertValidTime();
+		return this;
+	}
 
 }
