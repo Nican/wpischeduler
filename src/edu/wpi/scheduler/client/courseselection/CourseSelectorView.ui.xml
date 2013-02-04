@@ -11,7 +11,7 @@
 		<g:east size='250'>
 			<g:DockLayoutPanel>
 				<g:center>
-					<c:CourseDescription ui:field="courseDescription" />
+					<c:CourseDescriptionInfo ui:field="courseDescription" />
 				</g:center>
 				<g:south size="250">
 					<c:CourseSelection ui:field="courseSelection" />

@@ -30,6 +30,8 @@ public class WeekCourseView extends CellPanel implements ResizeHandler {
 	private PermutationController controller;
 	private HandlerRegistration resizeHandle;
 	private List<Term> allowedTerms;
+	
+	private final double timeColumnWidth = 40.0;
 
 	public WeekCourseView(PermutationController controller,
 			SchedulePermutation permutation) {
@@ -75,7 +77,7 @@ public class WeekCourseView extends CellPanel implements ResizeHandler {
 			timeTableRow.removeChild(timeTableRow.getLastChild());
 	}
 
-	private void updateTimeColumn() {
+	private void createTimeColumn() {
 		clearTimeColumn();
 
 		Element timeCells = DOM.createTD();
@@ -98,7 +100,7 @@ public class WeekCourseView extends CellPanel implements ResizeHandler {
 			markerStyle.setMarginBottom(heightPerHour / 2, Unit.PX);
 			markerStyle.setPosition(Position.ABSOLUTE);
 			markerStyle.setTop((i - start) * heightPerHour, Unit.PX);
-			markerStyle.setLeft(40.0, Unit.PX);
+			markerStyle.setLeft(timeColumnWidth, Unit.PX);
 			marker.setClassName("permutationHourMarker");
 
 			Element label = DOM.createDiv();
@@ -118,6 +120,8 @@ public class WeekCourseView extends CellPanel implements ResizeHandler {
 
 		timeCells.appendChild(hourMarkers);
 		timeTableRow.appendChild(timeCells);
+		
+		updateTimeColumns();
 	}
 
 	private void createTermBackground() {
@@ -142,7 +146,7 @@ public class WeekCourseView extends CellPanel implements ResizeHandler {
 
 	@Override
 	protected void onLoad() {
-		this.updateTimeColumn();
+		this.createTimeColumn();
 		resizeHandle = Window.addResizeHandler(this);
 	}
 
@@ -160,16 +164,22 @@ public class WeekCourseView extends CellPanel implements ResizeHandler {
 
 		return courseColumn;
 	}
-
-	@Override
-	public void onResize(ResizeEvent event) {
-		this.updateTimeColumn();
+	
+	private void updateTimeColumns(){
+		double width = this.getElement().getClientWidth() - timeColumnWidth;
+		double widthPerColumn = width / getChildren().size();
 
 		for (Widget widget : this.getChildren()) {
 			if (widget instanceof WeekCourseColumn) {
+				widget.getElement().getStyle().setWidth(widthPerColumn, Unit.PX);
 				((WeekCourseColumn) widget).updatePeriods();
 			}
-		}
+		}	
+	}
+
+	@Override
+	public void onResize(ResizeEvent event) {
+		this.createTimeColumn();
 	}
 
 }

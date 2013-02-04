@@ -1,6 +1,13 @@
 package edu.wpi.scheduler.client;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.JsonUtils;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 
@@ -18,25 +25,35 @@ public class Scheduler implements EntryPoint {
 	 * Create a remote service proxy to talk to the server-side Greeting
 	 * service.
 	 */
-	//private final GreetingServiceAsync greetingService = GWT
-	//		.create(G	reetingService.class);
-	
+	// private final GreetingServiceAsync greetingService = GWT
+	// .create(G reetingService.class);
+
 	private static ScheduleDB scheduleDB;
-	
-	public static ScheduleDB getDatabase(){
-		if( scheduleDB == null )
+	private static CourseDescriptions courseDescriptions;
+
+	public static ScheduleDB getDatabase() {
+		if (scheduleDB == null)
 			throw new IllegalStateException("Getting the database while it has not yet been loaded!");
-		
+
 		return scheduleDB;
 	}
+	
+	public static CourseDescriptions getDescription() {
+		if (courseDescriptions == null)
+			throw new IllegalStateException("Getting course descriptions before it has been loaded!");
+
+		return courseDescriptions;
+	}
+	
+	
 
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		
+
 		final StudentSchedule studentSchedule = new StudentSchedule();
-		
+
 		ScheduleDBRequest request = new ScheduleDBRequest();
 		request.setCallback(new DBRequestCallback() {
 
@@ -45,9 +62,9 @@ public class Scheduler implements EntryPoint {
 				// TODO Auto-generated method stub
 				System.out.println("Got success: ");
 				scheduleDB = database;
-				
+
 				RootPanel.get().add(new MainView(studentSchedule));
-				
+
 			}
 
 			@Override
@@ -58,9 +75,34 @@ public class Scheduler implements EntryPoint {
 			}
 		});
 		request.send();
-		
+
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, URL.encode("/courses.json"));
+		try {
+			builder.sendRequest(null, new RequestCallback() {
+				public void onError(Request request, Throwable exception) {
+					System.out.println("Unable to get course descriptions: " + exception.getMessage());
+					// Couldn't connect to server (could be timeout, SOP
+					// violation, etc.)
+				}
+
+				public void onResponseReceived(Request request, Response response) {
+					if (200 == response.getStatusCode()) {
+						// Process the response in response.getText()
+						courseDescriptions = JsonUtils.safeEval( response.getText() );
+						
+					} else {
+						// Handle the error. Can get the status text from
+						// response.getStatusText()
+						System.out.println("Unable to get course descriptions2: " + response.getStatusText());
+					}
+				}
+			});
+		} catch (RequestException e) {
+			// Couldn't connect to server
+		}
+
 		Window.enableScrolling(false);
 		Window.setMargin("0px");
-		
+
 	}
 }

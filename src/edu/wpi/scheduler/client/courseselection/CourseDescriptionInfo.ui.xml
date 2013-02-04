@@ -2,8 +2,16 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
+		.mainDescription {
+			overflow: auto;
+		}
 		
+		.title{
+			font-weight: bold;
+		}
 	</ui:style>
-	<g:HTMLPanel>
+	<g:HTMLPanel styleName="{style.mainDescription}">
+		<div ui:field="title" class="{style.title}"></div>
+		<div ui:field="description"></div>
 	</g:HTMLPanel>
 </ui:UiBinder> 

@@ -44,7 +44,7 @@ public class CourseSelectorView extends Composite implements
 	CourseList courseList;
 
 	@UiField
-	CourseDescription courseDescription;
+	CourseDescriptionInfo courseDescription;
 
 	@UiField(provided = true)
 	CourseSelection courseSelection;
