@@ -1,19 +1,24 @@
 package edu.wpi.scheduler.client.timechooser;
 
-import edu.wpi.scheduler.client.controller.StudentSchedule;
+import edu.wpi.scheduler.client.controller.StudentChosenTimes;
 import edu.wpi.scheduler.client.timechooser.TimeChooser;
-public class TimeChooserController {
+
+public class TimeChooserController 
+{
 	
 	TimeChooser view;
-	StudentSchedule model;
+	StudentChosenTimes model;
 	
-	TimeChooserController(TimeChooser v, StudentSchedule model){
+	TimeChooserController(TimeChooser v, StudentChosenTimes model)
+	{
 		this.view = v;
 		this.model = model;
 	}
 
-	void timeChosen(double dragX, double dragY, double dropX, double dropY){
-		if(dragX > 0 && dragY > 0 && dropX > 0 && dropY > 0){
+	void timeChosen(double dragX, double dragY, double dropX, double dropY)
+	{
+		if(dragX > 0 && dragY > 0 && dropX > 0 && dropY > 0)
+		{
 			// Calculate grid points
 			int i1 = (int) Math.floor((Math.min(dragY, dropY)/view.height) * view.numRows);
 			int j1 = (int) Math.floor((Math.min(dragX, dropX)/view.width) * view.numColumns);
@@ -45,8 +50,10 @@ public class TimeChooserController {
 		}
 	}
 	
-	void mouseDrag(double dragX, double dragY, double dropX, double dropY){
-		if(dragX > 0 && dragY > 0 && dropX > 0 && dropY > 0){
+	void mouseDrag(double dragX, double dragY, double dropX, double dropY)
+	{
+		if(dragX > 0 && dragY > 0 && dropX > 0 && dropY > 0)
+		{
 			// Calculate grid points
 			int i1 = (int) Math.min(dragY, dropY);
 			int j1 = (int) Math.min(dragX, dropX);
@@ -60,7 +67,8 @@ public class TimeChooserController {
 		}
 	}
 	
-	void mouseOut(){
+	void mouseOut()
+	{
 		view.control.canvas.getContext2d().clearRect(0, 0, view.width, view.height);
 		view.control.canvas.getContext2d().drawImage(view.fill.canvas.getCanvasElement(), 0, 0);
 		view.control.canvas.getContext2d().drawImage(view.grid.canvas.getCanvasElement(), 0, 0);

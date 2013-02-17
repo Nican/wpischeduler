@@ -10,8 +10,7 @@ import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 
-import edu.wpi.scheduler.client.controller.StudentSchedule;
-
+import edu.wpi.scheduler.client.controller.StudentChosenTimes;
 
 /**
  * Canvas for selection drawing and event triggering
@@ -35,7 +34,7 @@ public class Control {
 	/**
 	 * 
 	 */
-	public Control(TimeChooser tc, int w, int h, int dy, int hr, StudentSchedule model){
+	public Control(TimeChooser tc, int w, int h, int dy, int hr, StudentChosenTimes model){
 		numDays = dy;
 		numHours = hr;
 		tcc = new TimeChooserController(tc, model);
