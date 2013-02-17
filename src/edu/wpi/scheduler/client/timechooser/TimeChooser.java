@@ -12,15 +12,26 @@ public class TimeChooser extends AbsolutePanel
 	final int width = 700;
 	final int height = 700;
 	
+	StudentChosenTimes model;
 	Control control;
-	Grid grid;
 	Fill fill;
+	Grid grid;
 	
 	public TimeChooser(StudentChosenTimes model)
 	{
+		this.model = model;
+		control = new Control(this, width, height, numColumns, numRows, model);
 		fill = new Fill(width, height, numColumns, numRows);
 		grid = new Grid(width, height, numColumns, numRows);
-		control = new Control(this, width, height, numColumns, numRows, model);
 		this.add(control.canvas);
+		redraw();
+	}
+	
+	void redraw()
+	{
+		control.canvas.getContext2d().clearRect(0, 0, width, height);
+		fill.fillTimes(model);
+		control.canvas.getContext2d().drawImage(fill.canvas.getCanvasElement(), 0, 0);
+		control.canvas.getContext2d().drawImage(grid.canvas.getCanvasElement(), 0, 0);
 	}
 }

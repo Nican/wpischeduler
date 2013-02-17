@@ -22,10 +22,27 @@ public class TimeCell
 	public TimeCell(int i, int j)
 	{
 		time = gridToTime(i);
-		day = gridToDayOfWeek(j);
+		day = gridToDay(j);
 	}
 	
-	private DayOfWeek gridToDayOfWeek(int j)
+	// Time to Cell methods
+	public int dayToGrid()
+	{
+		int j = 0;
+		while(!week[j++].equals(day));
+		return j - START_DAY - 1;
+	}
+	public int timeToGrid()
+	{
+		int i = 0;
+		final Time startTime = new Time(START_HOUR, START_MIN);
+		i += (time.hour - startTime.hour) * CELLS_PER_HOUR;
+		i += (time.minutes - startTime.minutes) / (60/CELLS_PER_HOUR);
+		return i;
+	}
+	
+	// Cell to Time methods
+	private DayOfWeek gridToDay(int j)
 	{
 		int index = START_DAY + j;
 		// j = 9
@@ -41,5 +58,15 @@ public class TimeCell
 		Time calculatedTime = new Time(START_HOUR, START_MIN);
 		calculatedTime.increment(0, (60/CELLS_PER_HOUR) * i);
 		return calculatedTime;
+	}
+	
+	@Override
+	public String toString()
+	{
+		String out = "";
+		out += day.getName() + ": " + time.toString();
+		out += " || ";
+		out += "(" + dayToGrid() + ", " + timeToGrid() + ")";
+		return out;
 	}
 }

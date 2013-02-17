@@ -23,8 +23,7 @@ public class StudentChosenTimes
 			termTimes.put(TimeCell.week[i], new ArrayList<Time>());
 		}
 	}
-
-	
+	// Setters
 	public void selectTime(int i, int j)
 	{
 		TimeCell selectedCell = new TimeCell(i, j);
@@ -43,24 +42,34 @@ public class StudentChosenTimes
 			dayTimes.remove(deselectedCell.time);
 		}
 	}
+	// Getters
 	public boolean isTimeSelected(int i, int j)
 	{
 		TimeCell queriedCell = new TimeCell(i, j);
 		List<Time> dayTimes = termTimes.get(queriedCell.day);
 		return dayTimes.contains(queriedCell.time);
 	}
-	public void printTimes()
+	public List<Time> getTimes(DayOfWeek day)
 	{
+		return termTimes.get(day);
+	}
+	
+	
+	@Override
+	public String toString()
+	{
+		String out = "";
 		for(int i=TimeCell.START_DAY; i<=TimeCell.NUM_DAYS; i++){
 			DayOfWeek day = TimeCell.week[i];
-			System.out.print(day.toString());
-			System.out.print(": ");
+			out += day.toString();
+			out += ": ";
 			List<Time> dayTimes = termTimes.get(day);
 			for(int j=0; j<dayTimes.size(); j++){
-				System.out.print(dayTimes.get(j).toString());
-				System.out.print(", ");
+				out += dayTimes.get(j).toString();
+				out += ", ";
 			}
-			System.out.print("\n");
+			out += "\n";
 		}
+		return out;
 	}
 }

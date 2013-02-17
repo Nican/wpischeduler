@@ -22,8 +22,8 @@ public class TimeChooserView extends Composite {
 	
 	@UiField SimplePanel timeChooserPanel;
 	
-	public TimeChooserView(StudentSchedule studentSchedule) {
-		
+	public TimeChooserView(StudentSchedule studentSchedule) 
+	{
 		initWidget(uiBinder.createAndBindUi(this));
 		getElement().getStyle().setLeft(0, Unit.PX);
 		getElement().getStyle().setRight(0, Unit.PX);

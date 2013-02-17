@@ -43,10 +43,7 @@ public class TimeChooserController
 				}
 			}
 			// Update View
-			view.control.canvas.getContext2d().clearRect(0, 0, view.width, view.height);
-			view.fill.fillTimes(i1, j1, i2, j2, isSelected);
-			view.control.canvas.getContext2d().drawImage(view.fill.canvas.getCanvasElement(), 0, 0);
-			view.control.canvas.getContext2d().drawImage(view.grid.canvas.getCanvasElement(), 0, 0);
+			view.redraw();
 		}
 	}
 	
@@ -55,23 +52,21 @@ public class TimeChooserController
 		if(dragX > 0 && dragY > 0 && dropX > 0 && dropY > 0)
 		{
 			// Calculate grid points
+			boolean isSelected = isSelected(dragX, dragY);
 			int i1 = (int) Math.min(dragY, dropY);
 			int j1 = (int) Math.min(dragX, dropX);
 			int i2 = (int) Math.max(dragY, dropY);
 			int j2 = (int) Math.max(dragX, dropX);
 			// Update View
-			view.control.canvas.getContext2d().clearRect(0, 0, view.width, view.height);
-			view.control.canvas.getContext2d().drawImage(view.fill.canvas.getCanvasElement(), 0, 0);
-			view.control.canvas.getContext2d().drawImage(view.grid.canvas.getCanvasElement(), 0, 0);
-			view.control.drawDrag(i1, j1, i2, j2);
+			view.redraw();
+			view.control.drawDrag(i1, j1, i2, j2, isSelected);
 		}
 	}
 	
 	void mouseOut()
 	{
-		view.control.canvas.getContext2d().clearRect(0, 0, view.width, view.height);
-		view.control.canvas.getContext2d().drawImage(view.fill.canvas.getCanvasElement(), 0, 0);
-		view.control.canvas.getContext2d().drawImage(view.grid.canvas.getCanvasElement(), 0, 0);
+		// Update View
+		view.redraw();
 	}
 	
 	private boolean isSelected(double dragX, double dragY)
