@@ -69,15 +69,20 @@ public class ScheduleConflictController {
 		
 		Section section = sectionQueue.remove(0);
 		ConflictedList list = new ConflictedList();
+		list.section = section;
 		
 		for( Entry<Section, ConflictedList> entry : conflicts.entrySet() ){
-			if (SchedulePermutationController.hasConflicts(entry.getKey(), section)){
+			if (ScheduleProducer.hasConflicts(entry.getKey(), section)){
 				entry.getValue().add(section);
 				list.add(entry.getKey());				
 			}
 		}
 		
 		conflicts.put(section, list);
+	}
+	
+	public ConflictedList getConflicts(Section section){
+		return conflicts.get(section);
 	}
 
 	private boolean canGenerate() {

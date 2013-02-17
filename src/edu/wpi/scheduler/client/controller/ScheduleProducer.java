@@ -1,18 +1,16 @@
 package edu.wpi.scheduler.client.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import com.google.gwt.event.shared.EventHandler;
-import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.Timer;
 
+import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
+import edu.wpi.scheduler.client.permutation.PermutationController;
 import edu.wpi.scheduler.shared.model.DayOfWeek;
 import edu.wpi.scheduler.shared.model.Period;
 import edu.wpi.scheduler.shared.model.Section;
@@ -30,7 +28,7 @@ import edu.wpi.scheduler.shared.model.Time;
  * @author Nican
  *
  */
-public class SchedulePermutationController implements HasHandlers {
+public class ScheduleProducer {
 
 	public static class ConflictedList extends ArrayList<Section> {
 		private static final long serialVersionUID = 8823532784912354546L;
@@ -41,10 +39,6 @@ public class SchedulePermutationController implements HasHandlers {
 		@Override
 		public void run() {
 			generate();
-
-			if (!canGenerate()) {
-				this.cancel();
-			}
 		}
 	}
 	
@@ -58,18 +52,15 @@ public class SchedulePermutationController implements HasHandlers {
 		}
 	}
 
-	public static interface PermutationUpdateEventHandler extends EventHandler {
-		public void onPermutationUpdated();
+	public static interface ProducerEventHandler extends EventHandler {
+		public void onPermutationUpdated(UpdateType type);
 	}
-
-	private HandlerManager handlerManager = new HandlerManager(this);
-	public final StudentSchedule studentSchedule;
 
 	/**
 	 * List of sections that we are going to cross match to find conflicts and
 	 * schedules
 	 */
-	private ArrayList<List<Section>> producedSections = new ArrayList<List<Section>>();
+	public final ArrayList<List<Section>> producedSections = new ArrayList<List<Section>>();
 
 	/**
 	 * List of actual found schedule permutations
@@ -77,48 +68,53 @@ public class SchedulePermutationController implements HasHandlers {
 	private List<SchedulePermutation> permutations = new ArrayList<SchedulePermutation>();
 
 	/**
-	 * A mapping to what sections conflict to what sections If section A
-	 * conflicts with section B, then section B conflicts with section A
-	 */
-	private Map<Section, ConflictedList> conflicts = new HashMap<Section, ConflictedList>();
-
-	/**
 	 * Current state of searching the producedSections tree (Using the
 	 * LinkedList as a queue/FIFO)
 	 */
-	private ArrayList<TreeStateItem> treeSearchState = new ArrayList<TreeStateItem>();
+	public final ArrayList<TreeStateItem> treeSearchState = new ArrayList<TreeStateItem>();
 
 	/**
 	 * Timer that will generate more schedules as needed
 	 */
 	ProducerTimer timer = new ProducerTimer();
+	
+	boolean active = false;
+	public final PermutationController controller;
 
-	public SchedulePermutationController(StudentSchedule studentSchedule) {
-		this.studentSchedule = studentSchedule;
+	public ScheduleProducer(PermutationController controller) {
+		this.controller = controller;
 
-		for (SectionProducer producer : studentSchedule.sectionProducers) {
+		for (SectionProducer producer : controller.studentSchedule.sectionProducers) {
 			List<Section> sections = producer.getSections();
 
 			if (!sections.isEmpty())
 				producedSections.add(sections);
 		}
+		
+		if( producedSections.isEmpty() )
+			return;
+		
+		Collections.sort(producedSections, new Comparator<List<Section>>() {
+
+			@Override
+			public int compare(List<Section> o1, List<Section> o2) {
+				int s1 = o1.size();
+				int s2 = o2.size();
+				
+				if( s1 == s2 ) return 0;				
+				return s1 < s2 ? -1 : 1;
+			}
+		});
 
 		// Start with the root node of the tree
 		addState(0);
 
 		// Start generating!
-		timer.scheduleRepeating(50);
+		timer.scheduleRepeating(10);
+		active = true;
 
 		// Make a few right off the bat so users do not have to wait
 		generate();
-	}
-
-	public HandlerRegistration addUpdateHandler(PermutationUpdateEventHandler handler) {
-		return handlerManager.addHandler(PermutationUpdateEvent.TYPE, handler);
-	}
-
-	public void removeUpdateHandler(PermutationUpdateEventHandler handler) {
-		handlerManager.removeHandler(PermutationUpdateEvent.TYPE, handler);
 	}
 
 	public List<SchedulePermutation> getPermutations() {
@@ -130,18 +126,28 @@ public class SchedulePermutationController implements HasHandlers {
 	 */
 	public void cancel() {
 		timer.cancel();
+		active = false;
+		controller.fireEvent(new ProducerUpdateEvent(UpdateType.FINISH));
+	}
+	
+	public boolean isActive(){
+		return active;
 	}
 
 	private void generate() {
 		int i = 0;
 
-		while (i < 10 && canGenerate()) {
+		while (i < 20 && canGenerate()) {
 			generateNext();
 			i++;
 		}
+		
+		if (!canGenerate() || permutations.size() > 1000 ) {
+			this.cancel();
+		}
 
 		if (i > 0)
-			this.fireEvent(new PermutationUpdateEvent());
+			controller.fireEvent(new ProducerUpdateEvent(UpdateType.UPDATE));
 	}
 
 	protected boolean canGenerate() {
@@ -173,6 +179,10 @@ public class SchedulePermutationController implements HasHandlers {
 			}
 		}
 	}
+	
+	public Section getSectionFromTree( int level ){
+		return producedSections.get(level).get(treeSearchState.get(level).id);
+	}
 
 	private void addState(int newId) {
 		Section newSection = producedSections.get(treeSearchState.size()).get(newId);
@@ -180,7 +190,7 @@ public class SchedulePermutationController implements HasHandlers {
 
 		// Look at our current state, and see if we have any conflicts
 		for (int i = 0; i < treeSearchState.size(); i++) {
-			Section section = producedSections.get(i).get(treeSearchState.get(i).id);
+			Section section = getSectionFromTree(i);
 
 			if (hasConflicts(newSection, section)) {
 				hasConflicts = true;
@@ -218,19 +228,6 @@ public class SchedulePermutationController implements HasHandlers {
 		}
 
 		permutations.add(schedule);
-	}
-
-	private void addConflicts(Section newSection, Section section) {
-		ConflictedList list;
-
-		if (!conflicts.containsKey(newSection)) {
-			list = new ConflictedList();
-			conflicts.put(newSection, list);
-		} else {
-			list = conflicts.get(newSection);
-		}
-
-		list.add(section);
 	}
 
 	public static boolean hasConflicts(Section newSection, Section section) {
@@ -285,11 +282,6 @@ public class SchedulePermutationController implements HasHandlers {
 		return (otherStart.compareTo(periodStart) >= 0 && otherStart.compareTo(periodEnd) <= 0)
 				|| (otherEnd.compareTo(periodStart) >= 0 && otherEnd.compareTo(periodEnd) <= 0)
 				|| (otherStart.compareTo(periodStart) <= 0 && otherEnd.compareTo(periodEnd) >= 0);
-	}
-
-	@Override
-	public void fireEvent(GwtEvent<?> event) {
-		handlerManager.fireEvent(event);
 	}
 
 }

@@ -27,11 +27,10 @@ public class WeekCourseColumn extends ComplexPanel {
 	private Element body = DOM.createDiv();
 	private List<Term> allowedTerms = null;
 
-	public WeekCourseColumn(PermutationController controller, SchedulePermutation permutation, DayOfWeek day, List<Term> terms) {
+	public WeekCourseColumn(PermutationController controller, DayOfWeek day, List<Term> terms) {
 		this.setElement(DOM.createTD());
 
 		this.controller = controller;
-		this.permutation = permutation;
 		this.day = day;
 		this.allowedTerms = terms;
 
@@ -39,37 +38,50 @@ public class WeekCourseColumn extends ComplexPanel {
 		body.getStyle().setPosition(Position.RELATIVE);
 
 		getElement().appendChild(body);
-		
-		this.createPeriods();
 	}
 
 	@Override
 	protected void onLoad() {
 		this.updatePeriods();
 	}
+	
+	public void setPermutation(SchedulePermutation permutation){
+		this.permutation = permutation;
+		createPeriods();
+	}
 
 	public void createPeriods() {
 		this.clear();
-
-		for (Section section : this.permutation.sections) {
-			for (Period period : section.periods) {
-				if (period.days.contains(this.day)){
-					for (Term term : section.getTerms()){
-						if( allowTerm( term ))
-							addPeriod(period, term);
-					}
-				}
+		
+		if( controller.getSelectedSection() != null )
+			addSection(controller.getSelectedSection());
+		
+		if( this.permutation != null ){
+			for (Section section : this.permutation.sections) {
+				addSection(section);
 			}
 		}
 		
 		this.updatePeriods();
+	}
+	
+	private void addSection( Section section ){
+		for (Period period : section.periods) {
+			if (period.days.contains(this.day)){
+				for (Term term : section.getTerms()){
+					if( allowTerm( term ))
+						addPeriod(period, term);
+				}
+			}
+		}
 	}
 
 	public void updatePeriods() {
 		if(!isAttached())
 			return;
 		
-		double height = (double) this.getElement().getClientHeight();
+		double height = (double) getElement().getClientHeight();
+		Section selectedSection = controller.getSelectedSection();
 		
 		for (Widget widget : this.getChildren()) {
 			PeriodItem item = (PeriodItem) widget;
@@ -80,6 +92,12 @@ public class WeekCourseColumn extends ComplexPanel {
 			periodStyle.setHeight((getTimeProgress(item.period.endTime) - getTimeProgress(item.period.startTime)) * height, Unit.PX);
 			periodStyle.setBackgroundColor(controller.getTermColor(item.term));
 			//periodStyle.setZIndex(item.term.ordinal());
+			
+			if( selectedSection == null || item.period.section.equals(selectedSection) ){
+				periodStyle.setOpacity(1.0f);				
+			} else {
+				periodStyle.setOpacity(0.5f);
+			}
 		}
 	}
 	
@@ -87,10 +105,12 @@ public class WeekCourseColumn extends ComplexPanel {
 		return allowedTerms.contains(term);
 	}
 
-	private void addPeriod(Period period, Term term) {
-		PeriodItem item = new PeriodItem(period, term);
+	private PeriodItem addPeriod(Period period, Term term) {
+		PeriodItem item = new PeriodItem(controller, period, term);
 
 		add(item, body);
+		
+		return item;
 	}
 
 	private double getTimeProgress(Time time) {

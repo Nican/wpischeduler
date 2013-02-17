@@ -23,11 +23,13 @@ public class CourseItem extends CellPanel implements ClickHandler {
 	public final PermutationController permutationController;
 
 	private Element periodsRow = null;
-	private CourseItemPeriods itemPeriods = null;
+	private PeriodSelectListBase itemPeriods = null;
+	protected Button collapseButton = new Button(">");
 
 	public CourseItem(PermutationController permutationController, SectionProducer producer) {
 		this.permutationController = permutationController;
 		this.producer = producer;
+		collapseButton.addClickHandler(this);
 
 		this.setStyleName("permutationCourseItem");
 
@@ -42,16 +44,11 @@ public class CourseItem extends CellPanel implements ClickHandler {
 
 		nameCell.setAttribute("align", "center");
 		termsCell.setAttribute("align", "right");
-
-		Button collapse = new Button(">");
-		this.add(collapse, collapseCell);
-		collapse.addClickHandler(this);
-
-		nameCell.setInnerText(getName());
-
+		nameCell.setInnerText(getName());		
+		
+		this.add(collapseButton, collapseCell);
 		this.add(new TermViewSelection(producer.getCourse(), permutationController.getStudentSchedule()), termsCell);
-
-		DOM.appendChild(getBody(), titleRow);
+		getBody().appendChild(titleRow);
 	}
 
 	public String getName() {
@@ -84,8 +81,10 @@ public class CourseItem extends CellPanel implements ClickHandler {
 		
 		if( periodsRow.getStyle().getDisplay().equals(Display.NONE.getCssName()) ){
 			periodsRow.getStyle().setProperty("display", null);
+			collapseButton.setText("\\/");
 		} else {
 			periodsRow.getStyle().setDisplay(Display.NONE);
+			collapseButton.setText(">");
 		}
 
 		

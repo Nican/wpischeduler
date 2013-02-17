@@ -14,16 +14,13 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
-import edu.wpi.scheduler.client.controller.SchedulePermutationController;
-import edu.wpi.scheduler.client.controller.SchedulePermutationController.PermutationUpdateEventHandler;
-import edu.wpi.scheduler.client.controller.ScheduleConflictController;
+import edu.wpi.scheduler.client.controller.ScheduleProducer.ProducerEventHandler;
 import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
-import edu.wpi.scheduler.client.controller.StudentScheduleEvent;
-import edu.wpi.scheduler.client.controller.StudentScheduleEventHandler;
 
-public class PermutationChooserView extends Composite implements StudentScheduleEventHandler, PermutationSelectEventHandler, ScrollHandler, PermutationUpdateEventHandler {
+public class PermutationChooserView extends Composite implements ScrollHandler, ProducerEventHandler {
 
 	private static PermutationChooserViewUiBinder uiBinder = GWT
 			.create(PermutationChooserViewUiBinder.class);
@@ -39,7 +36,7 @@ public class PermutationChooserView extends Composite implements StudentSchedule
 	public ScrollPanel thumbScroll;
 
 	@UiField(provided = true)
-	public PermutationScheduleView body;
+	public final PermutationScheduleView scheduleView;
 
 	@UiField
 	public VerticalPanel courseList;
@@ -49,13 +46,11 @@ public class PermutationChooserView extends Composite implements StudentSchedule
 	private final StudentSchedule studentSchedule;
 	public final PermutationController permutationController;
 
-	public SchedulePermutationController producer;
-
 	public PermutationChooserView(StudentSchedule studentSchedule) {
 		this.permutationController = new PermutationController(studentSchedule);
 		this.studentSchedule = studentSchedule;
 		this.thumbList = new PermutationCanvasList(permutationController);
-		this.body = new PermutationScheduleView(permutationController);
+		this.scheduleView = new PermutationScheduleView(permutationController);
 
 		initWidget(uiBinder.createAndBindUi(this));
 
@@ -80,63 +75,47 @@ public class PermutationChooserView extends Composite implements StudentSchedule
 
 	}
 
+	/*
 	public void updatePermutations() {
 		thumbList.clear();
 		int count = 0;
 
 		if (producer != null) {
 			producer.cancel();
-			producer.removeUpdateHandler(this);
+			producer.removeProduceHandler(this);
 			producer = null;
 		}
 
-		producer = new SchedulePermutationController(studentSchedule);
+		producer = new ScheduleProducer(studentSchedule);
 		List<SchedulePermutation> permutations = producer.getPermutations();
 
-		producer.addUpdateHandler(this);
+		producer.addProduceHandler(this);
 		permutationController.updateTimeRange(permutations);
 
 		for (SchedulePermutation permutation : permutations) {
 			thumbList.addPermutation(permutation);
 		}
 
-		System.out.println("Found a total of " + count + " permutations.");
-
-		if (permutations.size() > 0)
-			permutationController.selectPermutation(permutations.get(0));
-
+		permutationController.selectPermutation(null);
+		scheduleView.resetView(producer);
 	}
-
-	public void setPermutation(SchedulePermutation permutation) {
-		body.setPermutation(permutation);
-	}
+	*/
 
 	public void update() {
-		permutationController.update();
 		updateCourses();
-		updatePermutations();
+		//updatePermutations();
 	}
 
 	@Override
 	protected void onLoad() {
-		studentSchedule.addStudentScheduleHandler(this);
-		permutationController.addSelectListner(this);
+		permutationController.addProduceHandler(this);
+		update();
+		updateThumbnails();
 	}
 
 	@Override
 	protected void onUnload() {
-		studentSchedule.removeStudentScheduleHandler(this);
-		permutationController.removeSelectListner(this);
-	}
-
-	@Override
-	public void onCoursesChanged(StudentScheduleEvent studentScheduleEvent) {
-		this.updatePermutations();
-	}
-
-	@Override
-	public void onPermutationSelected(PermutationSelectEvent permutation) {
-		setPermutation(permutationController.selectedPermutation);
+		permutationController.addProduceHandler(this);
 	}
 
 	/**
@@ -155,17 +134,23 @@ public class PermutationChooserView extends Composite implements StudentSchedule
 	}
 
 	@Override
-	public void onPermutationUpdated() {
+	public void onPermutationUpdated(UpdateType type) {
+		if( type == UpdateType.NEW)
+			thumbList.clear();
+		
 		if (thumbList.childCount() < 20)
 			updateThumbnails();
+		
+		List<SchedulePermutation> permutations = permutationController.getProducer().getPermutations();
+		
+		if( permutations.size() > 0 && permutationController.getSelectedPermutation() == null )
+			permutationController.selectPermutation( permutations.get(0) );
 	}
 
 	public void updateThumbnails() {
-		List<SchedulePermutation> permutations = producer.getPermutations();
+		List<SchedulePermutation> permutations = permutationController.getProducer().getPermutations();
 		int thumbSize = thumbList.childCount();
 		int permutationSize = permutations.size();
-		
-		System.out.println("Found " + permutationSize + " permutations");
 
 		if (permutationSize <= thumbSize)
 			return;

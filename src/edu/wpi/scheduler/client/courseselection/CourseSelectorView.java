@@ -3,12 +3,18 @@
  */
 package edu.wpi.scheduler.client.courseselection;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArrayString;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.storage.client.Storage;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -80,17 +86,50 @@ public class CourseSelectorView extends Composite implements
 
 		selectionController.addCourseSelectedListner(this);
 	}
+	
+	private List<String> savedSelectedDepartments(){
+		Storage localStorage = Storage.getLocalStorageIfSupported();
+		List<String> deparments = new ArrayList<String>();
+		
+		if( localStorage == null )
+			return deparments;
+		
+		String depList = localStorage.getItem("selectedDepts");
+		
+		if( depList == null )
+			return deparments;
+		
+		try {
+			JsArrayString selectedDepsJs = JsonUtils.unsafeEval( depList );
+			
+			for( int i = 0; i < selectedDepsJs.length(); i++ ){
+				deparments.add( selectedDepsJs.get(i) );
+			}
+			
+		} catch( IllegalArgumentException e ){
+			e.printStackTrace();
+			return null;
+		}
+		
+		return deparments;		
+	}
 
 	public void updateDepartments() {
 
 		departmentList.clear();
 
 		List<Department> departments = Scheduler.getDatabase().departments;
+		List<String> savedDeps = savedSelectedDepartments();
 
 		for (int i = 0; i < departments.size(); i++) {
-			departmentList.insertItem(departments.get(i).name, i);
+			Department department = departments.get(i);
+			
+			departmentList.insertItem(department.name, i);
+			
+			if( savedDeps.contains(department.abbreviation) )
+				departmentList.setItemSelected(i, true);
 		}
-
+		
 		updateCourseList();
 
 	}
@@ -112,13 +151,25 @@ public class CourseSelectorView extends Composite implements
 		courseList.clear();
 
 		List<Department> departments = Scheduler.getDatabase().departments;
+		JsArrayString arr = JavaScriptObject.createArray().cast();
 		
 		for (int i = 0; i < departments.size(); i++) {
-			if(departmentList.isItemSelected(i))
+			if(departmentList.isItemSelected(i)){
 				courseList.addDeparment(departments.get(i));
+				arr.push( departments.get(i).abbreviation );
+			}
+		}
+		
+		Storage localStorage = Storage.getLocalStorageIfSupported();
+		
+		if( localStorage != null ){
+			JSONArray jsonArr = new JSONArray( arr );
+			localStorage.setItem("selectedDepts", jsonArr.toString() );
 		}
 		
 	}
+	
+	
 
 	/**
 	 * Called when a course is selected in the main view

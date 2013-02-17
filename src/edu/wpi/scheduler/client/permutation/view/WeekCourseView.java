@@ -12,7 +12,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.CellPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
@@ -20,31 +19,26 @@ import edu.wpi.scheduler.client.permutation.PermutationController;
 import edu.wpi.scheduler.shared.model.DayOfWeek;
 import edu.wpi.scheduler.shared.model.Term;
 
-public class WeekCourseView extends CellPanel implements ResizeHandler {
+public class WeekCourseView extends PermutationViewBase implements ResizeHandler {
 
 	private Element tableRow = DOM.createTR();
 	private Element timeTableRow = DOM.createTR();
 	private Element timeLabelsColumn = DOM.createTD();
 
-	private SchedulePermutation permutation;
-	private PermutationController controller;
 	private HandlerRegistration resizeHandle;
 	private List<Term> allowedTerms;
 	
 	private final double timeColumnWidth = 40.0;
 
-	public WeekCourseView(PermutationController controller,
-			SchedulePermutation permutation) {
-		this(controller, permutation, Arrays.asList(Term.values()));
+	public WeekCourseView(PermutationController controller) {
+		this(controller, Arrays.asList(Term.values()));
 	}
 
-	public WeekCourseView(PermutationController controller,
-			SchedulePermutation permutation, List<Term> terms) {
+	public WeekCourseView(PermutationController controller, List<Term> terms) {
+		super(controller);
 		getTable().setPropertyString("cellSpacing", "0");
 		getTable().setPropertyString("cellPadding", "0");
 
-		this.permutation = permutation;
-		this.controller = controller;
 		this.allowedTerms = terms;
 
 		tableRow.appendChild(timeLabelsColumn);
@@ -157,8 +151,7 @@ public class WeekCourseView extends CellPanel implements ResizeHandler {
 	}
 
 	private WeekCourseColumn addColumn(DayOfWeek day) {
-		WeekCourseColumn courseColumn = new WeekCourseColumn(controller,
-				permutation, day, allowedTerms);
+		WeekCourseColumn courseColumn = new WeekCourseColumn(controller, day, allowedTerms);
 
 		this.add(courseColumn, tableRow);
 
@@ -180,6 +173,17 @@ public class WeekCourseView extends CellPanel implements ResizeHandler {
 	@Override
 	public void onResize(ResizeEvent event) {
 		this.createTimeColumn();
+	}
+
+	@Override
+	public void setPermutation(SchedulePermutation permutation) {
+		
+		for( Widget widget : getChildren() ){
+			if( widget instanceof WeekCourseColumn ){
+				((WeekCourseColumn) widget).setPermutation(permutation);
+			}
+		}
+		
 	}
 
 }

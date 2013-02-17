@@ -19,7 +19,7 @@
 			</g:ScrollPanel>
 		</g:west>
 		<g:center>
-			<p:PermutationScheduleView ui:field="body" />
+			<p:PermutationScheduleView ui:field="scheduleView" />
 		</g:center> 
 	</g:SplitLayoutPanel>
 </ui:UiBinder>
