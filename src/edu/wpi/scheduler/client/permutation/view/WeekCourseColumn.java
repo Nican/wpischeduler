@@ -58,7 +58,8 @@ public class WeekCourseColumn extends ComplexPanel {
 		
 		if( this.permutation != null ){
 			for (Section section : this.permutation.sections) {
-				addSection(section);
+				if( controller.getSelectedSection() != section )
+					addSection(section);
 			}
 		}
 		
@@ -90,13 +91,15 @@ public class WeekCourseColumn extends ComplexPanel {
 			periodStyle.setPosition(Position.ABSOLUTE);
 			periodStyle.setTop(getTimeProgress(item.period.startTime) * height, Unit.PX);
 			periodStyle.setHeight((getTimeProgress(item.period.endTime) - getTimeProgress(item.period.startTime)) * height, Unit.PX);
-			periodStyle.setBackgroundColor(controller.getTermColor(item.term));
+			periodStyle.setBackgroundColor(controller.getCourseColor(item.period.section.course));
 			//periodStyle.setZIndex(item.term.ordinal());
 			
 			if( selectedSection == null || item.period.section.equals(selectedSection) ){
-				periodStyle.setOpacity(1.0f);				
+				periodStyle.setOpacity(1.0f);
+				periodStyle.setZIndex(2);
 			} else {
 				periodStyle.setOpacity(0.5f);
+				periodStyle.setZIndex(0);
 			}
 		}
 	}

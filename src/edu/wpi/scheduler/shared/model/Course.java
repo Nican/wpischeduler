@@ -32,4 +32,9 @@ public class Course implements Serializable {
 	 * Needed for the GWT RPC to deserialize properly
 	 */
 	public Course(){}
+	
+	@Override
+	public String toString(){
+		return this.name + " (" + this.department.abbreviation + this.number + ")";
+	}
 }

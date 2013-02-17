@@ -72,10 +72,14 @@ public class ScheduleConflictController {
 		list.section = section;
 		
 		for( Entry<Section, ConflictedList> entry : conflicts.entrySet() ){
-			if (ScheduleProducer.hasConflicts(entry.getKey(), section)){
-				entry.getValue().add(section);
-				list.add(entry.getKey());				
-			}
+			if( entry.getKey().course.equals(section.course) )
+				continue;
+			
+			if (!ScheduleProducer.hasConflicts(entry.getKey(), section))
+				continue;
+			
+			list.add(entry.getKey());
+			entry.getValue().add(section);
 		}
 		
 		conflicts.put(section, list);

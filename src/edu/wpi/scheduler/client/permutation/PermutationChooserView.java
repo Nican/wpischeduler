@@ -66,44 +66,15 @@ public class PermutationChooserView extends Composite implements ScrollHandler, 
 	}
 
 	public void updateCourses() {
-
 		courseList.clear();
 
 		for (SectionProducer producer : studentSchedule.sectionProducers) {
 			courseList.add(new CourseItem(permutationController, producer));
 		}
-
 	}
-
-	/*
-	public void updatePermutations() {
-		thumbList.clear();
-		int count = 0;
-
-		if (producer != null) {
-			producer.cancel();
-			producer.removeProduceHandler(this);
-			producer = null;
-		}
-
-		producer = new ScheduleProducer(studentSchedule);
-		List<SchedulePermutation> permutations = producer.getPermutations();
-
-		producer.addProduceHandler(this);
-		permutationController.updateTimeRange(permutations);
-
-		for (SchedulePermutation permutation : permutations) {
-			thumbList.addPermutation(permutation);
-		}
-
-		permutationController.selectPermutation(null);
-		scheduleView.resetView(producer);
-	}
-	*/
 
 	public void update() {
 		updateCourses();
-		//updatePermutations();
 	}
 
 	@Override
@@ -124,9 +95,6 @@ public class PermutationChooserView extends Composite implements ScrollHandler, 
 	 */
 	@Override
 	public void onScroll(ScrollEvent event) {
-
-		System.out.println(thumbScroll.getVerticalScrollPosition() + " - " + thumbScroll.getMaximumVerticalScrollPosition());
-
 		if (thumbScroll.getVerticalScrollPosition() + 300 < thumbScroll.getMaximumVerticalScrollPosition())
 			return;
 
@@ -155,7 +123,7 @@ public class PermutationChooserView extends Composite implements ScrollHandler, 
 		if (permutationSize <= thumbSize)
 			return;
 
-		int limit = Math.min(thumbSize + 10, permutationSize);
+		int limit = Math.min(thumbSize + 20, permutationSize);
 
 		for (int i = thumbSize; i < limit; i++) {
 			thumbList.addPermutation(permutations.get(i));

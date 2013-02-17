@@ -118,12 +118,12 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 
 	public void resetView() {
 		ScheduleProducer producer = controller.getProducer();
-		
-		if( producer.getPermutations().size() > 0 )
+
+		if (producer.getPermutations().size() > 0)
 			viewMode = ViewMode.PROGRESS;
 		else
 			viewMode = ViewMode.GRID;
-		
+
 		createNewBody();
 	}
 
@@ -137,19 +137,21 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 
 	public void updateProgressButton() {
 		ScheduleProducer producer = controller.getProducer();
-		String text = producer.getPermutations().size() + " Schedules";
+		int size = producer.getPermutations().size();
 
-		if( producer.isActive() )
+		String text = (size > 1000 ? (size / 1000) + "k" : size) + " Schedules";
+
+		if (producer.isActive())
 			text += "...";
-		
-		progressButton.setText(text);
+
+		if (!progressButton.getText().equals(text))
+			progressButton.setText(text);
 	}
 
 	@Override
 	public void onPermutationUpdated(UpdateType type) {
 		updateProgressButton();
-		
-		
+
 	}
 
 }

@@ -61,13 +61,13 @@ public class GridCourseView extends PermutationViewBase {
 
 	private void addView(List<Term> terms, Element cell) {
 		Element div = DOM.createDiv();
-		div.getStyle().setProperty("border", "black 1px solid");
+		div.getStyle().setProperty("border", "#AAAAAA 1px solid");
 		div.getStyle().setProperty("position", "absolute");
 		div.getStyle().setProperty("top", "1px");
 		div.getStyle().setProperty("bottom", "1px");
 		div.getStyle().setProperty("right", "1px");
 		div.getStyle().setProperty("left", "1px");
-		div.getStyle().setProperty("borderRadius", "15px");
+		div.getStyle().setProperty("borderRadius", "5px");
 		div.getStyle().setProperty("overflow", "hidden");
 
 		cell.appendChild(div);

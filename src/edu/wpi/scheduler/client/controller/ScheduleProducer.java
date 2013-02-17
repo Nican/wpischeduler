@@ -142,7 +142,7 @@ public class ScheduleProducer {
 			i++;
 		}
 		
-		if (!canGenerate() || permutations.size() > 1000 ) {
+		if (!canGenerate() || permutations.size() > 50000 ) {
 			this.cancel();
 		}
 
@@ -151,7 +151,7 @@ public class ScheduleProducer {
 	}
 
 	protected boolean canGenerate() {
-		return !treeSearchState.isEmpty();
+		return !treeSearchState.isEmpty() && isActive();
 	}
 
 	private void generateNext() {
@@ -228,6 +228,11 @@ public class ScheduleProducer {
 		}
 
 		permutations.add(schedule);
+		
+		if( permutations.size() == 1 ){
+			//We are the first insert, make this the selected schedule
+			controller.selectPermutation(schedule);
+		}
 	}
 
 	public static boolean hasConflicts(Section newSection, Section section) {

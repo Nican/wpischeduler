@@ -39,9 +39,8 @@ public class PermutationCanvas {
 		context.drawImage(background.getCanvasElement(), 0.0, 0.0);
 
 		for (Section section : this.permutation.sections) {
+			context.setFillStyle(controller.getCourseColor(section.course));
 			for (Term term : section.getTerms()) {
-				context.setFillStyle(controller.getTermColor(term));
-
 				for (int i = 0; i < controller.getValidDaysOfWeek().size(); i++) {
 					for (Period period : section.periods) {
 						if (period.days.contains(controller.getValidDaysOfWeek().get(i))) {

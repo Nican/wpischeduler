@@ -18,6 +18,7 @@ import edu.wpi.scheduler.client.controller.SchedulePermutation;
 import edu.wpi.scheduler.client.permutation.PermutationController;
 import edu.wpi.scheduler.shared.model.DayOfWeek;
 import edu.wpi.scheduler.shared.model.Term;
+import edu.wpi.scheduler.shared.model.Time;
 
 public class WeekCourseView extends PermutationViewBase implements ResizeHandler {
 
@@ -28,7 +29,7 @@ public class WeekCourseView extends PermutationViewBase implements ResizeHandler
 	private HandlerRegistration resizeHandle;
 	private List<Term> allowedTerms;
 	
-	private final double timeColumnWidth = 40.0;
+	private final double timeColumnWidth = 44.0;
 
 	public WeekCourseView(PermutationController controller) {
 		this(controller, Arrays.asList(Term.values()));
@@ -42,7 +43,7 @@ public class WeekCourseView extends PermutationViewBase implements ResizeHandler
 		this.allowedTerms = terms;
 
 		tableRow.appendChild(timeLabelsColumn);
-		timeLabelsColumn.getStyle().setWidth(40, Unit.PX);
+		timeLabelsColumn.getStyle().setWidth(timeColumnWidth, Unit.PX);
 		timeTableRow.getStyle().setHeight(1.0, Unit.PX);
 
 		List<DayOfWeek> weekDays = controller.getValidDaysOfWeek();
@@ -102,8 +103,8 @@ public class WeekCourseView extends PermutationViewBase implements ResizeHandler
 			labelStyle.setHeight(heightPerHour, Unit.PX);
 			labelStyle.setPosition(Position.ABSOLUTE);
 			labelStyle.setTop((i - start) * heightPerHour, Unit.PX);
-			labelStyle.setWidth(40.0, Unit.PX);
-			label.setInnerText(Double.toString(Math.floor(i)));
+			labelStyle.setWidth(timeColumnWidth, Unit.PX);
+			label.setInnerText((new Time( (int) i, 0)).toString());
 			label.setClassName("permutationHourLabel");
 			
 			hourMarkers.appendChild(marker);

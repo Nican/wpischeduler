@@ -58,8 +58,6 @@ public class CanvasProgress extends SimplePanel implements ResizeHandler, Produc
 
 	@Override
 	public void onLoad() {
-		System.out.println("controller: " + controller);
-
 		resizeRegistration = Window.addResizeHandler(this);
 		controller.addProduceHandler(this);
 
@@ -110,7 +108,6 @@ public class CanvasProgress extends SimplePanel implements ResizeHandler, Produc
 		Context2d context = background.getContext2d();
 		context.clearRect(0.0, 0.0, width, height);
 		context.setTextAlign(TextAlign.CENTER);
-		context.setTextBaseline(TextBaseline.MIDDLE);
 
 		for (int i = 0; i < courseCount; i++) {
 			List<Section> sections = prdocuer.producedSections.get(i);
@@ -140,6 +137,7 @@ public class CanvasProgress extends SimplePanel implements ResizeHandler, Produc
 				context.rotate(Math.PI / 2);
 
 				context.setFillStyle("#000000");
+				context.setTextBaseline(TextBaseline.MIDDLE);
 				context.fillText(progress.section.number, 0, 0);
 				context.restore();
 
@@ -147,7 +145,8 @@ public class CanvasProgress extends SimplePanel implements ResizeHandler, Produc
 			}
 
 			String title = course.name + " (" + course.department.abbreviation + course.number + ")";
-			context.fillText(title, width / 2, courseY - lineHeight / 2);
+			context.setTextBaseline(TextBaseline.BOTTOM);
+			context.fillText(title, width / 2, courseY - 4);
 
 		}
 
@@ -187,8 +186,8 @@ public class CanvasProgress extends SimplePanel implements ResizeHandler, Produc
 				CanvasProgressSection progress2 = getBySection(prdocuer.getSectionFromTree(i));
 
 				context.beginPath();
-				context.moveTo(progress.x + progress.w / 2, progress.y + progress.h);
-				context.lineTo(progress2.x + progress2.w / 2, progress2.y);
+				context.moveTo(progress.x + progress.w / 2, progress.y + progress.h + 1);
+				context.lineTo(progress2.x + progress2.w / 2, progress2.y - 1);
 				context.stroke();
 			}
 
