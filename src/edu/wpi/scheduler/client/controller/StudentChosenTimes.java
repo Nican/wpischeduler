@@ -18,9 +18,18 @@ public class StudentChosenTimes
 	 */
 	public StudentChosenTimes()
 	{
+		// Initialize hash map
 		for(int i = TimeCell.START_DAY; i <= TimeCell.NUM_DAYS; i++)
 		{
 			termTimes.put(TimeCell.week[i], new ArrayList<Time>());
+		}
+		// Select every possible time
+		for(int j = 0; j < TimeCell.NUM_DAYS; j++)
+		{
+			for(int i = 0; i < TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR; i++)
+			{
+				selectTime(i, j);
+			}
 		}
 	}
 	// Setters
@@ -51,7 +60,8 @@ public class StudentChosenTimes
 	}
 	public List<Time> getTimes(DayOfWeek day)
 	{
-		return termTimes.get(day);
+		List<Time> times = new ArrayList<Time>(termTimes.get(day));
+		return times;
 	}
 	
 	
@@ -59,7 +69,8 @@ public class StudentChosenTimes
 	public String toString()
 	{
 		String out = "";
-		for(int i=TimeCell.START_DAY; i<=TimeCell.NUM_DAYS; i++){
+		for(int i=TimeCell.START_DAY; i<=TimeCell.NUM_DAYS; i++)
+		{
 			DayOfWeek day = TimeCell.week[i];
 			out += day.toString();
 			out += ": ";
