@@ -9,8 +9,8 @@ public class TimeChooser extends AbsolutePanel
 {
 	final int numColumns = TimeCell.NUM_DAYS;
 	final int numRows = TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR;
-	final int width = 700;
-	final int height = 700;
+	final int width = 320;
+	final int height = 240;
 	
 	StudentChosenTimes model;
 	Control control;

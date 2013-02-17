@@ -15,7 +15,10 @@ public class StudentSchedule implements HasHandlers
 {
 	public final List<SectionProducer> sectionProducers = new ArrayList<SectionProducer>();
 	private HandlerManager handlerManager = new HandlerManager(this);
-	public StudentChosenTimes chosenTimes = new StudentChosenTimes();
+	public StudentChosenTimes ATermTimes = new StudentChosenTimes();
+	public StudentChosenTimes BTermTimes = new StudentChosenTimes();
+	public StudentChosenTimes CTermTimes = new StudentChosenTimes();
+	public StudentChosenTimes DTermTimes = new StudentChosenTimes();
 	
 	public SectionProducer addCourse( Course course ){
 		for( SectionProducer producer : sectionProducers ){
