@@ -5,8 +5,8 @@ import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.controller.StudentSchedule;
@@ -20,18 +20,24 @@ public class TimeChooserView extends Composite {
 	interface TimeChooserViewUiBinder extends UiBinder<Widget, TimeChooserView> {
 	}
 	
-	@UiField SimplePanel timeChooserPanel;
+	@UiField AbsolutePanel ATermTimes;
+	@UiField AbsolutePanel BTermTimes;
+	@UiField AbsolutePanel CTermTimes;
+	@UiField AbsolutePanel DTermTimes;
 	
-	public TimeChooserView(StudentSchedule studentSchedule) {
-		
+	
+	public TimeChooserView(StudentSchedule studentSchedule) 
+	{
 		initWidget(uiBinder.createAndBindUi(this));
 		getElement().getStyle().setLeft(0, Unit.PX);
 		getElement().getStyle().setRight(0, Unit.PX);
 		getElement().getStyle().setTop(0, Unit.PX);
 		getElement().getStyle().setBottom(0, Unit.PX);
 		getElement().getStyle().setPosition(Position.ABSOLUTE);
-		timeChooserPanel.add(new TimeChooser(studentSchedule));
-		
+		ATermTimes.add(new TimeChooser(studentSchedule.ATermTimes));
+		BTermTimes.add(new TimeChooser(studentSchedule.BTermTimes));
+		CTermTimes.add(new TimeChooser(studentSchedule.CTermTimes));
+		DTermTimes.add(new TimeChooser(studentSchedule.DTermTimes));	
 	}
 
 }

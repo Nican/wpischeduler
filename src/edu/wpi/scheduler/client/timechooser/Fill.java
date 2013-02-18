@@ -1,6 +1,12 @@
 package edu.wpi.scheduler.client.timechooser;
 
+import java.util.List;
+
 import com.google.gwt.canvas.client.Canvas;
+
+import edu.wpi.scheduler.client.controller.StudentChosenTimes;
+import edu.wpi.scheduler.shared.model.Time;
+import edu.wpi.scheduler.shared.model.TimeCell;
 
 /**
  * Canvas representing selected times filled in
@@ -13,7 +19,8 @@ public class Fill {
 	int height;
 	int numDays;
 	int numHours;
-	
+	int col_w;
+	int row_h;
 	Canvas canvas = Canvas.createIfSupported();
 
 	/**
@@ -24,6 +31,8 @@ public class Fill {
 		numHours = hr;
 		width = w;
 		height = h;
+		col_w = width / numDays;
+		row_h = height / numHours;
 		if(canvas == null){
 			throw new RuntimeException("Canvas is unsupported");
 		}
@@ -31,23 +40,24 @@ public class Fill {
 		canvas.setCoordinateSpaceHeight(height);
 	}
 	
-	
-	/**
-	 * 
-	 * @param i1
-	 * @param j1
-	 * @param i2
-	 * @param j2
-	 */
-	void fillTimes(int i1, int j1, int i2, int j2, boolean isSelected){
-		int w = width / numDays;
-		int h = height / numHours;
-		if(isSelected) canvas.getContext2d().setFillStyle("white");
-		else  canvas.getContext2d().setFillStyle("red");
+	void fillTimes(StudentChosenTimes model)
+	{
+		// Clear current fill
+		canvas.getContext2d().setFillStyle("white");
+		canvas.getContext2d().fillRect(0, 0, width, height);
+		// Fill currently selected times
+		canvas.getContext2d().setFillStyle("red");
 		// Fill area given
-		for( int i = i1; i < i2; i++){
-			for( int j = j1; j < j2; j++){
-				canvas.getContext2d().fillRect((j*w), (i*h), w, h);
+		List<Time> times; 
+		for( int j = TimeCell.START_DAY; j <= TimeCell.NUM_DAYS; j++)
+		{
+			times = model.getTimes(TimeCell.week[j]);
+			for( int i = 0; i < times.size(); i++)
+			{
+				TimeCell cell = new TimeCell(times.get(i), TimeCell.week[j]);
+				int actual_j = cell.dayToGrid();
+				int actual_i = cell.timeToGrid();
+				canvas.getContext2d().fillRect((actual_j*col_w), (actual_i*row_h), col_w, row_h);
 			}
 		}
 	}

@@ -13,12 +13,7 @@ public class Grid {
 	int height;
 	int numDays;
 	int numHours;
-	
 	Canvas canvas = Canvas.createIfSupported();
-	int dragX = -1;
-	int dragY = -1;
-	int dropX = -1;
-	int dropY = -1;
 
 	/**
 	 * 
@@ -43,7 +38,8 @@ public class Grid {
 	 * @param i2
 	 * @param j2
 	 */
-	void drawGrid(int i1, int j1, int i2, int j2){
+	void drawGrid(int i1, int j1, int i2, int j2)
+	{
 		int w = width / numDays;
 		int h = height / numHours;
 		canvas.getContext2d().setStrokeStyle("black");
