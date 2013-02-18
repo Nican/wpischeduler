@@ -9,7 +9,6 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
-import com.google.gwt.user.client.ui.DialogBox;
 
 import edu.wpi.scheduler.client.controller.ProducerUpdateEvent;
 import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
@@ -21,7 +20,7 @@ import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.controller.StudentScheduleEvent;
 import edu.wpi.scheduler.client.controller.StudentScheduleEventHandler;
-import edu.wpi.scheduler.client.permutation.view.PeriodDescription;
+import edu.wpi.scheduler.client.permutation.view.PeriodDescriptionDialogBox;
 import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.DayOfWeek;
 import edu.wpi.scheduler.shared.model.Period;
@@ -221,27 +220,10 @@ public class PermutationController implements HasHandlers, StudentScheduleEventH
 		return producer;
 	}
 
-	public void displayDescription(Section section) {
-		/*
-		final PopupPanel imagePopup = new PopupPanel(true);
-		imagePopup.setAnimationEnabled(true);
-		imagePopup.ensureDebugId("cwBasicPopup-imagePopup");
-		imagePopup.setWidget(new PeriodDescription(this, section));
-		imagePopup.getElement().getStyle().setProperty("maxWidth", "50%");
-		imagePopup.getElement().getStyle().setZIndex(10);
-
-		imagePopup.center();
-		*/
-		
-		final DialogBox dialogBox = new DialogBox(true);
-	    dialogBox.ensureDebugId("cwDialogBox");
-	    dialogBox.setText(section.course.toString() + " - " + section.number );
-	    dialogBox.getElement().getStyle().setProperty("width", "50%");
-	    dialogBox.getElement().getStyle().setZIndex(10);
-	    
-	    dialogBox.add(new PeriodDescription(this, section));
-	    dialogBox.show();
-	    dialogBox.center();
-	    
+	public void displayDescription(Section section) {		
+		PeriodDescriptionDialogBox dialog = new PeriodDescriptionDialogBox(this, section);
+		dialog.setGlassEnabled(true);
+		dialog.center();
+		dialog.show();  
 	}
 }

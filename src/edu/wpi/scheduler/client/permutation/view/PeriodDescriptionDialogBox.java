@@ -3,6 +3,7 @@ package edu.wpi.scheduler.client.permutation.view;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -14,16 +15,21 @@ import edu.wpi.scheduler.client.permutation.PermutationController;
 import edu.wpi.scheduler.shared.model.Period;
 import edu.wpi.scheduler.shared.model.Section;
 
-public class PeriodDescription extends DockPanel {
+public class PeriodDescriptionDialogBox extends DialogBox {
 
 	public final Section section;
 
+	public final DockPanel dockPanel = new DockPanel();
 	public final DataGrid<Period> periodInfo = new DataGrid<Period>();
 	public final Label title = new Label();
 	public final FlowPanel conflictList = new FlowPanel();
 
-	public PeriodDescription(PermutationController controller, Section section) {
+	public PeriodDescriptionDialogBox(PermutationController controller, Section section) {
+		super(true);
 		this.section = section;
+		setText(section.course.toString() + " - " + section.number);
+		getElement().getStyle().setProperty("width", "50%");
+		getElement().getStyle().setZIndex(10);
 
 		periodInfo.addColumn(new TextColumn<Period>() {
 			@Override
@@ -77,20 +83,26 @@ public class PeriodDescription extends DockPanel {
 
 			conflictList.add(new PeriodConflictList(list, controller));
 			conflictList.setStyleName("sectionConflictList");
-			this.add(conflictList, EAST);
+			dockPanel.add(conflictList, DockPanel.EAST);
 		}
 
-		this.add(this.periodInfo, SOUTH);
-		this.setCellVerticalAlignment(periodInfo, ALIGN_BOTTOM);
+		dockPanel.add(this.periodInfo, DockPanel.SOUTH);
+		dockPanel.setCellVerticalAlignment(periodInfo, DockPanel.ALIGN_BOTTOM);
 
 		CourseDescription description = Scheduler.getDescription().getDescription(section.course);
 
 		if (description != null)
-			this.add(new Label(description.getDescription()), CENTER);
+			dockPanel.add(new Label(description.getDescription()), DockPanel.CENTER);
 		else
-			this.add(new Label("No description available"), CENTER);
+			dockPanel.add(new Label("No description available"), DockPanel.CENTER);
 
 		periodInfo.redraw();
+		add(dockPanel);
+	}
+
+	public void setGlassEnabled(boolean enabled) {
+		super.setGlassEnabled(enabled);
+		getGlassElement().getStyle().setZIndex(10);
 	}
 
 }

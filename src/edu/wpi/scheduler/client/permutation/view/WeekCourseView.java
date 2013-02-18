@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
@@ -24,12 +25,14 @@ public class WeekCourseView extends PermutationViewBase implements ResizeHandler
 
 	private Element tableRow = DOM.createTR();
 	private Element timeTableRow = DOM.createTR();
+	private Element weekdayRow = DOM.createTR();
 	private Element timeLabelsColumn = DOM.createTD();
 
 	private HandlerRegistration resizeHandle;
 	private List<Term> allowedTerms;
-	
+
 	private final double timeColumnWidth = 44.0;
+	private final double weekdayHeight = 12.0;
 
 	public WeekCourseView(PermutationController controller) {
 		this(controller, Arrays.asList(Term.values()));
@@ -43,6 +46,9 @@ public class WeekCourseView extends PermutationViewBase implements ResizeHandler
 		this.allowedTerms = terms;
 
 		tableRow.appendChild(timeLabelsColumn);
+		weekdayRow.appendChild(DOM.createTD());
+		weekdayRow.getStyle().setHeight(weekdayHeight, Unit.PX);
+
 		timeLabelsColumn.getStyle().setWidth(timeColumnWidth, Unit.PX);
 		timeTableRow.getStyle().setHeight(1.0, Unit.PX);
 
@@ -53,14 +59,21 @@ public class WeekCourseView extends PermutationViewBase implements ResizeHandler
 
 			if (i % 2 == 0)
 				column.getElement().getStyle().setBackgroundColor("#F3F7FB");
+
+			Element weekday = DOM.createTD();
+			weekday.setInnerHTML(weekDays.get(i).toString());
+			weekday.getStyle().setFontSize(weekdayHeight - 3.0, Unit.PX);
+			weekday.getStyle().setTextAlign(TextAlign.CENTER);
+			weekdayRow.appendChild(weekday);
 		}
-		
+
 		Style elementStyle = this.getElement().getStyle();
 		elementStyle.setProperty("width", "100%");
 		elementStyle.setProperty("height", "100%");
 		elementStyle.setPosition(Position.ABSOLUTE);
 
 		getBody().appendChild(timeTableRow);
+		getBody().appendChild(weekdayRow);
 		getBody().appendChild(tableRow);
 	}
 
@@ -85,7 +98,7 @@ public class WeekCourseView extends PermutationViewBase implements ResizeHandler
 
 		double start = controller.getStartHour();
 		double end = controller.getEndHour();
-		double totalHeight = this.getElement().getClientHeight();
+		double totalHeight = this.getElement().getClientHeight() - weekdayHeight;
 		double heightPerHour = totalHeight / (end - start);
 
 		for (double i = start; i < end; i += 1.0) {
@@ -94,7 +107,7 @@ public class WeekCourseView extends PermutationViewBase implements ResizeHandler
 			markerStyle.setHeight(heightPerHour / 2, Unit.PX);
 			markerStyle.setMarginBottom(heightPerHour / 2, Unit.PX);
 			markerStyle.setPosition(Position.ABSOLUTE);
-			markerStyle.setTop((i - start) * heightPerHour, Unit.PX);
+			markerStyle.setTop(weekdayHeight + (i - start) * heightPerHour, Unit.PX);
 			markerStyle.setLeft(timeColumnWidth, Unit.PX);
 			marker.setClassName("permutationHourMarker");
 
@@ -102,11 +115,11 @@ public class WeekCourseView extends PermutationViewBase implements ResizeHandler
 			Style labelStyle = label.getStyle();
 			labelStyle.setHeight(heightPerHour, Unit.PX);
 			labelStyle.setPosition(Position.ABSOLUTE);
-			labelStyle.setTop((i - start) * heightPerHour, Unit.PX);
+			labelStyle.setTop(weekdayHeight + (i - start) * heightPerHour, Unit.PX);
 			labelStyle.setWidth(timeColumnWidth, Unit.PX);
-			label.setInnerText((new Time( (int) i, 0)).toString());
+			label.setInnerText((new Time((int) i, 0)).toString());
 			label.setClassName("permutationHourLabel");
-			
+
 			hourMarkers.appendChild(marker);
 			timeLabelsColumn.appendChild(label);
 		}
@@ -115,7 +128,7 @@ public class WeekCourseView extends PermutationViewBase implements ResizeHandler
 
 		timeCells.appendChild(hourMarkers);
 		timeTableRow.appendChild(timeCells);
-		
+
 		updateTimeColumns();
 	}
 
@@ -158,8 +171,8 @@ public class WeekCourseView extends PermutationViewBase implements ResizeHandler
 
 		return courseColumn;
 	}
-	
-	private void updateTimeColumns(){
+
+	private void updateTimeColumns() {
 		double width = this.getElement().getClientWidth() - timeColumnWidth;
 		double widthPerColumn = width / getChildren().size();
 
@@ -168,7 +181,7 @@ public class WeekCourseView extends PermutationViewBase implements ResizeHandler
 				widget.getElement().getStyle().setWidth(widthPerColumn, Unit.PX);
 				((WeekCourseColumn) widget).updatePeriods();
 			}
-		}	
+		}
 	}
 
 	@Override
@@ -178,13 +191,13 @@ public class WeekCourseView extends PermutationViewBase implements ResizeHandler
 
 	@Override
 	public void setPermutation(SchedulePermutation permutation) {
-		
-		for( Widget widget : getChildren() ){
-			if( widget instanceof WeekCourseColumn ){
+
+		for (Widget widget : getChildren()) {
+			if (widget instanceof WeekCourseColumn) {
 				((WeekCourseColumn) widget).setPermutation(permutation);
 			}
 		}
-		
+
 	}
 
 }
