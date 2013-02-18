@@ -1,22 +1,57 @@
 package edu.wpi.scheduler.client.permutation;
 
+import java.util.List;
+
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.TextAlign;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.ToggleButton;
 
+import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
+import edu.wpi.scheduler.client.controller.ScheduleProducer.ProducerEventHandler;
 
-public class PermutationCanvasList extends VerticalPanel implements TimeRangeChangEventHandler {
+public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEventHandler, ProducerEventHandler, ScrollHandler {
 
 	private PermutationController controller;
 	private Canvas background;
+	
+	private final FlowPanel thumbList = new FlowPanel();
+	private final ScrollPanel scroll = new ScrollPanel(thumbList);
+	private final ToggleButton favoriteButtom = new ToggleButton("Favorites (0)");
+	
+	public static final double favoriteButtonSize = 20.0;
 
 	public PermutationCanvasList(PermutationController controller) {
 		this.controller = controller;
 		this.updateBackground();
+		
+		this.add( favoriteButtom, getElement() );
+		this.add( scroll, getElement() );
+		
+		favoriteButtom.getElement().getStyle().setTextAlign(TextAlign.CENTER);		
+		favoriteButtom.getElement().getStyle().setLeft(0.0, Unit.PX);
+		favoriteButtom.getElement().getStyle().setRight(0.0, Unit.PX);
+		favoriteButtom.getElement().getStyle().setTop(0.0, Unit.PX);
+		favoriteButtom.getElement().getStyle().setHeight(favoriteButtonSize, Unit.PX);
+		
+		scroll.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		scroll.getElement().getStyle().setLeft(0.0, Unit.PX);
+		scroll.getElement().getStyle().setRight(0.0, Unit.PX);
+		scroll.getElement().getStyle().setTop(favoriteButtonSize + 8, Unit.PX);
+		scroll.getElement().getStyle().setBottom(0.0, Unit.PX);
+		
+		scroll.addScrollHandler(this);
+
 	}
 
 	public void addPermutation(final SchedulePermutation permutation) {
@@ -25,7 +60,7 @@ public class PermutationCanvasList extends VerticalPanel implements TimeRangeCha
 		canvas.setSize("150px", "150px");
 		canvas.paint(background);
 
-		add(canvas.canvas);
+		thumbList.add(canvas.canvas);
 		
 		canvas.canvas.addClickHandler(new ClickHandler() {
 			@Override
@@ -36,19 +71,33 @@ public class PermutationCanvasList extends VerticalPanel implements TimeRangeCha
 
 	}
 	
+	/**
+	 * If we are near the end of the scroll, we are going to check if there are
+	 * any more images to be loaded
+	 */
+	@Override
+	public void onScroll(ScrollEvent event) {
+		if (scroll.getVerticalScrollPosition() + 300 < scroll.getMaximumVerticalScrollPosition())
+			return;
+
+		updateThumbnails();
+	}
+	
 	public int childCount(){
 		return this.getChildren().size();
 	}
 
 	@Override
 	protected void onLoad() {
-		this.controller.addTimeChangeListner(this);
+		controller.addTimeChangeListner(this);
+		controller.addProduceHandler(this);
 		updateBackground();
 	}
 
 	@Override
 	protected void onUnload() {
-		this.controller.removeTimeChangeListner(this);
+		controller.removeTimeChangeListner(this);
+		controller.addProduceHandler(this);
 	}
 
 	@Override
@@ -91,4 +140,29 @@ public class PermutationCanvasList extends VerticalPanel implements TimeRangeCha
 			context.stroke();
 		}		
 	}
+
+	@Override
+	public void onPermutationUpdated(UpdateType type) {
+		if( type == UpdateType.NEW)
+			thumbList.clear();
+		
+		if (thumbList.getWidgetCount() < 20)
+			updateThumbnails();
+	}
+	
+	public void updateThumbnails() {
+		List<SchedulePermutation> permutations = controller.getProducer().getPermutations();
+		int thumbSize = thumbList.getWidgetCount();
+		int permutationSize = permutations.size();
+
+		if (permutationSize <= thumbSize)
+			return;
+
+		int limit = Math.min(thumbSize + 20, permutationSize);
+
+		for (int i = thumbSize; i < limit; i++) {
+			addPermutation(permutations.get(i));
+		}
+	}
+
 }

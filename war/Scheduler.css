@@ -97,4 +97,33 @@ h1 {
 
 .permutationHourLabel {
 	border: 1px solid #ddd;
+	font-size: smaller;
+	overflow: hidden;
+	
+}
+
+.courseItemPeriods {
+}
+
+.courseItemPeriods > div:hover {
+	background: #F3F7FB;
+}
+
+.sectionConflictList {
+	width: 175px;
+}
+
+.sectionConflictList > span {
+	display: block;
+}
+
+
+.PeriodSelectProf {
+	float: right;
+	cursor: pointer;
+	content: 'test';
+}
+
+.PeriodSelectProf:hover {
+	content: 'test';
 }

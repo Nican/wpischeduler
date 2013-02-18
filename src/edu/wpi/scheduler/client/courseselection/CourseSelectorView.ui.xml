@@ -14,14 +14,16 @@
 					<c:CourseDescriptionInfo ui:field="courseDescription" />
 				</g:center>
 				<g:south size="250">
-					<c:CourseSelection ui:field="courseSelection" />
+					<g:ScrollPanel>
+						<c:CourseSelection ui:field="courseSelection" />
+					</g:ScrollPanel>
 				</g:south>
 			</g:DockLayoutPanel>
 		</g:east>
 
 		<g:center>
 			<g:ScrollPanel>
-				<c:CourseList ui:field="courseList"></c:CourseList>
+				<c:CourseList ui:field="courseList" />
 			</g:ScrollPanel>
 		</g:center>
 

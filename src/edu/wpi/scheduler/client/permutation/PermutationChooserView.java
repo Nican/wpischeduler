@@ -5,12 +5,9 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ScrollEvent;
-import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -20,7 +17,7 @@ import edu.wpi.scheduler.client.controller.ScheduleProducer.ProducerEventHandler
 import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
 
-public class PermutationChooserView extends Composite implements ScrollHandler, ProducerEventHandler {
+public class PermutationChooserView extends Composite implements ProducerEventHandler {
 
 	private static PermutationChooserViewUiBinder uiBinder = GWT
 			.create(PermutationChooserViewUiBinder.class);
@@ -31,9 +28,6 @@ public class PermutationChooserView extends Composite implements ScrollHandler, 
 
 	@UiField(provided = true)
 	public PermutationCanvasList thumbList;
-
-	@UiField
-	public ScrollPanel thumbScroll;
 
 	@UiField(provided = true)
 	public final PermutationScheduleView scheduleView;
@@ -55,8 +49,6 @@ public class PermutationChooserView extends Composite implements ScrollHandler, 
 		initWidget(uiBinder.createAndBindUi(this));
 
 		courseList.setWidth("100%");
-
-		thumbScroll.addScrollHandler(this);
 
 		getElement().getStyle().setLeft(0, Unit.PX);
 		getElement().getStyle().setRight(0, Unit.PX);
@@ -81,7 +73,6 @@ public class PermutationChooserView extends Composite implements ScrollHandler, 
 	protected void onLoad() {
 		permutationController.addProduceHandler(this);
 		update();
-		updateThumbnails();
 	}
 
 	@Override
@@ -89,45 +80,16 @@ public class PermutationChooserView extends Composite implements ScrollHandler, 
 		permutationController.addProduceHandler(this);
 	}
 
-	/**
-	 * If we are near the end of the scroll, we are going to check if there are
-	 * any more images to be loaded
-	 */
-	@Override
-	public void onScroll(ScrollEvent event) {
-		if (thumbScroll.getVerticalScrollPosition() + 300 < thumbScroll.getMaximumVerticalScrollPosition())
-			return;
-
-		updateThumbnails();
-	}
+	
 
 	@Override
 	public void onPermutationUpdated(UpdateType type) {
-		if( type == UpdateType.NEW)
-			thumbList.clear();
-		
-		if (thumbList.childCount() < 20)
-			updateThumbnails();
-		
 		List<SchedulePermutation> permutations = permutationController.getProducer().getPermutations();
 		
 		if( permutations.size() > 0 && permutationController.getSelectedPermutation() == null )
 			permutationController.selectPermutation( permutations.get(0) );
 	}
 
-	public void updateThumbnails() {
-		List<SchedulePermutation> permutations = permutationController.getProducer().getPermutations();
-		int thumbSize = thumbList.childCount();
-		int permutationSize = permutations.size();
-
-		if (permutationSize <= thumbSize)
-			return;
-
-		int limit = Math.min(thumbSize + 20, permutationSize);
-
-		for (int i = thumbSize; i < limit; i++) {
-			thumbList.addPermutation(permutations.get(i));
-		}
-	}
+	
 
 }
