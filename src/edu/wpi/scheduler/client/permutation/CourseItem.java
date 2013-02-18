@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.CellPanel;
 
 import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.courseselection.TermViewSelection;
+import edu.wpi.scheduler.client.permutation.view.PeriodConflictList;
 import edu.wpi.scheduler.shared.model.Course;
 
 /**
@@ -67,7 +68,7 @@ public class CourseItem extends CellPanel implements ClickHandler {
 		if (periodsRow == null) {
 			periodsRow = DOM.createTR();
 			Element periodsCell = DOM.createTD();
-			itemPeriods = new CourseItemPeriods(permutationController, this.producer);
+			itemPeriods = new PeriodConflictList(this.producer.getCourse().sections, permutationController, true);
 			
 			periodsRow.getStyle().setDisplay(Display.NONE);
 			periodsCell.setAttribute("colspan", "3");

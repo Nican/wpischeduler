@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
+import edu.wpi.scheduler.client.controller.SchedulePermutation;
 import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.controller.StudentScheduleEvent;
 import edu.wpi.scheduler.client.controller.StudentScheduleEventHandler;
@@ -106,6 +107,14 @@ public abstract class PeriodSelectListBase extends FlowPanel implements StudentS
 
 		public void update() {
 			checkBox.setValue(!producer.isSectionDenied(section));
+			
+			SchedulePermutation permutation = permutationController.getSelectedPermutation();
+			
+			if( permutation != null && permutation.sections.contains(section) ){
+				this.getElement().getStyle().setBackgroundColor(permutationController.getCourseColor(section.course));
+			} else {
+				this.getElement().getStyle().setBackgroundColor(null);
+			}
 		}
 
 		@Override

@@ -3,8 +3,10 @@ package edu.wpi.scheduler.client.controller;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.user.client.Timer;
@@ -183,6 +185,24 @@ public class ScheduleProducer {
 	public Section getSectionFromTree( int level ){
 		return producedSections.get(level).get(treeSearchState.get(level).id);
 	}
+	
+	private Map<Term, Integer> getTermCount(){
+		Map<Term, Integer> count = new HashMap<Term, Integer>();
+		
+		for( Term term : Term.values() ){
+			count.put(term, 0);
+		}
+		
+		for (int i = 0; i < treeSearchState.size(); i++) {
+			Section section = getSectionFromTree(i);
+			
+			for( Term term : section.getTerms() ){
+				count.put(term, count.get(term) + 1);
+			}
+		}
+		
+		return count;
+	}
 
 	private void addState(int newId) {
 		Section newSection = producedSections.get(treeSearchState.size()).get(newId);
@@ -206,6 +226,13 @@ public class ScheduleProducer {
 		// If we are at the leaf of the tree, and we do not have a conflict
 		// We have a winner!
 		if (!hasStateConflicts() && treeSearchState.size() == producedSections.size()) {
+			Map<Term, Integer> termCount = getTermCount();
+			
+			for( Integer count : termCount.values() ){
+				if( count > 4 )
+					return;
+			}		
+			
 			addStateToSchedules();
 		}
 	}
@@ -245,7 +272,7 @@ public class ScheduleProducer {
 			if (newTerms.contains(term)) {
 				conflictingTerms = true;
 			}
-		}
+		}		
 
 		// The classes are not even in the same days of the year
 		// There are no conflict here

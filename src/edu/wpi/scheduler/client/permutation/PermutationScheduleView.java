@@ -27,7 +27,7 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 
 	private PermutationController controller;
 
-	public ViewMode viewMode = ViewMode.PROGRESS;
+	public ViewMode viewMode = ViewMode.GRID;
 	Element body = DOM.createDiv();
 	public Widget bodyWidget;
 	Button progressButton;
