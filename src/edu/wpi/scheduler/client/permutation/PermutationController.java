@@ -159,7 +159,7 @@ public class PermutationController implements HasHandlers, StudentScheduleEventH
 		double endTime = 16.0;
 
 		for (SectionProducer producer : studentSchedule.sectionProducers) {
-			for (Section section : producer.getSections()) {
+			for (Section section : producer.getCourse().sections) {
 				for (Period period : section.periods) {
 					startTime = Math.min(period.startTime.getValue(), startTime);
 					endTime = Math.max(period.endTime.getValue(), endTime);
@@ -191,9 +191,9 @@ public class PermutationController implements HasHandlers, StudentScheduleEventH
 	public void setSelectedSection(Section section) {
 		if (this.selectedSection != null && this.selectedSection.equals(section))
 			return;
-
+		
 		this.selectedSection = section;
-
+		
 		this.fireEvent(new PermutationSelectEvent());
 	}
 
@@ -211,19 +211,24 @@ public class PermutationController implements HasHandlers, StudentScheduleEventH
 		if (producer != null) {
 			producer.cancel();
 		}
-
+		
 		producer = new ScheduleProducer(this);
 		fireEvent(new ProducerUpdateEvent(UpdateType.NEW));
+		
+		producer.start();
+		
+		if( producer.getPermutations().size() == 0 )
+			selectPermutation(null);
 	}
 
 	public ScheduleProducer getProducer() {
 		return producer;
 	}
 
-	public void displayDescription(Section section) {		
+	public void displayDescription(Section section) {
 		PeriodDescriptionDialogBox dialog = new PeriodDescriptionDialogBox(this, section);
 		dialog.setGlassEnabled(true);
 		dialog.center();
-		dialog.show();  
+		dialog.show();
 	}
 }

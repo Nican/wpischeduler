@@ -13,15 +13,17 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.CellPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import edu.wpi.scheduler.client.controller.SchedulePermutation;
 import edu.wpi.scheduler.client.permutation.PermutationController;
+import edu.wpi.scheduler.client.permutation.TimeRangeChangEventHandler;
+import edu.wpi.scheduler.client.permutation.TimeRangeChangeEvent;
 import edu.wpi.scheduler.shared.model.DayOfWeek;
 import edu.wpi.scheduler.shared.model.Term;
 import edu.wpi.scheduler.shared.model.Time;
 
-public class WeekCourseView extends PermutationViewBase implements ResizeHandler {
+public class WeekCourseView extends CellPanel implements ResizeHandler, TimeRangeChangEventHandler {
 
 	private Element tableRow = DOM.createTR();
 	private Element timeTableRow = DOM.createTR();
@@ -31,15 +33,16 @@ public class WeekCourseView extends PermutationViewBase implements ResizeHandler
 	private HandlerRegistration resizeHandle;
 	private List<Term> allowedTerms;
 
-	private final double timeColumnWidth = 44.0;
+	private final double timeColumnWidth = 32.0;
 	private final double weekdayHeight = 12.0;
+	private PermutationController controller;
 
 	public WeekCourseView(PermutationController controller) {
 		this(controller, Arrays.asList(Term.values()));
 	}
 
 	public WeekCourseView(PermutationController controller, List<Term> terms) {
-		super(controller);
+		this.controller = controller;
 		getTable().setPropertyString("cellSpacing", "0");
 		getTable().setPropertyString("cellPadding", "0");
 
@@ -117,7 +120,7 @@ public class WeekCourseView extends PermutationViewBase implements ResizeHandler
 			labelStyle.setPosition(Position.ABSOLUTE);
 			labelStyle.setTop(weekdayHeight + (i - start) * heightPerHour, Unit.PX);
 			labelStyle.setWidth(timeColumnWidth, Unit.PX);
-			label.setInnerText((new Time((int) i, 0)).toString());
+			label.setInnerText((new Time((int) i, 0)).toString(false));
 			label.setClassName("permutationHourLabel");
 
 			hourMarkers.appendChild(marker);
@@ -133,35 +136,40 @@ public class WeekCourseView extends PermutationViewBase implements ResizeHandler
 	}
 
 	private void createTermBackground() {
-		if (allowedTerms != null) {
-			StringBuilder builder = new StringBuilder();
+		if (allowedTerms == null)
+			return;
 
-			for (Term term : allowedTerms)
-				builder.append(term.name);
+		StringBuilder builder = new StringBuilder();
 
-			Element termLabel = DOM.createDiv();
-			termLabel.setInnerHTML(builder.toString());
-			termLabel.getStyle().setProperty("opacity", "0.05");
-			termLabel.getStyle().setProperty("fontSize", "325px");
-			termLabel.getStyle().setProperty("position", "absolute");
-			termLabel.getStyle().setProperty("right", "128px");
-			termLabel.getStyle().setProperty("lineHeight", "325px");
-			termLabel.getStyle().setProperty("bottom", "0px");
+		for (Term term : allowedTerms)
+			builder.append(term.name);
 
-			timeLabelsColumn.appendChild(termLabel);
-		}
+		Element termLabel = DOM.createDiv();
+		termLabel.setInnerHTML(builder.toString());
+		termLabel.getStyle().setProperty("opacity", "0.05");
+		termLabel.getStyle().setProperty("fontSize", "325px");
+		termLabel.getStyle().setProperty("position", "absolute");
+		termLabel.getStyle().setProperty("right", "128px");
+		termLabel.getStyle().setProperty("lineHeight", "325px");
+		termLabel.getStyle().setProperty("bottom", "0px");
+
+		timeLabelsColumn.appendChild(termLabel);
+
 	}
 
 	@Override
 	protected void onLoad() {
-		this.createTimeColumn();
 		resizeHandle = Window.addResizeHandler(this);
+		controller.addTimeChangeListner(this);
+
+		this.createTimeColumn();
 	}
 
 	@Override
 	protected void onUnload() {
 		resizeHandle.removeHandler();
 		resizeHandle = null;
+		controller.removeTimeChangeListner(this);
 	}
 
 	private WeekCourseColumn addColumn(DayOfWeek day) {
@@ -190,14 +198,8 @@ public class WeekCourseView extends PermutationViewBase implements ResizeHandler
 	}
 
 	@Override
-	public void setPermutation(SchedulePermutation permutation) {
-
-		for (Widget widget : getChildren()) {
-			if (widget instanceof WeekCourseColumn) {
-				((WeekCourseColumn) widget).setPermutation(permutation);
-			}
-		}
-
+	public void onTimeRangeChange(TimeRangeChangeEvent timeRangeChangeEvent) {
+		this.createTimeColumn();
 	}
 
 }

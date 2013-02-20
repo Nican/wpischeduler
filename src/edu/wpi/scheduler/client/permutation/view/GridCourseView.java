@@ -5,18 +5,17 @@ import java.util.List;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.CellPanel;
 
-import edu.wpi.scheduler.client.controller.SchedulePermutation;
 import edu.wpi.scheduler.client.permutation.PermutationController;
 import edu.wpi.scheduler.shared.model.Term;
 
-public class GridCourseView extends PermutationViewBase {
+public class GridCourseView extends CellPanel {
 
-	protected SchedulePermutation permutation;
+	private PermutationController controller;
 
 	public GridCourseView(PermutationController controller) {
-		super(controller);
+		this.controller = controller;
 
 		DOM.setElementProperty(getTable(), "cellSpacing", "0");
 		DOM.setElementProperty(getTable(), "cellPadding", "0");
@@ -71,24 +70,8 @@ public class GridCourseView extends PermutationViewBase {
 		div.getStyle().setProperty("overflow", "hidden");
 
 		cell.appendChild(div);
-		
-		//Element termLabel = DOM.createDiv();
-		//termLabel.setInnerHTML(terms.get(0).name);
-		
-		//div.appendChild(termLabel);
 
 		add(new WeekCourseView(controller, terms), div);
-	}
-
-	@Override
-	public void setPermutation(SchedulePermutation permutation) {
-		this.permutation = permutation;
-		
-		for( Widget widget : getChildren() ){
-			if( widget instanceof WeekCourseView ){
-				((WeekCourseView) widget).setPermutation(permutation);
-			}
-		}
 	}
 
 }

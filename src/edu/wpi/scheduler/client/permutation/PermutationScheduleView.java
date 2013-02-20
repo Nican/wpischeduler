@@ -27,7 +27,7 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 
 	private PermutationController controller;
 
-	public ViewMode viewMode = ViewMode.GRID;
+	private ViewMode viewMode = ViewMode.GRID;
 	Element body = DOM.createDiv();
 	public Widget bodyWidget;
 	Button progressButton;
@@ -46,24 +46,21 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 		Button gridButton = new Button("Grid", new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				viewMode = ViewMode.GRID;
-				createNewBody();
+				setView(ViewMode.GRID);
 			}
 		});
 
 		Button singleButton = new Button("Single", new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				viewMode = ViewMode.SINGLE;
-				createNewBody();
+				setView(ViewMode.SINGLE);
 			}
 		});
 
 		progressButton = new Button("0 Schedules...", new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				viewMode = ViewMode.PROGRESS;
-				createNewBody();
+				setView(ViewMode.PROGRESS);
 			}
 		});
 		progressButton.getElement().getStyle().setFloat(Float.RIGHT);
@@ -75,7 +72,7 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 		getElement().appendChild(header);
 		getElement().appendChild(body);
 
-		createNewBody();
+		setView(ViewMode.GRID);
 	}
 
 	@Override
@@ -91,20 +88,32 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 		controller.removeProduceHandler(this);
 	}
 
-	public void createNewBody() {
+	public void setView(ViewMode mode) {
+		ViewMode target = mode;
+
+		ScheduleProducer producer = controller.getProducer();
+		int size = producer.getPermutations().size();
+
+		if (size == 0)
+			target = ViewMode.PROGRESS;
+
+		if (target == viewMode)
+			return;
+
 		if (bodyWidget != null)
 			remove(bodyWidget);
 
-		bodyWidget = getNewView();
+		bodyWidget = getNewView(target);
 
 		if (bodyWidget == null)
 			return;
 
 		add(bodyWidget, body);
+		viewMode = target;
 	}
 
-	private Widget getNewView() {
-		switch (viewMode) {
+	private Widget getNewView(ViewMode mode) {
+		switch (mode) {
 		case GRID:
 			return new GridCourseView(controller);
 		case SINGLE:
@@ -116,22 +125,10 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 		return null;
 	}
 
-	public void resetView() {
-		ScheduleProducer producer = controller.getProducer();
-
-		if (producer.getPermutations().size() > 0)
-			viewMode = ViewMode.PROGRESS;
-		else
-			viewMode = ViewMode.GRID;
-
-		createNewBody();
-	}
-
 	@Override
 	public void onPermutationSelected(PermutationSelectEvent permutation) {
 		if (viewMode == ViewMode.PROGRESS) {
-			viewMode = ViewMode.GRID;
-			createNewBody();
+			setView(ViewMode.GRID);
 		}
 	}
 

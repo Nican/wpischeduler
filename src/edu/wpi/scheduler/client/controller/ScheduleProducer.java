@@ -93,9 +93,6 @@ public class ScheduleProducer {
 				producedSections.add(sections);
 		}
 		
-		if( producedSections.isEmpty() )
-			return;
-		
 		Collections.sort(producedSections, new Comparator<List<Section>>() {
 
 			@Override
@@ -108,15 +105,23 @@ public class ScheduleProducer {
 			}
 		});
 
+		
+	}
+	
+	public void start(){
+		treeSearchState.clear();
+		permutations.clear();
+		
+		//Nothing to do here! We have no sections to produce schedules from
+		if( producedSections.isEmpty() )
+			return;
+		
 		// Start with the root node of the tree
 		addState(0);
 
 		// Start generating!
 		timer.scheduleRepeating(10);
 		active = true;
-
-		// Make a few right off the bat so users do not have to wait
-		generate();
 	}
 
 	public List<SchedulePermutation> getPermutations() {
@@ -136,7 +141,7 @@ public class ScheduleProducer {
 		return active;
 	}
 
-	private void generate() {
+	public void generate() {
 		int i = 0;
 
 		while (i < 20 && canGenerate()) {
@@ -215,8 +220,6 @@ public class ScheduleProducer {
 			if (hasConflicts(newSection, section)) {
 				hasConflicts = true;
 				break;
-				//addConflicts(newSection, section);
-				//addConflicts(section, newSection);
 			}
 		}
 		

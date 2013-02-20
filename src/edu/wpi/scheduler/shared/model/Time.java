@@ -48,18 +48,29 @@ public class Time implements Comparable<Time>, Serializable {
 
 	@Override
 	public String toString() {
+		return toString( true );
+	}
+	
+	public String toString( boolean bMinutes ){
 		String min = Integer.toString(minutes);
 
 		if (min.length() == 1)
 			min = "0" + min;
+		
+		if( bMinutes )
+			min = ":" + min;
+		else
+			min = "";	
 
 		// Remember: ... 10AM, 11AM, 12PM, 1PM, 2PM ...
 		if (hour <= 12)
-			return hour + ":" + min + (hour == 12 ? "PM" : "AM");
+			return hour + min + (hour == 12 ? "PM" : "AM");
 
-		return (hour - 12) + ":" + min + "PM";
+		return (hour - 12) + min + "PM";
+		
 	}
-
+	
+	
 	public double getValue() {
 		return ((double) this.hour) + ((double) this.minutes) / 60.0;
 	}

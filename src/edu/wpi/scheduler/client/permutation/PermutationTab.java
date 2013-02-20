@@ -9,12 +9,10 @@ import edu.wpi.scheduler.client.tabs.BaseTab;
 
 public class PermutationTab extends BaseTab implements StudentScheduleEventHandler {
 
-	public final PermutationChooserView permutationView;
+	private PermutationChooserView permutationView;
 	
 	public PermutationTab(StudentSchedule studentSchedule) {
 		super(studentSchedule, "Schedules");
-		
-		permutationView = new PermutationChooserView(studentSchedule);
 		
 		studentSchedule.addStudentScheduleHandler(this);
 		
@@ -23,6 +21,9 @@ public class PermutationTab extends BaseTab implements StudentScheduleEventHandl
 
 	@Override
 	public Widget getBody() {
+		if( permutationView == null )
+			permutationView = new PermutationChooserView(studentSchedule);
+		
 		return permutationView;
 	}
 	

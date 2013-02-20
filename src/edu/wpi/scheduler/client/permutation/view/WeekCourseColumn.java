@@ -13,15 +13,15 @@ import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
 import edu.wpi.scheduler.client.permutation.PermutationController;
+import edu.wpi.scheduler.client.permutation.PermutationSelectEvent;
+import edu.wpi.scheduler.client.permutation.PermutationSelectEventHandler;
 import edu.wpi.scheduler.shared.model.DayOfWeek;
 import edu.wpi.scheduler.shared.model.Period;
 import edu.wpi.scheduler.shared.model.Section;
 import edu.wpi.scheduler.shared.model.Term;
 import edu.wpi.scheduler.shared.model.Time;
 
-public class WeekCourseColumn extends ComplexPanel {
-
-	private SchedulePermutation permutation;
+public class WeekCourseColumn extends ComplexPanel implements PermutationSelectEventHandler {
 	private DayOfWeek day;
 	private PermutationController controller;
 	private Element body = DOM.createDiv();
@@ -42,12 +42,13 @@ public class WeekCourseColumn extends ComplexPanel {
 
 	@Override
 	protected void onLoad() {
-		this.updatePeriods();
+		createPeriods();
+		controller.addSelectListner(this);
 	}
 	
-	public void setPermutation(SchedulePermutation permutation){
-		this.permutation = permutation;
-		createPeriods();
+	@Override
+	protected void onUnload() {
+		controller.removeSelectListner(this);
 	}
 
 	public void createPeriods() {
@@ -56,8 +57,10 @@ public class WeekCourseColumn extends ComplexPanel {
 		if( controller.getSelectedSection() != null )
 			addSection(controller.getSelectedSection());
 		
-		if( this.permutation != null ){
-			for (Section section : this.permutation.sections) {
+		SchedulePermutation permutation = controller.getSelectedPermutation();
+		
+		if( permutation != null ){
+			for (Section section : permutation.sections) {
 				if( controller.getSelectedSection() != section )
 					addSection(section);
 			}
@@ -118,6 +121,11 @@ public class WeekCourseColumn extends ComplexPanel {
 
 	private double getTimeProgress(Time time) {
 		return (time.getValue() - controller.getStartHour()) / (controller.getEndHour() - controller.getStartHour());
+	}
+
+	@Override
+	public void onPermutationSelected(PermutationSelectEvent permutation) {
+		createPeriods();
 	}
 
 }

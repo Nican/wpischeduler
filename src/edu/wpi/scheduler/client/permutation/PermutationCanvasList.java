@@ -92,6 +92,7 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 		controller.addTimeChangeListner(this);
 		controller.addProduceHandler(this);
 		updateBackground();
+		updateThumbnails();
 	}
 
 	@Override

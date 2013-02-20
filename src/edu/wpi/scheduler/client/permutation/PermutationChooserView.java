@@ -1,7 +1,5 @@
 package edu.wpi.scheduler.client.permutation;
 
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
@@ -11,13 +9,10 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
-import edu.wpi.scheduler.client.controller.SchedulePermutation;
-import edu.wpi.scheduler.client.controller.ScheduleProducer.ProducerEventHandler;
 import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
 
-public class PermutationChooserView extends Composite implements ProducerEventHandler {
+public class PermutationChooserView extends Composite {
 
 	private static PermutationChooserViewUiBinder uiBinder = GWT
 			.create(PermutationChooserViewUiBinder.class);
@@ -67,27 +62,6 @@ public class PermutationChooserView extends Composite implements ProducerEventHa
 
 	public void update() {
 		updateCourses();
-	}
-
-	@Override
-	protected void onLoad() {
-		permutationController.addProduceHandler(this);
-		update();
-	}
-
-	@Override
-	protected void onUnload() {
-		permutationController.addProduceHandler(this);
-	}
-
-	
-
-	@Override
-	public void onPermutationUpdated(UpdateType type) {
-		List<SchedulePermutation> permutations = permutationController.getProducer().getPermutations();
-		
-		if( permutations.size() > 0 && permutationController.getSelectedPermutation() == null )
-			permutationController.selectPermutation( permutations.get(0) );
 	}
 
 	

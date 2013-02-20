@@ -80,9 +80,13 @@ public class PeriodDescriptionDialogBox extends DialogBox {
 			conflictTitle.getElement().getStyle().setProperty("fontSize", "large");
 
 			conflictList.add(conflictTitle);
-
-			conflictList.add(new PeriodConflictList(list, controller));
-			conflictList.setStyleName("sectionConflictList");
+			
+			if( list.size() > 0 ){
+				conflictList.add(new PeriodConflictList(list, controller));
+				conflictList.setStyleName("sectionConflictList");
+			} else {
+				conflictList.add( new Label("There are no sections with time conflicts with this section."));
+			}
 			dockPanel.add(conflictList, DockPanel.EAST);
 		}
 
