@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Label;
 import edu.wpi.scheduler.client.CourseDescription;
 import edu.wpi.scheduler.client.Scheduler;
 import edu.wpi.scheduler.client.controller.ScheduleConflictController.ConflictedList;
+import edu.wpi.scheduler.client.permutation.PeriodSelectList;
 import edu.wpi.scheduler.client.permutation.PermutationController;
 import edu.wpi.scheduler.shared.model.Period;
 import edu.wpi.scheduler.shared.model.Section;
@@ -82,7 +83,10 @@ public class PeriodDescriptionDialogBox extends DialogBox {
 			conflictList.add(conflictTitle);
 			
 			if( list.size() > 0 ){
-				conflictList.add(new PeriodConflictList(list, controller));
+				PeriodSelectList conflictList = new PeriodSelectList(controller);
+				conflictList.setSections(list, false);
+				
+				conflictList.add(conflictList);
 				conflictList.setStyleName("sectionConflictList");
 			} else {
 				conflictList.add( new Label("There are no sections with time conflicts with this section."));

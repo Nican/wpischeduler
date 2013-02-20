@@ -4,18 +4,17 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.ComplexPanel;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.Section;
 import edu.wpi.scheduler.shared.model.Term;
 
-public class TermView extends ComplexPanel {
+public class TermView extends Widget {
 
 	public Course course;
-	public HashMap<Term, Label> terms = new HashMap<Term, Label>();
+	public HashMap<Element, Term> terms = new HashMap<Element, Term>();
 
 	public TermView(Course course) {
 		this.course = course;
@@ -23,8 +22,6 @@ public class TermView extends ComplexPanel {
 	
 		for (Term term : Term.values())
 			this.addTerm(term);
-
-		//DOM.setElementProperty(getTable(), "cellSpacing", "2");
 
 		this.setStyleName("termView");
 	}
@@ -39,31 +36,27 @@ public class TermView extends ComplexPanel {
 		return false;
 	}
 
-	public Label addTerm(Term term) {
-		Label label = new Label(term.name);
+	public Element addTerm(Term term) {
+		Element elem = DOM.createDiv();
+		elem.setInnerText(term.name);
 		
-		this.add(label);
-		terms.put(term, label);
+		getElement().appendChild(elem);
+		terms.put(elem, term);
 
-		return label;
-	}
-	
-	@Override
-	public void add( Widget child ){		
-		this.add( child, this.getElement() );
+		return elem;
 	}
 
 	public void update() {
-		for (Entry<Term, Label> entry : terms.entrySet()) {
-			update(entry.getKey(), entry.getValue());
+		for (Entry<Element, Term> entry : terms.entrySet()) {
+			update(entry.getValue(), entry.getKey());
 		}
 	}
 
-	protected void update(Term term, Label label) {
+	protected void update(Term term, Element label) {
 		if (!hasTerm(term)) {
-			label.getElement().getStyle().setOpacity(0.2);
+			label.getStyle().setOpacity(0.2);
 		} else {
-			label.getElement().getStyle().setBackgroundColor("#DFFFDF");
+			label.getStyle().setBackgroundColor("#DFFFDF");
 		}
 	}
 
@@ -71,5 +64,7 @@ public class TermView extends ComplexPanel {
 	protected void onLoad() {
 		this.update();
 	}
+
+
 
 }

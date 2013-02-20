@@ -10,13 +10,14 @@ import com.google.gwt.user.client.ui.CellPanel;
 
 import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.courseselection.TermViewSelection;
-import edu.wpi.scheduler.client.permutation.view.PeriodConflictList;
 import edu.wpi.scheduler.shared.model.Course;
 
 /**
- * Items on the course list, that will display what terms the class will be taken
+ * Items on the course list, that will display what terms the class will be
+ * taken
+ * 
  * @author Nican
- *
+ * 
  */
 public class CourseItem extends CellPanel implements ClickHandler {
 
@@ -24,7 +25,7 @@ public class CourseItem extends CellPanel implements ClickHandler {
 	public final PermutationController permutationController;
 
 	private Element periodsRow = null;
-	private PeriodSelectListBase itemPeriods = null;
+	private PeriodSelectList itemPeriods = null;
 	protected Button collapseButton = new Button(">");
 
 	public CourseItem(PermutationController permutationController, SectionProducer producer) {
@@ -45,8 +46,8 @@ public class CourseItem extends CellPanel implements ClickHandler {
 
 		nameCell.setAttribute("align", "center");
 		termsCell.setAttribute("align", "right");
-		nameCell.setInnerText(getName());		
-		
+		nameCell.setInnerText(getName());
+
 		this.add(collapseButton, collapseCell);
 		this.add(new TermViewSelection(producer.getCourse(), permutationController.getStudentSchedule()), termsCell);
 		getBody().appendChild(titleRow);
@@ -68,7 +69,8 @@ public class CourseItem extends CellPanel implements ClickHandler {
 		if (periodsRow == null) {
 			periodsRow = DOM.createTR();
 			Element periodsCell = DOM.createTD();
-			itemPeriods = new PeriodConflictList(this.producer.getCourse().sections, permutationController, true);
+			itemPeriods = new PeriodSelectList(permutationController);
+			itemPeriods.setSections(producer.getCourse().sections, true);
 			
 			periodsRow.getStyle().setDisplay(Display.NONE);
 			periodsCell.setAttribute("colspan", "3");
@@ -90,5 +92,4 @@ public class CourseItem extends CellPanel implements ClickHandler {
 
 		
 	}
-
 }

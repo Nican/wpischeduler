@@ -3,57 +3,62 @@ package edu.wpi.scheduler.client.courseselection;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.Element;
 
 import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.Term;
 
-public class TermViewSelection extends TermView {
+public class TermViewSelection extends TermView  implements ClickHandler {
 
 	private StudentSchedule schedule;
 
 	public TermViewSelection(Course course, StudentSchedule schedule) {
 		super(course);
 		this.schedule = schedule;
+		
+		this.addDomHandler(this, ClickEvent.getType());
 	
 	}
 	
-	@Override
-	public Label addTerm(final Term term) {
-		Label label = super.addTerm(term);
+	public Element addTerm(Term term) {
+		Element elem = super.addTerm(term);
 		
 		if (hasTerm(term)) 
-			label.getElement().getStyle().setCursor(Cursor.POINTER);
+			elem.getStyle().setCursor(Cursor.POINTER);
 		
-		label.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				SectionProducer producer = schedule.getSectionProducer(course) ;
-				
-				if(producer.isTermDenied(term))
-					producer.removeDenyTerm(term);
-				else
-					producer.denyTerm(term);
-				
-				update();
-			}
-		});
-		
-		return label;
+		return elem;
 	}
 	
 	@Override
-	protected void update(Term term, Label label) {		
+	protected void update(Term term, Element label) {		
 		SectionProducer producer = schedule.getSectionProducer(course) ;
 		
 		if( producer != null && hasTerm(term) && producer.isTermDenied(term)){
-			label.getElement().getStyle().setBackgroundColor("#FFDFDF");
+			label.getStyle().setBackgroundColor("#FFBBBB");
 		} else {
 			super.update(term, label);
 		}
+	}
+	
+	@Override
+	public void onClick(ClickEvent event) {
+		Term term = terms.get(event.getNativeEvent().getEventTarget().cast());
+		
+		if( term == null ){
+			System.out.println("Cound not find term");
+			return;
+		}
+		
+		SectionProducer producer = schedule.getSectionProducer(course) ;
+		
+		if(producer.isTermDenied(term))
+			producer.removeDenyTerm(term);
+		else
+			producer.denyTerm(term);
+		
+		update();		
 	}
 
 }

@@ -1,5 +1,12 @@
 package edu.wpi.scheduler.client.permutation;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+
+import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
@@ -19,6 +26,7 @@ import edu.wpi.scheduler.client.controller.SchedulePermutation;
 import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.controller.StudentScheduleEvent;
 import edu.wpi.scheduler.client.controller.StudentScheduleEventHandler;
+import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.Section;
 
 /**
@@ -28,28 +36,28 @@ import edu.wpi.scheduler.shared.model.Section;
  * @author Nican
  * 
  */
-public abstract class PeriodSelectListBase extends FlowPanel implements StudentScheduleEventHandler {
+public class PeriodSelectList extends FlowPanel implements StudentScheduleEventHandler {
 
-	public final PermutationController permutationController;
-	
+	public final PermutationController controller;
+
 	public class PeriodProfessorLabel extends Label implements MouseOverHandler, MouseOutHandler, ClickHandler {
-		
+
 		private Section section;
 
-		public PeriodProfessorLabel( Section section ){
+		public PeriodProfessorLabel(Section section) {
 			this.section = section;
 			this.setStyleName("PeriodSelectProf");
-			
+
 			this.addDomHandler(this, MouseOverEvent.getType());
 			this.addDomHandler(this, MouseOutEvent.getType());
 			this.addClickHandler(this);
 			this.setText(getName());
 		}
-		
-		private String getName(){
-			if( section.periods.size() > 0 )
+
+		private String getName() {
+			if (section.periods.size() > 0)
 				return section.periods.get(0).professor;
-			
+
 			return "Unkown";
 		}
 
@@ -65,9 +73,9 @@ public abstract class PeriodSelectListBase extends FlowPanel implements StudentS
 
 		@Override
 		public void onClick(ClickEvent event) {
-			permutationController.displayDescription(section);
+			controller.displayDescription(section);
 		}
-			
+
 	}
 
 	public class PeriodCheckbox extends ComplexPanel implements ValueChangeHandler<Boolean>, MouseOverHandler, MouseOutHandler {
@@ -85,15 +93,11 @@ public abstract class PeriodSelectListBase extends FlowPanel implements StudentS
 			checkBox.setText(section.number);
 			checkBox.addValueChangeHandler(this);
 
-			//Element elem = DOM.createSpan();
-			//elem.setInnerText(section.periods.get(0).professor);
-			//elem.setClassName("PeriodSelectProf");
-
 			this.addDomHandler(this, MouseOverEvent.getType());
 			this.addDomHandler(this, MouseOutEvent.getType());
 			this.add(checkBox, this.getElement());
-			//this.getElement().appendChild(elem);
-			this.add( new PeriodProfessorLabel(section), this.getElement() );
+			this.add(new PeriodProfessorLabel(section), this.getElement());
+			update();
 		}
 
 		@Override
@@ -107,11 +111,11 @@ public abstract class PeriodSelectListBase extends FlowPanel implements StudentS
 
 		public void update() {
 			checkBox.setValue(!producer.isSectionDenied(section));
-			
-			SchedulePermutation permutation = permutationController.getSelectedPermutation();
-			
-			if( permutation != null && permutation.sections.contains(section) ){
-				this.getElement().getStyle().setBackgroundColor(permutationController.getCourseColor(section.course));
+
+			SchedulePermutation permutation = controller.getSelectedPermutation();
+
+			if (permutation != null && permutation.sections.contains(section)) {
+				this.getElement().getStyle().setBackgroundColor(controller.getCourseColor(section.course));
 			} else {
 				this.getElement().getStyle().setBackgroundColor(null);
 			}
@@ -119,29 +123,55 @@ public abstract class PeriodSelectListBase extends FlowPanel implements StudentS
 
 		@Override
 		public void onMouseOut(MouseOutEvent event) {
-			permutationController.setSelectedSection(null);
+			controller.setSelectedSection(null);
 		}
 
 		@Override
 		public void onMouseOver(MouseOverEvent event) {
-			permutationController.setSelectedSection(section);
+			controller.setSelectedSection(section);
 		}
 
 	}
 
-	public PeriodSelectListBase(PermutationController permutationController) {
-		this.permutationController = permutationController;
+	public PeriodSelectList(PermutationController permutationController) {
+		this.controller = permutationController;
 		this.setStyleName("courseItemPeriods");
+	}
+
+	public void setSections(List<Section> conflictList, boolean courseSimpleName) {
+		this.clear();
+		HashMap<Course, List<Section>> conflictMap = new HashMap<Course, List<Section>>();
+
+		for (Section section : conflictList) {
+			if (!conflictMap.containsKey(section.course))
+				conflictMap.put(section.course, new ArrayList<Section>());
+
+			conflictMap.get(section.course).add(section);
+		}
+
+		for (Entry<Course, List<Section>> entry : conflictMap.entrySet()) {
+			Label label = new Label(courseSimpleName ? entry.getKey().name : entry.getKey().toString());
+			label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			label.getElement().getStyle().setMarginLeft(4.0, Unit.PX);
+			this.add(label);
+
+			for (Section section : entry.getValue()) {
+				SectionProducer producer = controller.getStudentSchedule().getSectionProducer(section.course);
+				PeriodCheckbox checkbox = new PeriodCheckbox(section, producer);
+				checkbox.getElement().getStyle().setPaddingLeft(8.0, Unit.PX);
+				this.add(checkbox);
+			}
+		}
 	}
 
 	@Override
 	protected void onLoad() {
-		permutationController.getStudentSchedule().addStudentScheduleHandler(this);
+		controller.getStudentSchedule().addStudentScheduleHandler(this);
 	}
 
 	@Override
 	protected void onUnload() {
-		permutationController.getStudentSchedule().removeStudentScheduleHandler(this);
+		controller.getStudentSchedule().removeStudentScheduleHandler(this);
 	}
 
 	@Override
@@ -151,7 +181,7 @@ public abstract class PeriodSelectListBase extends FlowPanel implements StudentS
 
 	public void update() {
 		for (Widget widget : this.getChildren()) {
-			if( widget instanceof PeriodCheckbox )
+			if (widget instanceof PeriodCheckbox)
 				((PeriodCheckbox) widget).update();
 		}
 	}
