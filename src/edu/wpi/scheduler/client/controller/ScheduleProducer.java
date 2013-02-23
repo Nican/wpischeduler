@@ -13,6 +13,7 @@ import com.google.gwt.user.client.Timer;
 
 import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
 import edu.wpi.scheduler.client.permutation.PermutationController;
+import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.DayOfWeek;
 import edu.wpi.scheduler.shared.model.Period;
 import edu.wpi.scheduler.shared.model.Section;
@@ -31,16 +32,33 @@ import edu.wpi.scheduler.shared.model.Time;
  *
  */
 public class ScheduleProducer {
-
-	public static class ConflictedList extends ArrayList<Section> {
-		private static final long serialVersionUID = 8823532784912354546L;
-		public Section section;
+	
+	enum CourseRelation {
+		COMPATIBLE,
+		CONFLICT
 	}
-
-	private class ProducerTimer extends Timer {
-		@Override
-		public void run() {
-			generate();
+	
+	public static class CoursePair {
+		public final Course course1;
+		public final Course course2;
+		private CourseRelation relation = CourseRelation.CONFLICT;
+		
+		CoursePair( Course course1, Course course2 ){
+			this.course1 = course1;
+			this.course2 = course2;
+		}
+		
+		public boolean isConflict(){
+			return relation == CourseRelation.CONFLICT;
+		}
+		
+		void markCompatible(){
+			relation = CourseRelation.COMPATIBLE;
+		}
+		
+		public boolean equals( Course course1, Course course2 ){
+			return (this.course1.equals(course1) && this.course2.equals( course2 )) ||
+					(this.course2.equals(course1) && this.course1.equals( course2 ));
 		}
 	}
 	
@@ -74,11 +92,18 @@ public class ScheduleProducer {
 	 * LinkedList as a queue/FIFO)
 	 */
 	public final ArrayList<TreeStateItem> treeSearchState = new ArrayList<TreeStateItem>();
+	
+	public final ArrayList<CoursePair> courseRelations = new ArrayList<CoursePair>();
 
 	/**
 	 * Timer that will generate more schedules as needed
 	 */
-	ProducerTimer timer = new ProducerTimer();
+	Timer timer = new Timer() {
+		@Override
+		public void run() {
+			generate();
+		}
+	};
 	
 	boolean active = false;
 	public final PermutationController controller;
@@ -132,9 +157,27 @@ public class ScheduleProducer {
 	 * Cancels the timer from generating any more schedules
 	 */
 	public void cancel() {
+		if(!isActive())
+			return;
+		
 		timer.cancel();
 		active = false;
+		
 		controller.fireEvent(new ProducerUpdateEvent(UpdateType.FINISH));
+	}
+	
+	public CoursePair getConflictCourse(){
+		//We have a schedule! We do not have any conflicts!
+		if (permutations.size() > 0 )
+			return null;
+		
+		//Find a course pair that is under conflict
+		for( CoursePair pair : courseRelations ){
+			if( pair.isConflict() )
+				return pair;
+		}
+		
+		return null;		
 	}
 	
 	public boolean isActive(){
@@ -143,18 +186,18 @@ public class ScheduleProducer {
 
 	public void generate() {
 		int i = 0;
+		int oldSize = permutations.size();
 
 		while (i < 20 && canGenerate()) {
 			generateNext();
 			i++;
 		}
 		
-		if (!canGenerate() || permutations.size() > 50000 ) {
-			this.cancel();
-		}
-
-		if (i > 0)
+		if (oldSize != permutations.size())
 			controller.fireEvent(new ProducerUpdateEvent(UpdateType.UPDATE));
+		
+		if (!canGenerate() || permutations.size() > 50000 )
+			this.cancel();
 	}
 
 	protected boolean canGenerate() {
@@ -216,11 +259,13 @@ public class ScheduleProducer {
 		// Look at our current state, and see if we have any conflicts
 		for (int i = 0; i < treeSearchState.size(); i++) {
 			Section section = getSectionFromTree(i);
+			
+			hasConflicts = hasConflicts(newSection, section);
+			
+			updateCourseRelation( section.course, newSection.course, hasConflicts );
 
-			if (hasConflicts(newSection, section)) {
-				hasConflicts = true;
+			if (hasConflicts) 
 				break;
-			}
 		}
 		
 		treeSearchState.add(new TreeStateItem( newId, hasConflicts ));
@@ -228,7 +273,7 @@ public class ScheduleProducer {
 
 		// If we are at the leaf of the tree, and we do not have a conflict
 		// We have a winner!
-		if (!hasStateConflicts() && treeSearchState.size() == producedSections.size()) {
+		if (treeSearchState.size() == producedSections.size() && !hasStateConflicts()) {
 			Map<Term, Integer> termCount = getTermCount();
 			
 			for( Integer count : termCount.values() ){
@@ -238,6 +283,25 @@ public class ScheduleProducer {
 			
 			addStateToSchedules();
 		}
+	}
+	
+	public void updateCourseRelation(Course course1, Course course2, boolean hasConflicts ){
+		CoursePair coursePair = null;
+		
+		for( CoursePair pair : courseRelations ){
+			if( pair.equals( course1, course2 ) ){
+				coursePair = pair;
+				break;
+			}			
+		}
+		
+		if( coursePair == null ){
+			coursePair = new CoursePair(course1, course2);
+			courseRelations.add(coursePair);
+		}
+		
+		if( !hasConflicts )
+			coursePair.markCompatible();		
 	}
 	
 	public boolean hasStateConflicts(){

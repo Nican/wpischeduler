@@ -13,56 +13,96 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 
 import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
+import edu.wpi.scheduler.client.controller.ScheduleProducer;
 import edu.wpi.scheduler.client.controller.ScheduleProducer.ProducerEventHandler;
+import edu.wpi.scheduler.shared.model.DayOfWeek;
+import edu.wpi.scheduler.shared.model.Period;
+import edu.wpi.scheduler.shared.model.Section;
+import edu.wpi.scheduler.shared.model.Term;
+import edu.wpi.scheduler.shared.model.Time;
 
 public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEventHandler, ProducerEventHandler, ScrollHandler {
 
 	private PermutationController controller;
 	private Canvas background;
-	
+
 	private final FlowPanel thumbList = new FlowPanel();
 	private final ScrollPanel scroll = new ScrollPanel(thumbList);
 	private final ToggleButton favoriteButtom = new ToggleButton("Favorites (0)");
-	
+
 	public static final double favoriteButtonSize = 20.0;
 
 	public PermutationCanvasList(PermutationController controller) {
 		this.controller = controller;
 		this.updateBackground();
-		
-		this.add( favoriteButtom, getElement() );
-		this.add( scroll, getElement() );
-		
-		favoriteButtom.getElement().getStyle().setTextAlign(TextAlign.CENTER);		
+
+		this.add(favoriteButtom, getElement());
+		this.add(scroll, getElement());
+
+		favoriteButtom.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		favoriteButtom.getElement().getStyle().setLeft(0.0, Unit.PX);
 		favoriteButtom.getElement().getStyle().setRight(0.0, Unit.PX);
 		favoriteButtom.getElement().getStyle().setTop(0.0, Unit.PX);
 		favoriteButtom.getElement().getStyle().setHeight(favoriteButtonSize, Unit.PX);
-		
+
 		scroll.getElement().getStyle().setPosition(Position.ABSOLUTE);
 		scroll.getElement().getStyle().setLeft(0.0, Unit.PX);
 		scroll.getElement().getStyle().setRight(0.0, Unit.PX);
 		scroll.getElement().getStyle().setTop(favoriteButtonSize + 8, Unit.PX);
 		scroll.getElement().getStyle().setBottom(0.0, Unit.PX);
-		
+
 		scroll.addScrollHandler(this);
 
 	}
 
 	public void addPermutation(final SchedulePermutation permutation) {
 		
-		PermutationCanvas canvas = new PermutationCanvas(controller, permutation);
-		canvas.setSize("150px", "150px");
-		canvas.paint(background);
-
-		thumbList.add(canvas.canvas);
+		Canvas canvas = Canvas.createIfSupported();
+		canvas.setCoordinateSpaceHeight( background.getCoordinateSpaceHeight() );
+		canvas.setCoordinateSpaceWidth( background.getCoordinateSpaceWidth() );
+		canvas.setStyleName("permutationCanvas");
 		
-		canvas.canvas.addClickHandler(new ClickHandler() {
+		Context2d context = canvas.getContext2d();
+
+		double columnWidth = ((double) canvas.getCoordinateSpaceWidth()) / controller.getValidDaysOfWeek().size();
+		double hourHeight = ((double) canvas.getCoordinateSpaceHeight()) / (controller.getEndHour() - controller.getStartHour());
+		List<DayOfWeek> daysOfWeek = controller.getValidDaysOfWeek();
+
+		// context.setFillStyle("black");
+		context.drawImage(background.getCanvasElement(), 0.0, 0.0);
+		
+		//So many For loops... But it is not that bad.
+		for (Section section : permutation.sections) {
+			context.setFillStyle(controller.getCourseColor(section.course));
+			
+			for (Term term : section.getTerms()) {
+				for (int i = 0; i < daysOfWeek.size(); i++) {
+					for (Period period : section.periods) {
+						if (period.days.contains(daysOfWeek.get(i))) {
+
+							double start = getDayProgress(period.startTime);
+							double end = getDayProgress(period.endTime);
+
+							context.fillRect(
+									i * columnWidth + columnWidth * term.ordinal() * 0.25,
+									start * hourHeight,
+									columnWidth * 0.25,
+									(end - start) * hourHeight);
+						}
+					}
+				}
+			}
+		}
+			
+		thumbList.add(canvas);
+		
+		canvas.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				controller.selectPermutation(permutation);
@@ -70,7 +110,11 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 		});
 
 	}
-	
+
+	private double getDayProgress(Time time) {
+		return ((double) time.hour) - controller.getStartHour() + ((double) time.minutes) / 60;
+	}
+
 	/**
 	 * If we are near the end of the scroll, we are going to check if there are
 	 * any more images to be loaded
@@ -82,8 +126,8 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 
 		updateThumbnails();
 	}
-	
-	public int childCount(){
+
+	public int childCount() {
 		return this.getChildren().size();
 	}
 
@@ -117,10 +161,11 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 		context.setLineWidth(1.0);
 
 		for (double hour = controller.getStartHour(); hour <= controller.getEndHour(); hour += 1.0) {
-			//Draw in the middle: http://stackoverflow.com/questions/9311428/draw-single-pixel-line-in-html5-canvas
+			// Draw in the middle:
+			// http://stackoverflow.com/questions/9311428/draw-single-pixel-line-in-html5-canvas
 			double yValue = Math.floor((hour - controller.getStartHour()) * heightPerHour) + 0.5;
-			
-			if( hour == 12.0 ){
+
+			if (hour == 12.0) {
 				context.setStrokeStyle(CssColor.make(200, 200, 200));
 			} else {
 				context.setStrokeStyle(CssColor.make(230, 230, 230));
@@ -139,18 +184,29 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 			context.moveTo(i * (150 / weekDaySize), 0.0);
 			context.lineTo(i * (150 / weekDaySize), 150.0);
 			context.stroke();
-		}		
+		}
 	}
 
 	@Override
 	public void onPermutationUpdated(UpdateType type) {
-		if( type == UpdateType.NEW)
+		if (type == UpdateType.NEW)
 			thumbList.clear();
-		
+
 		if (thumbList.getWidgetCount() < 20)
 			updateThumbnails();
+		
+		if( type == UpdateType.FINISH ){
+			ScheduleProducer producer = controller.getProducer();
+			
+			if( producer.getPermutations().size() == 0 ){
+				String msg = "Can not find any schedules!";
+				msg += producer.getConflictCourse().course1 + " - " + producer.getConflictCourse().course2;
+				
+				add( new Label( msg ) );
+			}
+		}
 	}
-	
+
 	public void updateThumbnails() {
 		List<SchedulePermutation> permutations = controller.getProducer().getPermutations();
 		int thumbSize = thumbList.getWidgetCount();

@@ -7,9 +7,9 @@ import edu.wpi.scheduler.client.controller.ScheduleProducer.ProducerEventHandler
 public class ProducerUpdateEvent extends GwtEvent<ProducerEventHandler> {
 	
 	public enum UpdateType {
-		NEW,
-		UPDATE,
-		FINISH
+		NEW, //When we start looking for new schedule
+		UPDATE, //When we find a new schedule (Called multiple times)
+		FINISH //When we finish finding schedules
 	}
 	
 	public static final Type<ProducerEventHandler> TYPE = new Type<ProducerEventHandler>();

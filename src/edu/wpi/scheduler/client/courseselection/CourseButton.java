@@ -25,7 +25,6 @@ public class CourseButton extends Button implements StudentScheduleEventHandler,
 		this.course = course;
 
 		this.addClickHandler(this);
-		this.updateIcon();
 	}
 
 	/**
@@ -34,6 +33,7 @@ public class CourseButton extends Button implements StudentScheduleEventHandler,
 	@Override
 	protected void onLoad() {
 		schedule.addStudentScheduleHandler(this);
+		this.updateIcon();
 	}
 
 	@Override

@@ -10,10 +10,7 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.Context2d.TextAlign;
 import com.google.gwt.canvas.dom.client.Context2d.TextBaseline;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.logical.shared.ResizeEvent;
-import com.google.gwt.event.logical.shared.ResizeHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
@@ -22,7 +19,7 @@ import edu.wpi.scheduler.client.controller.ScheduleProducer.ProducerEventHandler
 import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.Section;
 
-public class CanvasProgress extends SimplePanel implements ResizeHandler, ProducerEventHandler, AnimationCallback {
+public class CanvasProgress extends SimplePanel implements ProducerEventHandler, AnimationCallback, RequiresResize {
 
 	public static class CanvasProgressSection {
 		public double x;
@@ -38,12 +35,10 @@ public class CanvasProgress extends SimplePanel implements ResizeHandler, Produc
 	}
 
 	private final double lineHeight = 32.0;
-	HandlerRegistration resizeRegistration;
 
 	PermutationController controller;
 	Canvas canvas = Canvas.createIfSupported();
 	Canvas background = Canvas.createIfSupported();
-	AnimationScheduler animSched = AnimationScheduler.get();
 
 	protected List<CanvasProgressSection> sections = new ArrayList<CanvasProgressSection>();
 
@@ -58,33 +53,32 @@ public class CanvasProgress extends SimplePanel implements ResizeHandler, Produc
 
 	@Override
 	public void onLoad() {
-		resizeRegistration = Window.addResizeHandler(this);
 		controller.addProduceHandler(this);
 
 		updateSize();
-		initItems();
-		redraw();
 	}
 
 	@Override
 	public void onUnload() {
-		resizeRegistration.removeHandler();
 		controller.removeProduceHandler(this);
 	}
 
 	public void updateSize() {
-		setSize(Integer.toString(this.getElement().getClientWidth()), Integer.toString(this.getElement().getClientHeight()));
-		initItems();
-		redraw();
-	}
+		int width = getElement().getClientWidth();
+		int height = getElement().getClientHeight();
 
-	public void setSize(String width, String height) {
-		// this.canvas.setSize(width, height);
-		canvas.getElement().setAttribute("width", width);
-		canvas.getElement().setAttribute("height", height);
+		if (width != canvas.getCoordinateSpaceWidth() || height != canvas.getCoordinateSpaceHeight()) {
+			canvas.setCoordinateSpaceHeight(height);
+			canvas.setCoordinateSpaceWidth(width);
 
-		background.getElement().setAttribute("width", width);
-		background.getElement().setAttribute("height", height);
+			background.setCoordinateSpaceHeight(height);
+			background.setCoordinateSpaceWidth(width);
+
+			if (width > 0 && height > 0) {
+				initItems();
+				redraw();
+			}
+		}
 	}
 
 	private void initItems() {
@@ -153,7 +147,7 @@ public class CanvasProgress extends SimplePanel implements ResizeHandler, Produc
 	}
 
 	public void redraw() {
-		animSched.requestAnimationFrame(this, canvas.getCanvasElement());
+		AnimationScheduler.get().requestAnimationFrame(this, canvas.getCanvasElement());
 	}
 
 	public CanvasProgressSection getBySection(Section find) {
@@ -165,18 +159,23 @@ public class CanvasProgress extends SimplePanel implements ResizeHandler, Produc
 	}
 
 	@Override
-	public void onResize(ResizeEvent event) {
+	public void onResize() {
 		updateSize();
 	}
 
 	@Override
 	public void execute(double timestamp) {
+		updateSize();
+
 		ScheduleProducer prdocuer = controller.getProducer();
 		Context2d context = canvas.getContext2d();
-		double width = (double) canvas.getCoordinateSpaceWidth();
-		double height = (double) canvas.getCoordinateSpaceHeight();
+		int width = canvas.getCoordinateSpaceWidth();
+		int height = canvas.getCoordinateSpaceHeight();
 
-		context.clearRect(0.0, 0.0, width, height);
+		if (width == 0 || height == 0)
+			return;
+
+		context.clearRect(0.0, 0.0, (double) width, (double) height);
 		context.drawImage(background.getCanvasElement(), 0.0, 0.0);
 
 		if (prdocuer.treeSearchState.size() > 1) {

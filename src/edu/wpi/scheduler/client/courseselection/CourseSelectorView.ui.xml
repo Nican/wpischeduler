@@ -5,7 +5,7 @@
 
 	<g:SplitLayoutPanel>
 		<g:west size="250">
-			<g:ListBox ui:field="departmentList"></g:ListBox>
+			<c:DepartmentListBox ui:field="departmentList" />
 		</g:west>
 
 		<g:east size='250'>

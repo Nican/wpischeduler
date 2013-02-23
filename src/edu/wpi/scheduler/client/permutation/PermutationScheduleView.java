@@ -9,6 +9,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ComplexPanel;
+import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
@@ -17,7 +18,7 @@ import edu.wpi.scheduler.client.controller.ScheduleProducer.ProducerEventHandler
 import edu.wpi.scheduler.client.permutation.view.GridCourseView;
 import edu.wpi.scheduler.client.permutation.view.WeekCourseView;
 
-public class PermutationScheduleView extends ComplexPanel implements PermutationSelectEventHandler, ProducerEventHandler {
+public class PermutationScheduleView extends ComplexPanel implements PermutationSelectEventHandler, ProducerEventHandler, RequiresResize {
 
 	enum ViewMode {
 		GRID,
@@ -27,7 +28,9 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 
 	private PermutationController controller;
 
-	private ViewMode viewMode = ViewMode.GRID;
+	private ViewMode viewMode = null;
+	private ViewMode selectedViewMode = ViewMode.GRID;
+	
 	Element body = DOM.createDiv();
 	public Widget bodyWidget;
 	Button progressButton;
@@ -80,6 +83,7 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 		controller.addSelectListner(this);
 		controller.addProduceHandler(this);
 		updateProgressButton();
+		update();
 	}
 
 	@Override
@@ -87,16 +91,15 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 		controller.removeSelectListner(this);
 		controller.removeProduceHandler(this);
 	}
-
-	public void setView(ViewMode mode) {
-		ViewMode target = mode;
-
+	
+	public void update(){
+		ViewMode target = selectedViewMode;
 		ScheduleProducer producer = controller.getProducer();
 		int size = producer.getPermutations().size();
 
 		if (size == 0)
 			target = ViewMode.PROGRESS;
-
+		
 		if (target == viewMode)
 			return;
 
@@ -110,6 +113,12 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 
 		add(bodyWidget, body);
 		viewMode = target;
+		
+	}
+
+	public void setView(ViewMode mode) {
+		selectedViewMode = mode;
+		update();
 	}
 
 	private Widget getNewView(ViewMode mode) {
@@ -148,7 +157,14 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 	@Override
 	public void onPermutationUpdated(UpdateType type) {
 		updateProgressButton();
+		update();
+	}
 
+	@Override
+	public void onResize() {
+		if( bodyWidget instanceof RequiresResize ){
+			((RequiresResize) bodyWidget).onResize();
+		}
 	}
 
 }

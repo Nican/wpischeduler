@@ -52,18 +52,14 @@ public class PermutationChooserView extends Composite {
 		getElement().getStyle().setPosition(Position.ABSOLUTE);
 	}
 
-	public void updateCourses() {
+	public void update() {
 		courseList.clear();
 
 		for (SectionProducer producer : studentSchedule.sectionProducers) {
 			courseList.add(new CourseItem(permutationController, producer));
 		}
+		
+		scheduleView.update();
 	}
-
-	public void update() {
-		updateCourses();
-	}
-
-	
 
 }
