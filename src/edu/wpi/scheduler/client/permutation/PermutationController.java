@@ -12,7 +12,7 @@ import com.google.gwt.event.shared.HasHandlers;
 
 import edu.wpi.scheduler.client.controller.ProducerUpdateEvent;
 import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
-import edu.wpi.scheduler.client.controller.ScheduleConflictController;
+import edu.wpi.scheduler.client.controller.ConflictController;
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
 import edu.wpi.scheduler.client.controller.ScheduleProducer;
 import edu.wpi.scheduler.client.controller.ScheduleProducer.ProducerEventHandler;
@@ -50,11 +50,6 @@ public class PermutationController implements HasHandlers, StudentScheduleEventH
 	protected Section selectedSection = null;
 
 	/**
-	 * Find out conflicts between schedules
-	 */
-	public final ScheduleConflictController conflictController = new ScheduleConflictController();
-
-	/**
 	 * Generate schedules from the conflicts
 	 */
 	private ScheduleProducer producer;
@@ -75,10 +70,6 @@ public class PermutationController implements HasHandlers, StudentScheduleEventH
 
 		studentSchedule.addStudentScheduleHandler(this);
 		updateTimeRange();
-		
-		for (SectionProducer producer : studentSchedule.sectionProducers) {
-			conflictController.addCourse(producer.getCourse());
-		}
 	}
 
 	public String getCourseColor(Course course) {
@@ -203,12 +194,12 @@ public class PermutationController implements HasHandlers, StudentScheduleEventH
 
 	@Override
 	public void onCoursesChanged(StudentScheduleEvent studentScheduleEvent) {
-		for (SectionProducer producer : studentSchedule.sectionProducers) {
-			conflictController.addCourse(producer.getCourse());
-		}
-
 		updateProducer();
 		updateTimeRange();
+	}
+	
+	public ConflictController getConflictController(){
+		return getStudentSchedule().conflicts;
 	}
 
 	private void updateProducer() {

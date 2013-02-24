@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -14,11 +13,8 @@ import com.google.gwt.user.client.Timer;
 import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
 import edu.wpi.scheduler.client.permutation.PermutationController;
 import edu.wpi.scheduler.shared.model.Course;
-import edu.wpi.scheduler.shared.model.DayOfWeek;
-import edu.wpi.scheduler.shared.model.Period;
 import edu.wpi.scheduler.shared.model.Section;
 import edu.wpi.scheduler.shared.model.Term;
-import edu.wpi.scheduler.shared.model.Time;
 
 /**
  * Finds all conflicts between periods, and courses schedules.
@@ -108,12 +104,14 @@ public class ScheduleProducer {
 	Timer timer = new Timer() {
 		@Override
 		public void run() {
-			generate();
+			generate(20);
 		}
 	};
 
 	boolean active = true;
 	public final PermutationController controller;
+	
+	private int stepCounter = 0;
 
 	public ScheduleProducer(PermutationController controller) {
 		this.controller = controller;
@@ -172,35 +170,19 @@ public class ScheduleProducer {
 		active = false;
 
 		controller.fireEvent(new ProducerUpdateEvent(UpdateType.FINISH));
-	}
-
-	public CoursePair getConflictCourse() {
-		// We have a schedule! We do not have any conflicts!
-		if (permutations.size() > 0)
-			return null;
-
-		CoursePair conflictPair = null;
-
-		// Find a course pair that is under conflict
-		for (CoursePair pair : courseRelations) {
-			if (pair.isConflict()) {
-				conflictPair = pair;
-				System.out.println("Conflicting pairs: " + pair);
-			}
-		}
-
-		return conflictPair;
+		
+		System.out.println("Finished in " + stepCounter + " steps");
 	}
 
 	public boolean isActive() {
 		return active;
 	}
 
-	public void generate() {
+	public void generate( int steps ) {
 		int i = 0;
 		int oldSize = permutations.size();
 
-		while (i < 20 && canGenerate()) {
+		while (i < steps && canGenerate()) {
 			generateNext();
 			i++;
 		}
@@ -272,14 +254,15 @@ public class ScheduleProducer {
 		for (int i = 0; i < treeSearchState.size(); i++) {
 			Section section = getSectionFromTree(i);
 
-			hasConflicts = hasConflicts(newSection, section);
+			hasConflicts = controller.getConflictController().hasConflicts(newSection, section);
 
 			updateCourseRelation(section.course, newSection.course, hasConflicts);
 
 			if (hasConflicts)
 				break;
 		}
-
+		
+		stepCounter++;
 		treeSearchState.add(new TreeStateItem(newId, hasConflicts));
 
 		// If we are at the leaf of the tree, and we do not have a conflict
@@ -294,25 +277,6 @@ public class ScheduleProducer {
 
 			addStateToSchedules();
 		}
-	}
-
-	public void updateCourseRelation(Course course1, Course course2, boolean hasConflicts) {
-		CoursePair coursePair = null;
-
-		for (CoursePair pair : courseRelations) {
-			if (pair.equals(course1, course2)) {
-				coursePair = pair;
-				break;
-			}
-		}
-
-		if (coursePair == null) {
-			coursePair = new CoursePair(course1, course2);
-			courseRelations.add(coursePair);
-		}
-
-		if (!hasConflicts)
-			coursePair.markCompatible();
 	}
 
 	public boolean hasStateConflicts() {
@@ -337,61 +301,68 @@ public class ScheduleProducer {
 		if (permutations.size() == 1) {
 			// We are the first insert, make this the selected schedule
 			controller.selectPermutation(schedule);
+			System.out.println("Found first schedule in " + stepCounter + " steps");
 		}
 	}
 
-	public static boolean hasConflicts(Section newSection, Section section) {
-		List<Term> newTerms = newSection.getTerms();
-		List<Term> terms = section.getTerms();
-		boolean conflictingTerms = false;
+	public void updateCourseRelation(Course course1, Course course2, boolean hasConflicts) {
+		CoursePair coursePair = null;
 
-		// Checks if any terms exists in both sections
-		for (Term term : terms) {
-			if (newTerms.contains(term)) {
-				conflictingTerms = true;
+		for (CoursePair pair : courseRelations) {
+			if (pair.equals(course1, course2)) {
+				coursePair = pair;
+				break;
 			}
 		}
 
-		// The classes are not even in the same days of the year
-		// There are no conflict here
-		if (conflictingTerms == false)
-			return false;
-
-		for (Period period : section.periods) {
-			for (Period newPeriod : newSection.periods) {
-				if (hasConflitcs(period, newPeriod))
-					return true;
-			}
+		if (coursePair == null) {
+			coursePair = new CoursePair(course1, course2);
+			courseRelations.add(coursePair);
 		}
 
-		return false;
-
+		if (!hasConflicts)
+			coursePair.markCompatible();
 	}
 
-	private static boolean containsAny(HashSet<DayOfWeek> days1, HashSet<DayOfWeek> days2) {
-		for (DayOfWeek day : days1) {
-			if (days2.contains(day)) {
-				return true;
-			}
+	private List<Section> getCourseSections(Course course) {
+		for (List<Section> sections : this.producedSections) {
+			if (sections.get(0).course.equals(course))
+				return sections;
 		}
-		return false;
+
+		return null;
 	}
 
-	private static boolean hasConflitcs(Period period, Period newPeriod) {
+	private boolean fullCourseConflict( CoursePair pair ){
+		List<Section> sections1 = getCourseSections(pair.course1);
+		List<Section> sections2 = getCourseSections(pair.course2);
+		ConflictController conflictController = controller.getConflictController();
+		
+		for( Section section1 : sections1 ){
+			for( Section section2: sections2 ){
+				if( !conflictController.hasConflicts(section1, section2))
+					return false;
+			}
+		}
+		
+		return true;
+	}
 
-		// No days in common, no conflicts
-		if (!containsAny(period.days, newPeriod.days))
-			return false;
+	public CoursePair getConflictCourse() {
+		// We have a schedule! We do not have any conflicts!
+		if (permutations.size() > 0)
+			return null;
 
-		Time periodStart = period.startTime;
-		Time periodEnd = period.endTime;
+		CoursePair conflictPair = null;
 
-		Time otherStart = newPeriod.startTime;
-		Time otherEnd = newPeriod.endTime;
+		// Find a course pair that is under conflict
+		for (CoursePair pair : courseRelations) {
+			if (pair.isConflict() && fullCourseConflict(pair)) {
+				conflictPair = pair;
+			}
+		}
 
-		return (otherStart.compareTo(periodStart) >= 0 && otherStart.compareTo(periodEnd) <= 0)
-				|| (otherEnd.compareTo(periodStart) >= 0 && otherEnd.compareTo(periodEnd) <= 0)
-				|| (otherStart.compareTo(periodStart) <= 0 && otherEnd.compareTo(periodEnd) >= 0);
+		return conflictPair;
 	}
 
 }

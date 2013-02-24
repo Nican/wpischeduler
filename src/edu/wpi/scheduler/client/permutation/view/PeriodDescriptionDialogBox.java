@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.Label;
 
 import edu.wpi.scheduler.client.CourseDescription;
 import edu.wpi.scheduler.client.Scheduler;
-import edu.wpi.scheduler.client.controller.ScheduleConflictController.ConflictedList;
+import edu.wpi.scheduler.client.controller.ConflictController.ConflictedList;
 import edu.wpi.scheduler.client.permutation.PeriodSelectList;
 import edu.wpi.scheduler.client.permutation.PermutationController;
 import edu.wpi.scheduler.shared.model.Section;
@@ -30,7 +30,7 @@ public class PeriodDescriptionDialogBox extends DialogBox {
 		getElement().getStyle().setProperty("width", "50%");
 		getElement().getStyle().setZIndex(10);
 
-		ConflictedList list = controller.conflictController.getConflicts(section);
+		ConflictedList list = controller.getConflictController().getConflicts(section);
 
 		if (list != null) {
 			Label conflictTitle = new Label("Conflicts:");

@@ -24,6 +24,12 @@ import edu.wpi.scheduler.shared.model.Section;
 public class StudentSchedule implements HasHandlers
 {
 	public final List<SectionProducer> sectionProducers = new ArrayList<SectionProducer>();
+	
+	/**
+	 * Find out conflicts between sections
+	 */
+	public final ConflictController conflicts = new ConflictController();
+	
 	private HandlerManager handlerManager = new HandlerManager(this);
 	public StudentChosenTimes ATermTimes = new StudentChosenTimes();
 	public StudentChosenTimes BTermTimes = new StudentChosenTimes();
@@ -47,7 +53,8 @@ public class StudentSchedule implements HasHandlers
 		}
 
 		SectionProducer producer = new SectionProducer(this, course);
-
+		
+		conflicts.addCourse(course);
 		sectionProducers.add(producer);
 
 		this.fireEvent(new StudentScheduleEvent(course, StudentScheduleEvents.ADD));

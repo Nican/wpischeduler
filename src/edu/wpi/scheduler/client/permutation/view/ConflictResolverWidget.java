@@ -123,14 +123,17 @@ public class ConflictResolverWidget extends FlexTable implements ProducerEventHa
 			header += "<h2>There are no sections to generate schedules from.</h2>";
 
 		} else {
-			header += "<h2>Two courses can not exist in the same schedule.<br>All sections have conflicting times.</h2>";
 			CoursePair pair = producer.getConflictCourse();
 			
 			if( pair != null ){
+				header += "<h2>Two courses can not exist in the same schedule.<br>All sections have conflicting times.</h2>";
+				
 				setWidget(1, 0, new ConflictCourse(pair.course1));
 				cellFormatter.setWidth(1, 0, "50%");
 				setWidget(1, 1, new ConflictCourse(pair.course2));
 				cellFormatter.setWidth(1, 1, "50%");
+			} else {
+				header += "<h2>Unable to find solution... TODO: Brute force what course to add/remove</h2>";
 			}
 		}
 
