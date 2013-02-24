@@ -11,7 +11,7 @@ import edu.wpi.scheduler.shared.model.Term;
 public class SectionProducer {
 	Course course;
 
-	List<Section> deniedSections = new ArrayList<Section>();
+	public final List<Section> deniedSections = new ArrayList<Section>();
 	
 	private StudentSchedule schedule;
 
@@ -35,6 +35,10 @@ public class SectionProducer {
 	
 	public boolean isSectionDenied(Section section){
 		return deniedSections.contains(section);
+	}
+	
+	public boolean hasDeniedSection(){
+		return deniedSections.size() > 0;
 	}
 
 	public void denyTerm(Term term) {

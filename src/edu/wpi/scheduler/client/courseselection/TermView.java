@@ -46,7 +46,7 @@ public class TermView extends Widget {
 		return elem;
 	}
 
-	public void update() {
+	protected void update() {
 		for (Entry<Element, Term> entry : terms.entrySet()) {
 			update(entry.getValue(), entry.getKey());
 		}

@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.ToggleButton;
 import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
 import edu.wpi.scheduler.client.controller.ScheduleProducer;
+import edu.wpi.scheduler.client.controller.ScheduleProducer.CoursePair;
 import edu.wpi.scheduler.client.controller.ScheduleProducer.ProducerEventHandler;
 import edu.wpi.scheduler.shared.model.DayOfWeek;
 import edu.wpi.scheduler.shared.model.Period;
@@ -40,10 +41,10 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 
 	public PermutationCanvasList(PermutationController controller) {
 		this.controller = controller;
-		this.updateBackground();
+		updateBackground();
 
-		this.add(favoriteButtom, getElement());
-		this.add(scroll, getElement());
+		add(favoriteButtom, getElement());
+		add(scroll, getElement());
 
 		favoriteButtom.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		favoriteButtom.getElement().getStyle().setLeft(0.0, Unit.PX);
@@ -199,10 +200,15 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 			ScheduleProducer producer = controller.getProducer();
 			
 			if( producer.getPermutations().size() == 0 ){
-				String msg = "Can not find any schedules!";
-				msg += producer.getConflictCourse().course1 + " - " + producer.getConflictCourse().course2;
+				thumbList.clear();
+				CoursePair pair = producer.getConflictCourse();
 				
-				add( new Label( msg ) );
+				String msg = "Can not find any schedules!";
+				
+				if( pair != null )
+					msg += pair.course1 + " - " + pair.course2;
+				
+				thumbList.add( new Label( msg ) );
 			}
 		}
 	}

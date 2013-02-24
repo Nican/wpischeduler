@@ -35,6 +35,10 @@ public class Course implements Serializable {
 	
 	@Override
 	public String toString(){
-		return this.name + " (" + this.department.abbreviation + this.number + ")";
+		return this.name + " (" + toAbbreviation() + ")";
+	}
+	
+	public String toAbbreviation(){
+		return this.department.abbreviation + this.number;
 	}
 }

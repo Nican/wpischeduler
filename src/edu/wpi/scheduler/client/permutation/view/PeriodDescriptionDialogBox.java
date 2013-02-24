@@ -1,8 +1,5 @@
 package edu.wpi.scheduler.client.permutation.view;
 
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.cellview.client.DataGrid;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -13,7 +10,6 @@ import edu.wpi.scheduler.client.Scheduler;
 import edu.wpi.scheduler.client.controller.ScheduleConflictController.ConflictedList;
 import edu.wpi.scheduler.client.permutation.PeriodSelectList;
 import edu.wpi.scheduler.client.permutation.PermutationController;
-import edu.wpi.scheduler.shared.model.Period;
 import edu.wpi.scheduler.shared.model.Section;
 
 public class PeriodDescriptionDialogBox extends DialogBox {
@@ -21,58 +17,18 @@ public class PeriodDescriptionDialogBox extends DialogBox {
 	public final Section section;
 
 	public final DockPanel dockPanel = new DockPanel();
-	public final DataGrid<Period> periodInfo = new DataGrid<Period>();
+	public final PeriodDataGrid periodInfo;
 	public final Label title = new Label();
 	public final FlowPanel conflictList = new FlowPanel();
 
 	public PeriodDescriptionDialogBox(PermutationController controller, Section section) {
 		super(true);
 		this.section = section;
+		periodInfo = new PeriodDataGrid(section);
+		
 		setText(section.course.toString() + " - " + section.number);
 		getElement().getStyle().setProperty("width", "50%");
 		getElement().getStyle().setZIndex(10);
-
-		periodInfo.addColumn(new TextColumn<Period>() {
-			@Override
-			public String getValue(Period period) {
-				return period.professor;
-			}
-		}, "Professor");
-
-		periodInfo.addColumn(new TextColumn<Period>() {
-			@Override
-			public String getValue(Period period) {
-				return period.location;
-			}
-		}, "Location");
-
-		periodInfo.addColumn(new TextColumn<Period>() {
-			@Override
-			public String getValue(Period period) {
-				return period.type.getName();
-			}
-		}, "Type");
-
-		periodInfo.addColumn(new TextColumn<Period>() {
-			@Override
-			public String getValue(Period period) {
-				return period.startTime.toString();
-			}
-		}, "Start Time");
-
-		periodInfo.addColumn(new TextColumn<Period>() {
-			@Override
-			public String getValue(Period period) {
-				return period.endTime.toString();
-			}
-		}, "End Time");
-
-		periodInfo.setRowCount(section.periods.size(), true);
-		periodInfo.setRowData(0, section.periods);
-
-		// I really hate for having to hard-code this, but debugging the
-		// DataGrid is near impossible
-		periodInfo.getElement().getStyle().setHeight(24.0 + section.periods.size() * 24.0 + 2.0, Unit.PX);
 
 		ConflictedList list = controller.conflictController.getConflicts(section);
 
@@ -83,11 +39,11 @@ public class PeriodDescriptionDialogBox extends DialogBox {
 			conflictList.add(conflictTitle);
 			
 			if( list.size() > 0 ){
-				PeriodSelectList conflictList = new PeriodSelectList(controller);
-				conflictList.setSections(list, false);
+				PeriodSelectList periodList = new PeriodSelectList(controller);
+				periodList.setSections(list, false);
+				periodList.setStyleName("sectionConflictList");
 				
-				conflictList.add(conflictList);
-				conflictList.setStyleName("sectionConflictList");
+				conflictList.add(periodList);
 			} else {
 				conflictList.add( new Label("There are no sections with time conflicts with this section."));
 			}
@@ -95,17 +51,17 @@ public class PeriodDescriptionDialogBox extends DialogBox {
 		}
 
 		dockPanel.add(this.periodInfo, DockPanel.SOUTH);
+		dockPanel.add(new Label(getDescription()), DockPanel.CENTER);
+		
 		dockPanel.setCellVerticalAlignment(periodInfo, DockPanel.ALIGN_BOTTOM);
 
+		add(dockPanel);
+	}
+	
+	private String getDescription(){
 		CourseDescription description = Scheduler.getDescription().getDescription(section.course);
 
-		if (description != null)
-			dockPanel.add(new Label(description.getDescription()), DockPanel.CENTER);
-		else
-			dockPanel.add(new Label("No description available"), DockPanel.CENTER);
-
-		periodInfo.redraw();
-		add(dockPanel);
+		return description != null ? description.getDescription() : "No description available";
 	}
 
 	public void setGlassEnabled(boolean enabled) {

@@ -54,11 +54,19 @@ public class PermutationChooserView extends Composite {
 
 	public void update() {
 		courseList.clear();
+		boolean first = true;
 
 		for (SectionProducer producer : studentSchedule.sectionProducers) {
-			courseList.add(new CourseItem(permutationController, producer));
+			CourseItem item = new CourseItem(permutationController, producer);
+			
+			courseList.add( item );
+			
+			if( first ){
+				item.togglePeriods();
+				first = false;
+			}
 		}
-		
+
 		scheduleView.update();
 	}
 

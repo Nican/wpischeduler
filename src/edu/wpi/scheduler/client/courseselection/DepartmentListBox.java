@@ -14,6 +14,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.OptGroupElement;
 import com.google.gwt.dom.client.OptionElement;
 import com.google.gwt.dom.client.SelectElement;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.storage.client.Storage;
 import com.google.gwt.user.client.ui.ListBox;
@@ -38,7 +39,7 @@ public class DepartmentListBox extends ListBox {
 
 	private static final List<AcademicGroup> groups = Arrays.asList(
 			new AcademicGroup("Science", "MA", "PH", "AS", "BB", "BCB", "CH", "CS", "ES", "GE"),
-			new AcademicGroup("Engeenering", "ECE", "RBE", "AREN", "BME", "CE", "CHE", "ME", "MFE", "MTE", "NSE", "OIE", "FP", "SYS"),
+			new AcademicGroup("Engineering", "ECE", "RBE", "AREN", "BME", "CE", "CHE", "ME", "MFE", "MTE", "NSE", "OIE", "FP", "SYS"),
 			new AcademicGroup("Language", "GN", "AB", "CN", "EN", "ESL", "SP"),
 			new AcademicGroup("Humanities", "PY", "SOC", "AR", "HI", "HU", "MU", "RE"),
 			new AcademicGroup("Social Science", "ECON", "SS", "PSY")
@@ -46,6 +47,8 @@ public class DepartmentListBox extends ListBox {
 
 	public DepartmentListBox(StudentSchedule studentSchedule) {
 		super(true); // Create is a multi-select
+		
+		this.getElement().getStyle().setHeight(100.0, Unit.PCT);
 	}
 
 	private AcademicGroup findAcademicGroup(Department department) {
@@ -85,7 +88,11 @@ public class DepartmentListBox extends ListBox {
 
 			groupElements.get(deptGroup).appendChild(option);
 
-			if (savedDeps.contains(dept.abbreviation))
+			if (savedDeps == null ){
+				if( dept.abbreviation.equals("MA"))
+					option.setSelected(true);
+				
+			} else if( savedDeps.contains(dept.abbreviation))
 				option.setSelected(true);
 
 			options.put(dept, option);
@@ -119,12 +126,12 @@ public class DepartmentListBox extends ListBox {
 		List<String> deparments = new ArrayList<String>();
 
 		if (localStorage == null)
-			return deparments;
+			return null;
 
 		String depList = localStorage.getItem("selectedDepts");
 
 		if (depList == null)
-			return deparments;
+			return null;
 
 		try {
 			JsArrayString selectedDepsJs = JsonUtils.unsafeEval(depList);

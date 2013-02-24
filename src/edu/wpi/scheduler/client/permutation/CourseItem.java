@@ -64,7 +64,7 @@ public class CourseItem extends CellPanel implements ClickHandler {
 		this.togglePeriods();
 	}
 
-	private void togglePeriods() {
+	public void togglePeriods() {
 
 		if (periodsRow == null) {
 			periodsRow = DOM.createTR();

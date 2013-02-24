@@ -64,6 +64,7 @@ public class Scheduler implements EntryPoint {
 				scheduleDB = database;
 
 				RootPanel.get().add(new MainView(studentSchedule));
+				studentSchedule.loadSchedule();
 
 			}
 
@@ -76,7 +77,7 @@ public class Scheduler implements EntryPoint {
 		});
 		request.send();
 
-		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, URL.encode("/courses.json"));
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, URL.encode("courses.json"));
 		try {
 			builder.sendRequest(null, new RequestCallback() {
 				public void onError(Request request, Throwable exception) {

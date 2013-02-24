@@ -21,52 +21,59 @@ import edu.wpi.scheduler.shared.model.Term;
 import edu.wpi.scheduler.shared.model.Time;
 
 /**
- * Finds all conflicts between periods, and courses schedules. 
+ * Finds all conflicts between periods, and courses schedules.
  * 
- * The procedure works as follows:
- * -Place all the sections in a tree, where each layer of the tree are all sections of a given course (exclude any courses with 0 sections)
- * -Traverse the tree using DFS
- * -Before adding each item of to the DFS, compare the item to all the elements in the DFS's queue, and check for conflicts.
- * -When we reach the end of the tree. (A section of each course is in the queue), and there are no conflicts, create a new schedule. 
+ * The procedure works as follows: -Place all the sections in a tree, where each
+ * layer of the tree are all sections of a given course (exclude any courses
+ * with 0 sections) -Traverse the tree using DFS -Before adding each item of to
+ * the DFS, compare the item to all the elements in the DFS's queue, and check
+ * for conflicts. -When we reach the end of the tree. (A section of each course
+ * is in the queue), and there are no conflicts, create a new schedule.
+ * 
  * @author Nican
- *
+ * 
  */
 public class ScheduleProducer {
-	
+
 	enum CourseRelation {
 		COMPATIBLE,
 		CONFLICT
 	}
-	
+
 	public static class CoursePair {
 		public final Course course1;
 		public final Course course2;
 		private CourseRelation relation = CourseRelation.CONFLICT;
-		
-		CoursePair( Course course1, Course course2 ){
+
+		CoursePair(Course course1, Course course2) {
 			this.course1 = course1;
 			this.course2 = course2;
 		}
-		
-		public boolean isConflict(){
+
+		public boolean isConflict() {
 			return relation == CourseRelation.CONFLICT;
 		}
-		
-		void markCompatible(){
+
+		void markCompatible() {
 			relation = CourseRelation.COMPATIBLE;
 		}
-		
-		public boolean equals( Course course1, Course course2 ){
-			return (this.course1.equals(course1) && this.course2.equals( course2 )) ||
-					(this.course2.equals(course1) && this.course1.equals( course2 ));
+
+		public boolean equals(Course course1, Course course2) {
+			return (this.course1.equals(course1) && this.course2.equals(course2)) ||
+					(this.course2.equals(course1) && this.course1.equals(course2));
+		}
+
+		@Override
+		public String toString() {
+			return "Conflict[" + course1 + "," + course2 + "]";
 		}
 	}
-	
+
 	public static class TreeStateItem {
 		public int id;
 		public boolean hasConflict;
-		
-		public TreeStateItem(int id, boolean hasConflict){
+
+		public TreeStateItem(int id, boolean hasConflict) {
 			this.id = id;
 			this.hasConflict = hasConflict;
 		}
@@ -92,7 +99,7 @@ public class ScheduleProducer {
 	 * LinkedList as a queue/FIFO)
 	 */
 	public final ArrayList<TreeStateItem> treeSearchState = new ArrayList<TreeStateItem>();
-	
+
 	public final ArrayList<CoursePair> courseRelations = new ArrayList<CoursePair>();
 
 	/**
@@ -104,8 +111,8 @@ public class ScheduleProducer {
 			generate();
 		}
 	};
-	
-	boolean active = false;
+
+	boolean active = true;
 	public final PermutationController controller;
 
 	public ScheduleProducer(PermutationController controller) {
@@ -117,36 +124,37 @@ public class ScheduleProducer {
 			if (!sections.isEmpty())
 				producedSections.add(sections);
 		}
-		
+
 		Collections.sort(producedSections, new Comparator<List<Section>>() {
 
 			@Override
 			public int compare(List<Section> o1, List<Section> o2) {
 				int s1 = o1.size();
 				int s2 = o2.size();
-				
-				if( s1 == s2 ) return 0;				
+
+				if (s1 == s2)
+					return 0;
 				return s1 < s2 ? -1 : 1;
 			}
 		});
 
-		
 	}
-	
-	public void start(){
+
+	public void start() {
 		treeSearchState.clear();
 		permutations.clear();
-		
-		//Nothing to do here! We have no sections to produce schedules from
-		if( producedSections.isEmpty() )
+
+		// Nothing to do here! We have no sections to produce schedules from
+		if (producedSections.isEmpty()) {
+			active = false;
 			return;
-		
+		}
+
 		// Start with the root node of the tree
 		addState(0);
 
 		// Start generating!
 		timer.scheduleRepeating(10);
-		active = true;
 	}
 
 	public List<SchedulePermutation> getPermutations() {
@@ -157,30 +165,34 @@ public class ScheduleProducer {
 	 * Cancels the timer from generating any more schedules
 	 */
 	public void cancel() {
-		if(!isActive())
+		if (!isActive())
 			return;
-		
+
 		timer.cancel();
 		active = false;
-		
+
 		controller.fireEvent(new ProducerUpdateEvent(UpdateType.FINISH));
 	}
-	
-	public CoursePair getConflictCourse(){
-		//We have a schedule! We do not have any conflicts!
-		if (permutations.size() > 0 )
+
+	public CoursePair getConflictCourse() {
+		// We have a schedule! We do not have any conflicts!
+		if (permutations.size() > 0)
 			return null;
-		
-		//Find a course pair that is under conflict
-		for( CoursePair pair : courseRelations ){
-			if( pair.isConflict() )
-				return pair;
+
+		CoursePair conflictPair = null;
+
+		// Find a course pair that is under conflict
+		for (CoursePair pair : courseRelations) {
+			if (pair.isConflict()) {
+				conflictPair = pair;
+				System.out.println("Conflicting pairs: " + pair);
+			}
 		}
-		
-		return null;		
+
+		return conflictPair;
 	}
-	
-	public boolean isActive(){
+
+	public boolean isActive() {
 		return active;
 	}
 
@@ -192,11 +204,11 @@ public class ScheduleProducer {
 			generateNext();
 			i++;
 		}
-		
+
 		if (oldSize != permutations.size())
 			controller.fireEvent(new ProducerUpdateEvent(UpdateType.UPDATE));
-		
-		if (!canGenerate() || permutations.size() > 50000 )
+
+		if (!canGenerate() || permutations.size() > 50000)
 			this.cancel();
 	}
 
@@ -209,7 +221,7 @@ public class ScheduleProducer {
 
 		// Can we move down the tree?
 		if (treeSize < producedSections.size()) {
-			
+
 			// Move a step down and compare the current state
 			addState(0);
 
@@ -229,26 +241,26 @@ public class ScheduleProducer {
 			}
 		}
 	}
-	
-	public Section getSectionFromTree( int level ){
+
+	public Section getSectionFromTree(int level) {
 		return producedSections.get(level).get(treeSearchState.get(level).id);
 	}
-	
-	private Map<Term, Integer> getTermCount(){
+
+	private Map<Term, Integer> getTermCount() {
 		Map<Term, Integer> count = new HashMap<Term, Integer>();
-		
-		for( Term term : Term.values() ){
+
+		for (Term term : Term.values()) {
 			count.put(term, 0);
 		}
-		
+
 		for (int i = 0; i < treeSearchState.size(); i++) {
 			Section section = getSectionFromTree(i);
-			
-			for( Term term : section.getTerms() ){
+
+			for (Term term : section.getTerms()) {
 				count.put(term, count.get(term) + 1);
 			}
 		}
-		
+
 		return count;
 	}
 
@@ -259,56 +271,55 @@ public class ScheduleProducer {
 		// Look at our current state, and see if we have any conflicts
 		for (int i = 0; i < treeSearchState.size(); i++) {
 			Section section = getSectionFromTree(i);
-			
-			hasConflicts = hasConflicts(newSection, section);
-			
-			updateCourseRelation( section.course, newSection.course, hasConflicts );
 
-			if (hasConflicts) 
+			hasConflicts = hasConflicts(newSection, section);
+
+			updateCourseRelation(section.course, newSection.course, hasConflicts);
+
+			if (hasConflicts)
 				break;
 		}
-		
-		treeSearchState.add(new TreeStateItem( newId, hasConflicts ));
 
+		treeSearchState.add(new TreeStateItem(newId, hasConflicts));
 
 		// If we are at the leaf of the tree, and we do not have a conflict
 		// We have a winner!
 		if (treeSearchState.size() == producedSections.size() && !hasStateConflicts()) {
 			Map<Term, Integer> termCount = getTermCount();
-			
-			for( Integer count : termCount.values() ){
-				if( count > 4 )
+
+			for (Integer count : termCount.values()) {
+				if (count > 10)
 					return;
-			}		
-			
+			}
+
 			addStateToSchedules();
 		}
 	}
-	
-	public void updateCourseRelation(Course course1, Course course2, boolean hasConflicts ){
+
+	public void updateCourseRelation(Course course1, Course course2, boolean hasConflicts) {
 		CoursePair coursePair = null;
-		
-		for( CoursePair pair : courseRelations ){
-			if( pair.equals( course1, course2 ) ){
+
+		for (CoursePair pair : courseRelations) {
+			if (pair.equals(course1, course2)) {
 				coursePair = pair;
 				break;
-			}			
+			}
 		}
-		
-		if( coursePair == null ){
+
+		if (coursePair == null) {
 			coursePair = new CoursePair(course1, course2);
 			courseRelations.add(coursePair);
 		}
-		
-		if( !hasConflicts )
-			coursePair.markCompatible();		
+
+		if (!hasConflicts)
+			coursePair.markCompatible();
 	}
-	
-	public boolean hasStateConflicts(){
-		for( TreeStateItem item : treeSearchState )
-			if( item.hasConflict == true )
+
+	public boolean hasStateConflicts() {
+		for (TreeStateItem item : treeSearchState)
+			if (item.hasConflict == true)
 				return true;
-		
+
 		return false;
 	}
 
@@ -322,9 +333,9 @@ public class ScheduleProducer {
 		}
 
 		permutations.add(schedule);
-		
-		if( permutations.size() == 1 ){
-			//We are the first insert, make this the selected schedule
+
+		if (permutations.size() == 1) {
+			// We are the first insert, make this the selected schedule
 			controller.selectPermutation(schedule);
 		}
 	}
@@ -339,7 +350,7 @@ public class ScheduleProducer {
 			if (newTerms.contains(term)) {
 				conflictingTerms = true;
 			}
-		}		
+		}
 
 		// The classes are not even in the same days of the year
 		// There are no conflict here
@@ -356,10 +367,10 @@ public class ScheduleProducer {
 		return false;
 
 	}
-	
-	private static boolean containsAny( HashSet<DayOfWeek> days1, HashSet<DayOfWeek> days2 ){
-		for( DayOfWeek day : days1 ){
-			if( days2.contains(day)){
+
+	private static boolean containsAny(HashSet<DayOfWeek> days1, HashSet<DayOfWeek> days2) {
+		for (DayOfWeek day : days1) {
+			if (days2.contains(day)) {
 				return true;
 			}
 		}
@@ -368,8 +379,8 @@ public class ScheduleProducer {
 
 	private static boolean hasConflitcs(Period period, Period newPeriod) {
 
-		//No days in common, no conflicts		
-		if(!containsAny(period.days, newPeriod.days))
+		// No days in common, no conflicts
+		if (!containsAny(period.days, newPeriod.days))
 			return false;
 
 		Time periodStart = period.startTime;

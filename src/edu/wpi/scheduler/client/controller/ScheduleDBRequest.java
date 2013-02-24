@@ -41,8 +41,7 @@ public class ScheduleDBRequest {
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
 
-	private RequestBuilder XMLRequest = new RequestBuilder(RequestBuilder.GET,
-			"/sched.xml");
+	private RequestBuilder XMLRequest = new RequestBuilder(RequestBuilder.GET,"sched.xml");
 
 	protected DBRequestCallback callback;
 	
@@ -107,7 +106,11 @@ public class ScheduleDBRequest {
 
 		@Override
 		public void onFailure(Throwable caught) {
-			callback.OnFailure(caught);
+			try {
+				XMLRequest.send();
+			} catch (RequestException e) {
+				callback.OnFailure(caught);
+			}
 		}
 	};
 

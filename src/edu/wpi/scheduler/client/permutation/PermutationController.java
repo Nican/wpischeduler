@@ -75,6 +75,10 @@ public class PermutationController implements HasHandlers, StudentScheduleEventH
 
 		studentSchedule.addStudentScheduleHandler(this);
 		updateTimeRange();
+		
+		for (SectionProducer producer : studentSchedule.sectionProducers) {
+			conflictController.addCourse(producer.getCourse());
+		}
 	}
 
 	public String getCourseColor(Course course) {

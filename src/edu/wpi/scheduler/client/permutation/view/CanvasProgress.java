@@ -1,4 +1,4 @@
-package edu.wpi.scheduler.client.permutation;
+package edu.wpi.scheduler.client.permutation.view;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,16 +10,23 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.Context2d.TextAlign;
 import com.google.gwt.canvas.dom.client.Context2d.TextBaseline;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.ComplexPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RequiresResize;
-import com.google.gwt.user.client.ui.SimplePanel;
 
 import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
 import edu.wpi.scheduler.client.controller.ScheduleProducer;
 import edu.wpi.scheduler.client.controller.ScheduleProducer.ProducerEventHandler;
+import edu.wpi.scheduler.client.permutation.PermutationController;
 import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.Section;
 
-public class CanvasProgress extends SimplePanel implements ProducerEventHandler, AnimationCallback, RequiresResize {
+public class CanvasProgress extends ComplexPanel implements ProducerEventHandler, AnimationCallback, RequiresResize, ResizeHandler {
 
 	public static class CanvasProgressSection {
 		public double x;
@@ -35,32 +42,60 @@ public class CanvasProgress extends SimplePanel implements ProducerEventHandler,
 	}
 
 	private final double lineHeight = 32.0;
+	HandlerRegistration resizeRegistration;
 
 	PermutationController controller;
 	Canvas canvas = Canvas.createIfSupported();
 	Canvas background = Canvas.createIfSupported();
+	Label title = new Label("Looking for schedules...");
 
 	protected List<CanvasProgressSection> sections = new ArrayList<CanvasProgressSection>();
 
 	public CanvasProgress(PermutationController controller) {
+		setElement(DOM.createDiv());
 		this.controller = controller;
 
 		this.getElement().getStyle().setHeight(100.0, Unit.PCT);
 
-		this.add(canvas);
-
+		title.setStyleName("ScheduleLoadingLabel");
+		
+		this.add(title, getElement());
+		this.add(canvas, getElement());
+		
+		
+		
+		
+		/*
+		SimplePanel cover = new SimplePanel();
+		Style coverStyle = cover.getElement().getStyle();
+		coverStyle.setPosition(Position.ABSOLUTE);
+		coverStyle.setZIndex(100);
+		coverStyle.setLeft(0.0, Unit.PX);
+		coverStyle.setRight(0.0, Unit.PX);
+		coverStyle.setTop(0.0, Unit.PX);
+		coverStyle.setBottom(0.0, Unit.PX);
+		coverStyle.setOpacity(0.3);
+		coverStyle.setBackgroundColor("#000");
+		
+		this.add(cover, getElement());
+		
+		cover.setWidget(new Label("TESTTT"));
+		*/
+		
 	}
 
 	@Override
 	public void onLoad() {
 		controller.addProduceHandler(this);
-
+		resizeRegistration = Window.addResizeHandler(this);
+		
 		updateSize();
 	}
 
 	@Override
 	public void onUnload() {
 		controller.removeProduceHandler(this);
+		resizeRegistration.removeHandler();
 	}
 
 	public void updateSize() {
@@ -141,9 +176,10 @@ public class CanvasProgress extends SimplePanel implements ProducerEventHandler,
 			String title = course.name + " (" + course.department.abbreviation + course.number + ")";
 			context.setTextBaseline(TextBaseline.BOTTOM);
 			context.fillText(title, width / 2, courseY - 4);
-
 		}
 
+		title.getElement().getStyle().setLeft(width / 2 - title.getElement().getClientWidth() / 2, Unit.PX);
+		title.getElement().getStyle().setTop(height / 2 - title.getElement().getClientHeight() / 2, Unit.PX);
 	}
 
 	public void redraw() {
@@ -160,6 +196,11 @@ public class CanvasProgress extends SimplePanel implements ProducerEventHandler,
 
 	@Override
 	public void onResize() {
+		updateSize();
+	}
+	
+	@Override
+	public void onResize(ResizeEvent event) {
 		updateSize();
 	}
 
@@ -199,6 +240,6 @@ public class CanvasProgress extends SimplePanel implements ProducerEventHandler,
 			initItems();
 
 		this.redraw();
-	}
+	}	
 
 }

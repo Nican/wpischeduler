@@ -143,6 +143,10 @@ public class PeriodSelectList extends FlowPanel implements StudentScheduleEventH
 		HashMap<Course, List<Section>> conflictMap = new HashMap<Course, List<Section>>();
 
 		for (Section section : conflictList) {
+			//If the section is no longer in the student section, we do not care about it.
+			if( controller.getStudentSchedule().getSectionProducer(section.course) == null )
+				continue;
+			
 			if (!conflictMap.containsKey(section.course))
 				conflictMap.put(section.course, new ArrayList<Section>());
 

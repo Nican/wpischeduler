@@ -3,6 +3,8 @@
  */
 package edu.wpi.scheduler.client.courseselection;
 
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
@@ -89,9 +91,15 @@ public class CourseSelectorView extends Composite implements
 		// Clear the body from any existing elements
 		courseList.clear();
 		
-		for( Department department : departmentList.getSelectedDepartments() ){
+		List<Department> departments = departmentList.getSelectedDepartments();
+		
+		for( Department department : departments ){
 			courseList.addDeparment(department);
-		}		
+		}
+		
+		if( departments.size() > 0 && selectionController.getSelectedCourse() == null ){
+			selectionController.selectCourse( departments.get(0).courses.get(0) );
+		}
 	}
 
 	/**

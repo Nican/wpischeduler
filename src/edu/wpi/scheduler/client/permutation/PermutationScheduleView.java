@@ -7,6 +7,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.RequiresResize;
@@ -15,6 +16,9 @@ import com.google.gwt.user.client.ui.Widget;
 import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
 import edu.wpi.scheduler.client.controller.ScheduleProducer;
 import edu.wpi.scheduler.client.controller.ScheduleProducer.ProducerEventHandler;
+import edu.wpi.scheduler.client.permutation.view.CanvasProgress;
+import edu.wpi.scheduler.client.permutation.view.ConflictResolverWidget;
+import edu.wpi.scheduler.client.permutation.view.DetailedView;
 import edu.wpi.scheduler.client.permutation.view.GridCourseView;
 import edu.wpi.scheduler.client.permutation.view.WeekCourseView;
 
@@ -23,7 +27,9 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 	enum ViewMode {
 		GRID,
 		SINGLE,
-		PROGRESS
+		PROGRESS,
+		CONFLICT,
+		DETAIL
 	}
 
 	private PermutationController controller;
@@ -53,17 +59,17 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 			}
 		});
 
-		Button singleButton = new Button("Single", new ClickHandler() {
+		Button singleButton = new Button("Detail", new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				setView(ViewMode.SINGLE);
+				setView(ViewMode.DETAIL);
 			}
 		});
 
-		progressButton = new Button("0 Schedules...", new ClickHandler() {
+		progressButton = new Button("Favorite (insert star)", new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				setView(ViewMode.PROGRESS);
+				
 			}
 		});
 		progressButton.getElement().getStyle().setFloat(Float.RIGHT);
@@ -82,7 +88,6 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 	protected void onLoad() {
 		controller.addSelectListner(this);
 		controller.addProduceHandler(this);
-		updateProgressButton();
 		update();
 	}
 
@@ -97,9 +102,10 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 		ScheduleProducer producer = controller.getProducer();
 		int size = producer.getPermutations().size();
 
-		if (size == 0)
-			target = ViewMode.PROGRESS;
-		
+		if (size == 0){
+			target = producer.isActive() ? ViewMode.PROGRESS : ViewMode.CONFLICT;
+		}
+			
 		if (target == viewMode)
 			return;
 
@@ -114,6 +120,8 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 		add(bodyWidget, body);
 		viewMode = target;
 		
+		progressButton.setVisible( target == ViewMode.SINGLE || target == ViewMode.GRID || target == ViewMode.DETAIL );
+		controller.setSelectedSection(null);
 	}
 
 	public void setView(ViewMode mode) {
@@ -129,6 +137,10 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 			return new WeekCourseView(controller);
 		case PROGRESS:
 			return new CanvasProgress(controller);
+		case CONFLICT:
+			return new ConflictResolverWidget(controller);
+		case DETAIL:
+			return new DetailedView(controller);
 		}
 
 		return null;
@@ -140,24 +152,21 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 			setView(ViewMode.GRID);
 		}
 	}
-
-	public void updateProgressButton() {
-		ScheduleProducer producer = controller.getProducer();
-		int size = producer.getPermutations().size();
-
-		String text = (size > 1000 ? (size / 1000) + "k" : size) + " Schedules";
-
-		if (producer.isActive())
-			text += "...";
-
-		if (!progressButton.getText().equals(text))
-			progressButton.setText(text);
-	}
+	
+	/**
+	 * Constant change of the view can be a bit ugly for the eyes
+	 * We are putting a delay
+	 */
+	Timer updateTimer = new Timer() {
+		@Override
+		public void run() {
+			update();
+		}
+	};
 
 	@Override
 	public void onPermutationUpdated(UpdateType type) {
-		updateProgressButton();
-		update();
+		updateTimer.schedule(50);
 	}
 
 	@Override
