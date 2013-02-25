@@ -43,10 +43,10 @@ public class Fill {
 	void fillTimes(StudentChosenTimes model)
 	{
 		// Clear current fill
-		canvas.getContext2d().setFillStyle("#FFCCCC");
+		canvas.getContext2d().setFillStyle("#FFDEDE");
 		canvas.getContext2d().fillRect(0, 0, width, height);
 		// Fill currently selected times
-		canvas.getContext2d().setFillStyle("#CCFFCC");
+		canvas.getContext2d().setFillStyle("#339900");
 		// Fill area given
 		List<Time> times; 
 		for( int j = TimeCell.START_DAY; j <= TimeCell.NUM_DAYS; j++)
