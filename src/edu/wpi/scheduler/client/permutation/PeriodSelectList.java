@@ -150,6 +150,7 @@ public class PeriodSelectList extends FlowPanel implements StudentScheduleEventH
 	@Override
 	protected void onLoad() {
 		controller.getStudentSchedule().addStudentScheduleHandler(this);
+		update();
 	}
 
 	@Override

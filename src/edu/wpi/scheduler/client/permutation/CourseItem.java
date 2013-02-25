@@ -34,6 +34,8 @@ public class CourseItem extends CellPanel implements ClickHandler {
 		collapseButton.addClickHandler(this);
 
 		this.setStyleName("permutationCourseItem");
+		
+		setSpacing(0);
 
 		Element titleRow = DOM.createTR();
 		Element collapseCell = DOM.createTD();
