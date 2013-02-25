@@ -13,17 +13,13 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
-import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.controller.StudentScheduleEvent;
 import edu.wpi.scheduler.client.controller.StudentScheduleEventHandler;
 import edu.wpi.scheduler.shared.model.Course;
@@ -78,40 +74,24 @@ public class PeriodSelectList extends FlowPanel implements StudentScheduleEventH
 
 	}
 
-	public class PeriodCheckbox extends ComplexPanel implements ValueChangeHandler<Boolean>, MouseOverHandler, MouseOutHandler {
+	public class PeriodListItem extends ComplexPanel implements MouseOverHandler, MouseOutHandler {
 
-		public final CheckBox checkBox = new CheckBox();
 		public final Section section;
-		public final SectionProducer producer;
 
-		public PeriodCheckbox(Section section, SectionProducer producer) {
-			assert (producer != null);
+		public PeriodListItem(Section section) {
 			setElement(DOM.createDiv());
-			this.producer = producer;
 			this.section = section;
-
-			checkBox.setText(section.number);
-			checkBox.addValueChangeHandler(this);
 
 			this.addDomHandler(this, MouseOverEvent.getType());
 			this.addDomHandler(this, MouseOutEvent.getType());
-			this.add(checkBox, this.getElement());
+			this.add(new SectionCheckbox(controller.getStudentSchedule(), section), this.getElement());
 			this.add(new PeriodProfessorLabel(section), this.getElement());
 			update();
 		}
 
-		@Override
-		public void onValueChange(ValueChangeEvent<Boolean> event) {
-			if (event.getValue() == true) {
-				producer.removeDenySection(section);
-			} else {
-				producer.denySection(section);
-			}
-		}
+
 
 		public void update() {
-			checkBox.setValue(!producer.isSectionDenied(section));
-
 			SchedulePermutation permutation = controller.getSelectedPermutation();
 
 			if (permutation != null && permutation.sections.contains(section)) {
@@ -160,8 +140,7 @@ public class PeriodSelectList extends FlowPanel implements StudentScheduleEventH
 			this.add(label);
 
 			for (Section section : entry.getValue()) {
-				SectionProducer producer = controller.getStudentSchedule().getSectionProducer(section.course);
-				PeriodCheckbox checkbox = new PeriodCheckbox(section, producer);
+				PeriodListItem checkbox = new PeriodListItem(section);
 				checkbox.getElement().getStyle().setPaddingLeft(8.0, Unit.PX);
 				this.add(checkbox);
 			}
@@ -185,8 +164,8 @@ public class PeriodSelectList extends FlowPanel implements StudentScheduleEventH
 
 	public void update() {
 		for (Widget widget : this.getChildren()) {
-			if (widget instanceof PeriodCheckbox)
-				((PeriodCheckbox) widget).update();
+			if (widget instanceof PeriodListItem)
+				((PeriodListItem) widget).update();
 		}
 	}
 

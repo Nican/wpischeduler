@@ -1,5 +1,6 @@
 package edu.wpi.scheduler.client.permutation.view;
 
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -8,12 +9,24 @@ import com.google.gwt.user.client.ui.Label;
 import edu.wpi.scheduler.client.CourseDescription;
 import edu.wpi.scheduler.client.Scheduler;
 import edu.wpi.scheduler.client.controller.ConflictController.ConflictedList;
+import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.permutation.PeriodSelectList;
 import edu.wpi.scheduler.client.permutation.PermutationController;
+import edu.wpi.scheduler.client.permutation.SectionCheckbox;
 import edu.wpi.scheduler.shared.model.Section;
 
 public class PeriodDescriptionDialogBox extends DialogBox {
 
+	public static class TitleCheckbox extends SectionCheckbox implements Caption {
+		public TitleCheckbox(StudentSchedule schedule, Section section ){
+			super(schedule, section);
+			setStyleName("Caption");
+			getElement().getStyle().setDisplay(Display.BLOCK);
+			setText(section.course.toString() + " - " + section.number);
+		}
+	}
+	
+	
 	public final Section section;
 
 	public final DockPanel dockPanel = new DockPanel();
@@ -22,11 +35,10 @@ public class PeriodDescriptionDialogBox extends DialogBox {
 	public final FlowPanel conflictList = new FlowPanel();
 
 	public PeriodDescriptionDialogBox(PermutationController controller, Section section) {
-		super(true);
+		super(true, true, new TitleCheckbox(controller.getStudentSchedule(), section));
 		this.section = section;
 		periodInfo = new PeriodDataGrid(section);
 		
-		setText(section.course.toString() + " - " + section.number);
 		getElement().getStyle().setProperty("width", "50%");
 		getElement().getStyle().setZIndex(10);
 

@@ -204,6 +204,9 @@ public class StudentSchedule implements HasHandlers
 				SectionProducerData data = sections.get(i);
 				Course course = getCourse( data );
 				
+				if( course == null )
+					continue;
+				
 				SectionProducer producer = addCourse(course);
 				
 				if( producer == null )
@@ -211,7 +214,7 @@ public class StudentSchedule implements HasHandlers
 				
 				for( Section section : course.sections ){
 					if( data.hasSections(section.number))
-						producer.denySection(section);					
+						producer.denySection(section);
 				}
 			}
 

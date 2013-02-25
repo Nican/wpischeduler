@@ -41,7 +41,7 @@ public class CourseList extends ComplexPanel {
 			
 			item.add("128px", new TermView(course));
 			item.add(null, fixCase(course.name));
-			item.add(null, course.sections.get(0).term);
+			//item.add(null, course.sections.get(0).term);
 
 			this.add( item );
 		}

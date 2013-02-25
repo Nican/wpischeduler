@@ -271,7 +271,7 @@ public class ScheduleProducer {
 			Map<Term, Integer> termCount = getTermCount();
 
 			for (Integer count : termCount.values()) {
-				if (count > 10)
+				if (count > 4)
 					return;
 			}
 
