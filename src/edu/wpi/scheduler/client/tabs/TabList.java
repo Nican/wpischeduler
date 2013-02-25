@@ -1,6 +1,7 @@
 package edu.wpi.scheduler.client.tabs;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -29,6 +30,8 @@ public class TabList extends Composite {
 	
 	final CourseSelectionTab courseSelection;
 	final TimeTab timeChooser;
+	
+	BaseTab lastSelected;
 
 	public TabList( MainView mainView, StudentSchedule studentSchedule ) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -40,7 +43,7 @@ public class TabList extends Composite {
 		
 		addTab(  timeChooser );
 		addTab( courseSelection  );
-		addTab( new PermutationTab(studentSchedule)  );
+		addTab( new PermutationTab(studentSchedule)  );		
 	}
 	
 	public Widget getHomeView(){
@@ -56,8 +59,35 @@ public class TabList extends Composite {
 			public void onClick(ClickEvent event) {
 				mainView.setBody( baseTab.getBody() );
 				baseTab.updateView();
+				lastSelected = baseTab;
+				update();
 			}
 		});
+		
+		if( lastSelected == null )
+			lastSelected = baseTab;
+		
+		update();
+	}
+	
+	public void update(){
+		int count = horizontalPanel.getWidgetCount();
+		String bgColor = "#FFFFFF";
+		
+		for( int i = 0; i < count; i++ ){
+			Widget widget = horizontalPanel.getWidget(i);
+			Style style = widget.getElement().getStyle();
+			
+			style.setZIndex(count-i);
+			style.setBackgroundColor(bgColor);
+			
+			if( lastSelected == widget)
+				bgColor = null;
+			
+			widget.setStyleName( i == count-1 ? "sched-TopButton" : "sched-TopButton-notLast");
+		}
+		
+		
 	}
 
 

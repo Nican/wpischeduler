@@ -10,11 +10,12 @@ public abstract class BaseTab extends Button {
 	public final StudentSchedule studentSchedule;
 
 	public BaseTab(StudentSchedule studentSchedule, String name) {
+		super(name);
 		this.studentSchedule = studentSchedule;
 
-		this.setText(name);
-
-		this.setHeight("100%");
+		setText(name);
+		setHeight("100%");
+		setStyleName("sched-TopButton");
 	}
 
 	public abstract Widget getBody();

@@ -12,10 +12,14 @@
 		.rightTabs > button {
 			height: 64px;
 		}
+		
+		.topBar {
+			border-bottom: 1px solid #AAAAAA;
+		}
 	</ui:style>
 	<g:DockLayoutPanel ui:field="layoutPanel">
 		<g:north size="64">
-			<g:DockLayoutPanel>
+			<g:DockLayoutPanel styleName='{style.topBar}'>
 				<g:west size="198">
 					<g:Image resource='{res.logo}' />
 				</g:west>
