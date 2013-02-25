@@ -15,7 +15,7 @@ import edu.wpi.scheduler.shared.model.TimeCell;
 public class TimeChooserView extends Composite 
 {
 	private static TimeChooserViewUiBinder uiBinder = GWT.create(TimeChooserViewUiBinder.class);
-	
+
 	@UiField AbsolutePanel ATermGrid;
 	@UiField AbsolutePanel ATermHours;
 	@UiField AbsolutePanel ATermDays;
@@ -28,60 +28,70 @@ public class TimeChooserView extends Composite
 	@UiField AbsolutePanel DTermGrid;
 	@UiField AbsolutePanel DTermHours;
 	@UiField AbsolutePanel DTermDays;
-	
+
+	@UiField AbsolutePanel TimeChooserPanel;
 	@UiField AbsolutePanel WelcomeHelp;
-	
+
 	final int totalWidth = 512;
 	final int totalHeight = 384;
 	final int columnWidth = 55;
 	final int rowHeight = 20;
 	final int gridWidth = totalWidth - columnWidth;
 	final int gridHeight = totalHeight - rowHeight;
-	
+
 	interface TimeChooserViewUiBinder extends UiBinder<Widget, TimeChooserView> {}
-	
+
 	public TimeChooserView(StudentSchedule studentSchedule) 
 	{
-		initWidget(uiBinder.createAndBindUi(this));
-		
-		ATermGrid.setPixelSize(gridWidth, gridHeight);
-		ATermHours.setPixelSize(columnWidth, totalHeight);
-		ATermDays.setPixelSize(totalWidth, rowHeight);
-		BTermGrid.setPixelSize(gridWidth, gridHeight);
-		BTermHours.setPixelSize(columnWidth, totalHeight);
-		BTermDays.setPixelSize(totalWidth, rowHeight);
-		CTermGrid.setPixelSize(gridWidth, gridHeight);
-		CTermHours.setPixelSize(columnWidth, totalHeight);
-		CTermDays.setPixelSize(totalWidth, rowHeight);
-		DTermGrid.setPixelSize(gridWidth, gridHeight);
-		DTermHours.setPixelSize(columnWidth, totalHeight);
-		DTermDays.setPixelSize(totalWidth, rowHeight);
-		
-		for(int i = 0; i < TimeCell.NUM_DAYS; i++)
+		try
 		{
-			ATermDays.add(new Label(TimeCell.week[TimeCell.START_DAY+i].name()), (gridWidth/TimeCell.NUM_DAYS)*(i), 0);
-			BTermDays.add(new Label(TimeCell.week[TimeCell.START_DAY+i].name()), (gridWidth/TimeCell.NUM_DAYS)*(i), 0);
-			CTermDays.add(new Label(TimeCell.week[TimeCell.START_DAY+i].name()), (gridWidth/TimeCell.NUM_DAYS)*(i), 0);
-			DTermDays.add(new Label(TimeCell.week[TimeCell.START_DAY+i].name()), (gridWidth/TimeCell.NUM_DAYS)*(i), 0);
+			initWidget(uiBinder.createAndBindUi(this));
+
+			ATermGrid.add(new TimeChooser(studentSchedule.ATermTimes, gridWidth, gridHeight));
+			BTermGrid.add(new TimeChooser(studentSchedule.BTermTimes, gridWidth, gridHeight));
+			CTermGrid.add(new TimeChooser(studentSchedule.CTermTimes, gridWidth, gridHeight));
+			DTermGrid.add(new TimeChooser(studentSchedule.DTermTimes, gridWidth, gridHeight));
+
+			ATermGrid.setPixelSize(gridWidth, gridHeight);
+			ATermHours.setPixelSize(columnWidth, totalHeight);
+			ATermDays.setPixelSize(totalWidth, rowHeight);
+			BTermGrid.setPixelSize(gridWidth, gridHeight);
+			BTermHours.setPixelSize(columnWidth, totalHeight);
+			BTermDays.setPixelSize(totalWidth, rowHeight);
+			CTermGrid.setPixelSize(gridWidth, gridHeight);
+			CTermHours.setPixelSize(columnWidth, totalHeight);
+			CTermDays.setPixelSize(totalWidth, rowHeight);
+			DTermGrid.setPixelSize(gridWidth, gridHeight);
+			DTermHours.setPixelSize(columnWidth, totalHeight);
+			DTermDays.setPixelSize(totalWidth, rowHeight);
+
+			for(int i = 0; i < TimeCell.NUM_DAYS; i++)
+			{
+				ATermDays.add(new Label(TimeCell.week[TimeCell.START_DAY+i].name()), (gridWidth/TimeCell.NUM_DAYS)*(i), 0);
+				BTermDays.add(new Label(TimeCell.week[TimeCell.START_DAY+i].name()), (gridWidth/TimeCell.NUM_DAYS)*(i), 0);
+				CTermDays.add(new Label(TimeCell.week[TimeCell.START_DAY+i].name()), (gridWidth/TimeCell.NUM_DAYS)*(i), 0);
+				DTermDays.add(new Label(TimeCell.week[TimeCell.START_DAY+i].name()), (gridWidth/TimeCell.NUM_DAYS)*(i), 0);
+			}
+
+			Time t = new Time(TimeCell.START_HOUR, TimeCell.START_MIN);
+			for(int i = 0; i <= TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR; i++)
+			{
+				ATermHours.add(new Label(t.toString()), 0, (int) ((gridHeight/(TimeCell.NUM_HOURS*TimeCell.CELLS_PER_HOUR))*( i + .5)));
+				BTermHours.add(new Label(t.toString()), 0, (int) ((gridHeight/(TimeCell.NUM_HOURS*TimeCell.CELLS_PER_HOUR))*( i + .5)));
+				CTermHours.add(new Label(t.toString()), 0, (int) ((gridHeight/(TimeCell.NUM_HOURS*TimeCell.CELLS_PER_HOUR))*( i + .5)));
+				DTermHours.add(new Label(t.toString()), 0, (int) ((gridHeight/(TimeCell.NUM_HOURS*TimeCell.CELLS_PER_HOUR))*( i + .5)));
+				t.increment(0, 60/TimeCell.CELLS_PER_HOUR);
+			}
 		}
-		
-		Time t = new Time(TimeCell.START_HOUR, TimeCell.START_MIN);
-		for(int i = 0; i <= TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR; i++)
+		catch(Exception e)
 		{
-			ATermHours.add(new Label(t.toString()), 0, (int) ((gridHeight/(TimeCell.NUM_HOURS*TimeCell.CELLS_PER_HOUR))*( i + .5)));
-			BTermHours.add(new Label(t.toString()), 0, (int) ((gridHeight/(TimeCell.NUM_HOURS*TimeCell.CELLS_PER_HOUR))*( i + .5)));
-			CTermHours.add(new Label(t.toString()), 0, (int) ((gridHeight/(TimeCell.NUM_HOURS*TimeCell.CELLS_PER_HOUR))*( i + .5)));
-			DTermHours.add(new Label(t.toString()), 0, (int) ((gridHeight/(TimeCell.NUM_HOURS*TimeCell.CELLS_PER_HOUR))*( i + .5)));
-			t.increment(0, 60/TimeCell.CELLS_PER_HOUR);
+			TimeChooserPanel.add(new Label("Your internet browser does not support canvases; All class times are selected by default\n" +
+											"If you would like to select specific times to take classes, please use the latest version of IE, Firefox, or Chrome"));
 		}
-		ATermGrid.add(new TimeChooser(studentSchedule.ATermTimes, gridWidth, gridHeight));
-		BTermGrid.add(new TimeChooser(studentSchedule.BTermTimes, gridWidth, gridHeight));
-		CTermGrid.add(new TimeChooser(studentSchedule.CTermTimes, gridWidth, gridHeight));
-		DTermGrid.add(new TimeChooser(studentSchedule.DTermTimes, gridWidth, gridHeight));
-		
+
 		createWelcome();
 	}
-	
+
 	private void createWelcome()
 	{
 		WelcomeHelp.add(new Label("Welcome to the new WPI Scheduler!\nPossible space to include helpful information for non-inuitive things"));

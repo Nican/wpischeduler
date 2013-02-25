@@ -2,58 +2,60 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
-	<g:HorizontalPanel>
-		<g:VerticalPanel>
-			<g:HorizontalPanel>
-				<g:DockPanel>
-					<g:Dock direction="CENTER">
-						<g:AbsolutePanel ui:field="ATermGrid" />
-					</g:Dock>
-					<g:Dock direction="WEST">
-						<g:AbsolutePanel ui:field="ATermHours" />
-					</g:Dock>
-					<g:Dock direction="NORTH">
-						<g:AbsolutePanel ui:field="ATermDays" />
-					</g:Dock>
-				</g:DockPanel>
-				<g:DockPanel>
-					<g:Dock direction="CENTER">
-						<g:AbsolutePanel ui:field="BTermGrid" />
-					</g:Dock>
-					<g:Dock direction="WEST">
-						<g:AbsolutePanel ui:field="BTermHours" />
-					</g:Dock>
-					<g:Dock direction="NORTH">
-						<g:AbsolutePanel ui:field="BTermDays" />
-					</g:Dock>
-				</g:DockPanel>
-			</g:HorizontalPanel>
-			<g:HorizontalPanel>
-				<g:DockPanel>
-					<g:Dock direction="CENTER">
-						<g:AbsolutePanel ui:field="CTermGrid" />
-					</g:Dock>
-					<g:Dock direction="WEST">
-						<g:AbsolutePanel ui:field="CTermHours" />
-					</g:Dock>
-					<g:Dock direction="NORTH">
-						<g:AbsolutePanel ui:field="CTermDays" />
-					</g:Dock>
-				</g:DockPanel>
-				<g:DockPanel>
-					<g:Dock direction="CENTER">
-						<g:AbsolutePanel ui:field="DTermGrid" />
-					</g:Dock>
-					<g:Dock direction="WEST">
-						<g:AbsolutePanel ui:field="DTermHours" />
-					</g:Dock>
-					<g:Dock direction="NORTH">
-						<g:AbsolutePanel ui:field="DTermDays" />
-					</g:Dock>
-				</g:DockPanel>
-			</g:HorizontalPanel>
-		</g:VerticalPanel>
-		<g:AbsolutePanel ui:field="WelcomeHelp"/>
-	</g:HorizontalPanel>
+	<g:AbsolutePanel ui:field="TimeChooserPanel">
+		<g:HorizontalPanel>
+			<g:VerticalPanel>
+				<g:HorizontalPanel>
+					<g:DockPanel>
+						<g:Dock direction="CENTER">
+							<g:AbsolutePanel ui:field="ATermGrid" />
+						</g:Dock>
+						<g:Dock direction="WEST">
+							<g:AbsolutePanel ui:field="ATermHours" />
+						</g:Dock>
+						<g:Dock direction="NORTH">
+							<g:AbsolutePanel ui:field="ATermDays" />
+						</g:Dock>
+					</g:DockPanel>
+					<g:DockPanel>
+						<g:Dock direction="CENTER">
+							<g:AbsolutePanel ui:field="BTermGrid" />
+						</g:Dock>
+						<g:Dock direction="WEST">
+							<g:AbsolutePanel ui:field="BTermHours" />
+						</g:Dock>
+						<g:Dock direction="NORTH">
+							<g:AbsolutePanel ui:field="BTermDays" />
+						</g:Dock>
+					</g:DockPanel>
+				</g:HorizontalPanel>
+				<g:HorizontalPanel>
+					<g:DockPanel>
+						<g:Dock direction="CENTER">
+							<g:AbsolutePanel ui:field="CTermGrid" />
+						</g:Dock>
+						<g:Dock direction="WEST">
+							<g:AbsolutePanel ui:field="CTermHours" />
+						</g:Dock>
+						<g:Dock direction="NORTH">
+							<g:AbsolutePanel ui:field="CTermDays" />
+						</g:Dock>
+					</g:DockPanel>
+					<g:DockPanel>
+						<g:Dock direction="CENTER">
+							<g:AbsolutePanel ui:field="DTermGrid" />
+						</g:Dock>
+						<g:Dock direction="WEST">
+							<g:AbsolutePanel ui:field="DTermHours" />
+						</g:Dock>
+						<g:Dock direction="NORTH">
+							<g:AbsolutePanel ui:field="DTermDays" />
+						</g:Dock>
+					</g:DockPanel>
+				</g:HorizontalPanel>
+			</g:VerticalPanel>
+			<g:AbsolutePanel ui:field="WelcomeHelp" />
+		</g:HorizontalPanel>
+	</g:AbsolutePanel>
 
 </ui:UiBinder> 

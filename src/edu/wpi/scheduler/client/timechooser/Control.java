@@ -104,7 +104,7 @@ public class Control {
 	
 	void drawDrag(int i1, int j1, int i2, int j2, boolean isSelected)
 	{
-		final String color = (isSelected) ? "white" : "red";
+		final String color = (isSelected) ?  "#CC3333" : "#33CC33";
 		canvas.getContext2d().setStrokeStyle(color);
 		// Stroke drag rectangle
 		canvas.getContext2d().strokeRect(j1, i1, (j2-j1), (i2-i1));

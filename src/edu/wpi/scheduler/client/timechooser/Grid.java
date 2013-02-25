@@ -42,7 +42,7 @@ public class Grid {
 	{
 		int w = width / numDays;
 		int h = height / numHours;
-		canvas.getContext2d().setStrokeStyle("black");
+		canvas.getContext2d().setStrokeStyle("#080808");
 		// Stroke outside
 		canvas.getContext2d().strokeRect(0, 0, width, height);
 		// Stroke grid
