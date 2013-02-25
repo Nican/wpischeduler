@@ -38,13 +38,13 @@ public class TabList extends Composite {
 		courseSelection = new CourseSelectionTab(studentSchedule);
 		timeChooser = new TimeTab(studentSchedule);
 		
-		addTab( courseSelection  );
 		addTab(  timeChooser );
+		addTab( courseSelection  );
 		addTab( new PermutationTab(studentSchedule)  );
 	}
 	
 	public Widget getHomeView(){
-		return courseSelection.getBody();
+		return timeChooser.getBody();
 	}
 	
 	public void addTab( final BaseTab baseTab ){
