@@ -20,8 +20,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
-import edu.wpi.scheduler.client.controller.StudentScheduleEvent;
-import edu.wpi.scheduler.client.controller.StudentScheduleEventHandler;
 import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.Section;
 
@@ -32,7 +30,7 @@ import edu.wpi.scheduler.shared.model.Section;
  * @author Nican
  * 
  */
-public class PeriodSelectList extends FlowPanel implements StudentScheduleEventHandler {
+public class PeriodSelectList extends FlowPanel implements PermutationSelectEventHandler {
 
 	public final PermutationController controller;
 
@@ -149,18 +147,13 @@ public class PeriodSelectList extends FlowPanel implements StudentScheduleEventH
 
 	@Override
 	protected void onLoad() {
-		controller.getStudentSchedule().addStudentScheduleHandler(this);
+		controller.addSelectListner(this);
 		update();
 	}
 
 	@Override
 	protected void onUnload() {
-		controller.getStudentSchedule().removeStudentScheduleHandler(this);
-	}
-
-	@Override
-	public void onCoursesChanged(StudentScheduleEvent studentScheduleEvent) {
-		this.update();
+		controller.removeSelectListner(this);
 	}
 
 	public void update() {
@@ -168,6 +161,11 @@ public class PeriodSelectList extends FlowPanel implements StudentScheduleEventH
 			if (widget instanceof PeriodListItem)
 				((PeriodListItem) widget).update();
 		}
+	}
+
+	@Override
+	public void onPermutationSelected(PermutationSelectEvent permutation) {
+		update();
 	}
 
 }
