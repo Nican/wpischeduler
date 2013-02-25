@@ -11,10 +11,14 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.RequiresResize;
+import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 
+import edu.wpi.scheduler.client.controller.FavoriteEventHandler;
 import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
+import edu.wpi.scheduler.client.controller.SchedulePermutation;
 import edu.wpi.scheduler.client.controller.ScheduleProducer;
+import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.controller.ScheduleProducer.ProducerEventHandler;
 import edu.wpi.scheduler.client.permutation.view.CanvasProgress;
 import edu.wpi.scheduler.client.permutation.view.ConflictResolverWidget;
@@ -22,7 +26,7 @@ import edu.wpi.scheduler.client.permutation.view.DetailedView;
 import edu.wpi.scheduler.client.permutation.view.GridCourseView;
 import edu.wpi.scheduler.client.permutation.view.WeekCourseView;
 
-public class PermutationScheduleView extends ComplexPanel implements PermutationSelectEventHandler, ProducerEventHandler, RequiresResize {
+public class PermutationScheduleView extends ComplexPanel implements PermutationSelectEventHandler, ProducerEventHandler, RequiresResize, FavoriteEventHandler {
 
 	enum ViewMode {
 		GRID,
@@ -39,9 +43,9 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 	
 	Element body = DOM.createDiv();
 	public Widget bodyWidget;
-	Button progressButton;
+	ToggleButton favoriteButton;
 
-	public PermutationScheduleView(PermutationController controller) {
+	public PermutationScheduleView(final PermutationController controller) {
 		setElement(DOM.createDiv());
 		this.controller = controller;
 		Element header = DOM.createDiv();
@@ -66,17 +70,28 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 			}
 		});
 
-		progressButton = new Button("Favorite (insert star)", new ClickHandler() {
+		favoriteButton = new ToggleButton("Favorite (insert star)", new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				StudentSchedule studentSchedule = controller.getStudentSchedule();
+				SchedulePermutation permutation = controller.getSelectedPermutation();
 				
+				System.out.println("Toggling favorite: " + permutation );
+				
+				if( permutation == null )
+					return;
+				
+				if(!studentSchedule.containsFavorite(permutation))
+					studentSchedule.addFavorite(permutation);
+				else
+					studentSchedule.removeFavorite(permutation);
 			}
 		});
-		progressButton.getElement().getStyle().setFloat(Float.RIGHT);
+		favoriteButton.getElement().getStyle().setFloat(Float.RIGHT);
 
 		add(gridButton, header);
 		add(singleButton, header);
-		add(progressButton, header);
+		add(favoriteButton, header);
 
 		getElement().appendChild(header);
 		getElement().appendChild(body);
@@ -88,6 +103,7 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 	protected void onLoad() {
 		controller.addSelectListner(this);
 		controller.addProduceHandler(this);
+		controller.getStudentSchedule().addFavoriteHandler(this);
 		update();
 	}
 
@@ -100,7 +116,12 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 	public void update(){
 		ViewMode target = selectedViewMode;
 		ScheduleProducer producer = controller.getProducer();
+		StudentSchedule studentSchedule = controller.getStudentSchedule();
+		SchedulePermutation permutation = controller.getSelectedPermutation();
 		int size = producer.getPermutations().size();
+		
+		if(permutation != null )
+			favoriteButton.setDown(studentSchedule.containsFavorite(permutation));
 
 		if (size == 0){
 			target = producer.isActive() ? ViewMode.PROGRESS : ViewMode.CONFLICT;
@@ -120,7 +141,7 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 		add(bodyWidget, body);
 		viewMode = target;
 		
-		progressButton.setVisible( target == ViewMode.SINGLE || target == ViewMode.GRID || target == ViewMode.DETAIL );
+		favoriteButton.setVisible( target == ViewMode.SINGLE || target == ViewMode.GRID || target == ViewMode.DETAIL );
 		controller.setSelectedSection(null);
 	}
 
@@ -174,6 +195,11 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 		if( bodyWidget instanceof RequiresResize ){
 			((RequiresResize) bodyWidget).onResize();
 		}
+	}
+
+	@Override
+	public void onFavoriteUpdate() {
+		update();
 	}
 
 }

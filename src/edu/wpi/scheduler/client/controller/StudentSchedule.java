@@ -1,6 +1,7 @@
 package edu.wpi.scheduler.client.controller;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.core.client.JavaScriptObject;
@@ -24,20 +25,22 @@ import edu.wpi.scheduler.shared.model.Section;
 public class StudentSchedule implements HasHandlers
 {
 	public final List<SectionProducer> sectionProducers = new ArrayList<SectionProducer>();
-	
+
 	/**
 	 * Find out conflicts between sections
 	 */
 	public final ConflictController conflicts = new ConflictController();
-	
+
+	public final ArrayList<SchedulePermutation> favoritePermutations = new ArrayList<SchedulePermutation>();
+
 	private HandlerManager handlerManager = new HandlerManager(this);
 	public StudentChosenTimes ATermTimes = new StudentChosenTimes();
 	public StudentChosenTimes BTermTimes = new StudentChosenTimes();
 	public StudentChosenTimes CTermTimes = new StudentChosenTimes();
 	public StudentChosenTimes DTermTimes = new StudentChosenTimes();
-	
-	public StudentSchedule(){
-		
+
+	public StudentSchedule() {
+
 	}
 
 	public SectionProducer addCourse(Course course) {
@@ -46,14 +49,14 @@ public class StudentSchedule implements HasHandlers
 				throw new UnsupportedOperationException("The course it already in the list of producers!");
 			}
 		}
-		
-		if( sectionProducers.size() >= 18 ){
+
+		if (sectionProducers.size() >= 18) {
 			Window.alert("There is a hard-coded limit of 18 courses.");
 			return null;
 		}
 
 		SectionProducer producer = new SectionProducer(this, course);
-		
+
 		conflicts.addCourse(course);
 		sectionProducers.add(producer);
 
@@ -104,6 +107,43 @@ public class StudentSchedule implements HasHandlers
 		handlerManager.removeHandler(StudentScheduleEvent.TYPE, handler);
 	}
 
+	public HandlerRegistration addFavoriteHandler(FavoriteEventHandler handler) {
+		return handlerManager.addHandler(FavoriteEvent.TYPE, handler);
+	}
+
+	public void removeFavoriteHandler(FavoriteEventHandler handler) {
+		handlerManager.removeHandler(FavoriteEvent.TYPE, handler);
+	}
+
+	public boolean containsFavorite(SchedulePermutation permutation) {
+		for (SchedulePermutation perm : favoritePermutations) {
+			if (perm.equals(permutation))
+				return true;
+		}
+
+		return false;
+	}
+
+	public void addFavorite(SchedulePermutation permutation) {
+		if (containsFavorite(permutation))
+			return;
+
+		this.favoritePermutations.add(permutation);
+
+		fireEvent(new FavoriteEvent());
+	}
+
+	public void removeFavorite(SchedulePermutation permutation) {
+		for (Iterator<SchedulePermutation> iter = favoritePermutations.iterator(); iter.hasNext();) {
+			SchedulePermutation perm = iter.next();
+			if (perm.equals(permutation)) {
+				iter.remove();
+				fireEvent(new FavoriteEvent());
+				return;
+			}
+		}
+	}
+
 	public void courseUpdated(Course course) {
 		this.fireEvent(new StudentScheduleEvent(course, StudentScheduleEvents.UPDATE));
 		saveSchedule();
@@ -136,7 +176,7 @@ public class StudentSchedule implements HasHandlers
 		public final native JsArrayString getSections() /*-{
 			return this.sections;
 		}-*/;
-		
+
 		public final native boolean hasSections(String sectionName) /*-{
 			return this.sections.indexOf(sectionName) != -1;
 		}-*/;
@@ -202,18 +242,18 @@ public class StudentSchedule implements HasHandlers
 
 			for (int i = 0; i < sections.length(); i++) {
 				SectionProducerData data = sections.get(i);
-				Course course = getCourse( data );
-				
-				if( course == null )
+				Course course = getCourse(data);
+
+				if (course == null)
 					continue;
-				
+
 				SectionProducer producer = addCourse(course);
-				
-				if( producer == null )
+
+				if (producer == null)
 					continue;
-				
-				for( Section section : course.sections ){
-					if( data.hasSections(section.number))
+
+				for (Section section : course.sections) {
+					if (data.hasSections(section.number))
 						producer.denySection(section);
 				}
 			}

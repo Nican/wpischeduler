@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 
+import edu.wpi.scheduler.client.controller.FavoriteEventHandler;
 import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
 import edu.wpi.scheduler.client.controller.ScheduleProducer;
@@ -28,14 +29,16 @@ import edu.wpi.scheduler.shared.model.Section;
 import edu.wpi.scheduler.shared.model.Term;
 import edu.wpi.scheduler.shared.model.Time;
 
-public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEventHandler, ProducerEventHandler, ScrollHandler {
+public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEventHandler, ProducerEventHandler, ScrollHandler, FavoriteEventHandler, ClickHandler {
 
 	private PermutationController controller;
 	private Canvas background;
 
-	private final FlowPanel thumbList = new FlowPanel();
-	private final ScrollPanel scroll = new ScrollPanel(thumbList);
-	private final ToggleButton favoriteButtom = new ToggleButton("Favorites (0)");
+	private final FlowPanel scheduleList = new FlowPanel();
+	private final FlowPanel favoriteList = new FlowPanel();
+
+	private final ScrollPanel scroll = new ScrollPanel(scheduleList);
+	private final ToggleButton favoriteButtom = new ToggleButton("Favorites (0)", this);
 
 	public static final double favoriteButtonSize = 20.0;
 
@@ -62,13 +65,13 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 
 	}
 
-	public void addPermutation(final SchedulePermutation permutation) {
-		
+	protected void addPermutation(final SchedulePermutation permutation, FlowPanel panel) {
+
 		Canvas canvas = Canvas.createIfSupported();
-		canvas.setCoordinateSpaceHeight( background.getCoordinateSpaceHeight() );
-		canvas.setCoordinateSpaceWidth( background.getCoordinateSpaceWidth() );
+		canvas.setCoordinateSpaceHeight(background.getCoordinateSpaceHeight());
+		canvas.setCoordinateSpaceWidth(background.getCoordinateSpaceWidth());
 		canvas.setStyleName("permutationCanvas");
-		
+
 		Context2d context = canvas.getContext2d();
 
 		double columnWidth = ((double) canvas.getCoordinateSpaceWidth()) / controller.getValidDaysOfWeek().size();
@@ -77,11 +80,11 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 
 		// context.setFillStyle("black");
 		context.drawImage(background.getCanvasElement(), 0.0, 0.0);
-		
-		//So many For loops... But it is not that bad.
+
+		// So many For loops... But it is not that bad.
 		for (Section section : permutation.sections) {
 			context.setFillStyle(controller.getCourseColor(section.course));
-			
+
 			for (Term term : section.getTerms()) {
 				for (int i = 0; i < daysOfWeek.size(); i++) {
 					for (Period period : section.periods) {
@@ -100,9 +103,9 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 				}
 			}
 		}
-			
-		thumbList.add(canvas);
-		
+
+		panel.add(canvas);
+
 		canvas.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -136,14 +139,17 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 	protected void onLoad() {
 		controller.addTimeChangeListner(this);
 		controller.addProduceHandler(this);
+		controller.getStudentSchedule().addFavoriteHandler(this);
 		updateBackground();
 		updateThumbnails();
+		update();
 	}
 
 	@Override
 	protected void onUnload() {
 		controller.removeTimeChangeListner(this);
-		controller.addProduceHandler(this);
+		controller.removeProduceHandler(this);
+		controller.getStudentSchedule().removeFavoriteHandler(this);
 	}
 
 	@Override
@@ -188,34 +194,43 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 		}
 	}
 
+	public boolean onFavorites() {
+		return favoriteButtom.isDown();
+	}
+
 	@Override
 	public void onPermutationUpdated(UpdateType type) {
-		if (type == UpdateType.NEW)
-			thumbList.clear();
+		update();
 
-		if (thumbList.getWidgetCount() < 20)
+		if (onFavorites())
+			return;
+
+		if (type == UpdateType.NEW)
+			scheduleList.clear();
+
+		if (scheduleList.getWidgetCount() < 20)
 			updateThumbnails();
-		
-		if( type == UpdateType.FINISH ){
+
+		if (type == UpdateType.FINISH) {
 			ScheduleProducer producer = controller.getProducer();
-			
-			if( producer.getPermutations().size() == 0 ){
-				thumbList.clear();
+
+			if (producer.getPermutations().size() == 0) {
+				scheduleList.clear();
 				CoursePair pair = producer.getConflictCourse();
-				
+
 				String msg = "Can not find any schedules!";
-				
-				if( pair != null )
+
+				if (pair != null)
 					msg += pair.course1 + " - " + pair.course2;
-				
-				thumbList.add( new Label( msg ) );
+
+				scheduleList.add(new Label(msg));
 			}
 		}
 	}
 
 	public void updateThumbnails() {
 		List<SchedulePermutation> permutations = controller.getProducer().getPermutations();
-		int thumbSize = thumbList.getWidgetCount();
+		int thumbSize = scheduleList.getWidgetCount();
 		int permutationSize = permutations.size();
 
 		if (permutationSize <= thumbSize)
@@ -224,7 +239,34 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 		int limit = Math.min(thumbSize + 20, permutationSize);
 
 		for (int i = thumbSize; i < limit; i++) {
-			addPermutation(permutations.get(i));
+			addPermutation(permutations.get(i), scheduleList);
+		}
+	}
+
+	@Override
+	public void onFavoriteUpdate() {
+		update();
+		
+		favoriteList.clear();
+		
+		System.out.println("Favorite size: " + controller.getStudentSchedule().favoritePermutations.size() );
+		
+		for( SchedulePermutation permutation : controller.getStudentSchedule().favoritePermutations )
+			addPermutation(permutation, favoriteList);
+	}
+
+	@Override
+	public void onClick(ClickEvent event) {
+		update();
+	}
+
+	private void update() {
+		favoriteButtom.setText("Favorites (" + controller.getStudentSchedule().favoritePermutations.size() + ")");
+
+		if (onFavorites()) {
+			scroll.setWidget(favoriteList);
+		} else {
+			scroll.setWidget(scheduleList);
 		}
 	}
 
