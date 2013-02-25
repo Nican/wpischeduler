@@ -9,17 +9,19 @@ public class TimeChooser extends AbsolutePanel
 {
 	final int numColumns = TimeCell.NUM_DAYS;
 	final int numRows = TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR;
-	final int width = 320;
-	final int height = 240;
+	final int width;
+	final int height;
 	
 	StudentChosenTimes model;
 	Control control;
 	Fill fill;
 	Grid grid;
 	
-	public TimeChooser(StudentChosenTimes model)
+	public TimeChooser(StudentChosenTimes model, int gridWidth, int gridHeight)
 	{
 		this.model = model;
+		this.width = gridWidth;
+		this.height = gridHeight;
 		control = new Control(this, width, height, numColumns, numRows, model);
 		fill = new Fill(width, height, numColumns, numRows);
 		grid = new Grid(width, height, numColumns, numRows);
