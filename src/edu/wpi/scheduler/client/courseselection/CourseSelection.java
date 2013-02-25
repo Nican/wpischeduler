@@ -4,6 +4,8 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import edu.wpi.scheduler.client.controller.SectionProducer;
+import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.controller.StudentScheduleEvent;
 import edu.wpi.scheduler.client.controller.StudentScheduleEventHandler;
 import edu.wpi.scheduler.client.controller.StudentScheduleEvents;
@@ -32,11 +34,26 @@ public class CourseSelection extends ComplexPanel implements StudentScheduleEven
 	 */
 	@Override
 	protected void onLoad() {
-		selectionController.getStudentSchedule().addStudentScheduleHandler(this);
+		StudentSchedule schedule = selectionController.getStudentSchedule();
+		schedule.addStudentScheduleHandler(this);
 
-		// TODO: Possible bug, the list might be out of date
-		// If we removed this widget from the DOM tree, update the course list,
-		// And later re-add this widget
+		for( SectionProducer producer : schedule.sectionProducers ){
+			boolean hasCourse = false;
+			
+			for (Widget widget : this.getChildren()) {
+				CourseSelectionItem item = (CourseSelectionItem) widget;
+
+				if (item.getCourse().equals(producer.getCourse())) {
+					hasCourse = true;
+					break;
+				}
+			}
+			
+			if(!hasCourse)
+				addCourse(producer.getCourse());
+		}
+		
+		
 	}
 
 	@Override
