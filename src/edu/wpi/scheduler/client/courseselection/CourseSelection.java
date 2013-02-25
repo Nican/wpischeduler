@@ -36,24 +36,12 @@ public class CourseSelection extends ComplexPanel implements StudentScheduleEven
 	protected void onLoad() {
 		StudentSchedule schedule = selectionController.getStudentSchedule();
 		schedule.addStudentScheduleHandler(this);
-
+		
+		this.clear();
+		
 		for( SectionProducer producer : schedule.sectionProducers ){
-			boolean hasCourse = false;
-			
-			for (Widget widget : this.getChildren()) {
-				CourseSelectionItem item = (CourseSelectionItem) widget;
-
-				if (item.getCourse().equals(producer.getCourse())) {
-					hasCourse = true;
-					break;
-				}
-			}
-			
-			if(!hasCourse)
-				addCourse(producer.getCourse());
-		}
-		
-		
+			addCourse(producer.getCourse());
+		}		
 	}
 
 	@Override
