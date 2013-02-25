@@ -61,27 +61,6 @@ public class CanvasProgress extends ComplexPanel implements ProducerEventHandler
 		
 		this.add(title, getElement());
 		this.add(canvas, getElement());
-		
-		
-		
-		
-		/*
-		SimplePanel cover = new SimplePanel();
-		Style coverStyle = cover.getElement().getStyle();
-		coverStyle.setPosition(Position.ABSOLUTE);
-		coverStyle.setZIndex(100);
-		coverStyle.setLeft(0.0, Unit.PX);
-		coverStyle.setRight(0.0, Unit.PX);
-		coverStyle.setTop(0.0, Unit.PX);
-		coverStyle.setBottom(0.0, Unit.PX);
-		coverStyle.setOpacity(0.3);
-		coverStyle.setBackgroundColor("#000");
-		
-		this.add(cover, getElement());
-		
-		cover.setWidget(new Label("TESTTT"));
-		*/
-		
 	}
 
 	@Override
@@ -90,6 +69,7 @@ public class CanvasProgress extends ComplexPanel implements ProducerEventHandler
 		resizeRegistration = Window.addResizeHandler(this);
 		
 		updateSize();
+		redraw();
 	}
 
 	@Override
@@ -232,6 +212,9 @@ public class CanvasProgress extends ComplexPanel implements ProducerEventHandler
 			}
 
 		}
+		
+		if(isAttached() && prdocuer.isActive())
+			redraw();
 	}
 
 	@Override
