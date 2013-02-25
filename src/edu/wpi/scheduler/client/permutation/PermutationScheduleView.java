@@ -76,8 +76,6 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 				StudentSchedule studentSchedule = controller.getStudentSchedule();
 				SchedulePermutation permutation = controller.getSelectedPermutation();
 				
-				System.out.println("Toggling favorite: " + permutation );
-				
 				if( permutation == null )
 					return;
 				
@@ -172,6 +170,7 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 		if (viewMode == ViewMode.PROGRESS) {
 			setView(ViewMode.GRID);
 		}
+		update();
 	}
 	
 	/**
