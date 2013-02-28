@@ -15,6 +15,7 @@ import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.storage.client.Storage;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.Scheduler;
 import edu.wpi.scheduler.shared.model.Course;
@@ -43,7 +44,7 @@ public class StudentSchedule implements HasHandlers
 
 	}
 
-	public SectionProducer addCourse(Course course) {
+	public SectionProducer addCourse(Course course, Widget source) {
 		for (SectionProducer producer : sectionProducers) {
 			if (producer.getCourse().equals(course)) {
 				throw new UnsupportedOperationException("The course it already in the list of producers!");
@@ -59,8 +60,11 @@ public class StudentSchedule implements HasHandlers
 
 		conflicts.addCourse(course);
 		sectionProducers.add(producer);
+		
+		StudentScheduleEvent event = new StudentScheduleEvent(course, StudentScheduleEvents.ADD);
+		event.setWidgetSource(source);
 
-		this.fireEvent(new StudentScheduleEvent(course, StudentScheduleEvents.ADD));
+		this.fireEvent(event);
 		saveSchedule();
 
 		return producer;
@@ -247,7 +251,7 @@ public class StudentSchedule implements HasHandlers
 				if (course == null)
 					continue;
 
-				SectionProducer producer = addCourse(course);
+				SectionProducer producer = addCourse(course, null);
 
 				if (producer == null)
 					continue;

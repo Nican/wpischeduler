@@ -62,6 +62,6 @@ public class CourseButton extends Button implements StudentScheduleEventHandler,
 		if (schedule.getSectionProducer(course) != null)
 			schedule.removeCourse(course);
 		else
-			schedule.addCourse(course);
+			schedule.addCourse(course, getParent());
 	}
 }

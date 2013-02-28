@@ -51,9 +51,5 @@ public class CourseSelectionController implements HasHandlers {
 	public void removeCourseSelectedListner( CourseSelectedEventHandler handler ){
 		handlerManager.removeHandler(CourseSelectedEvent.TYPE, handler);
 	}
-	
-	public boolean studentHasCourse( Course course ){
-		return getStudentSchedule().getSectionProducer(course) != null;
-	}
 
 }

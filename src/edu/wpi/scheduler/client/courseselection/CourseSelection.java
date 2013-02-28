@@ -52,17 +52,25 @@ public class CourseSelection extends ComplexPanel implements StudentScheduleEven
 	@Override
 	public void onCoursesChanged(StudentScheduleEvent event) {
 		if( event.event == StudentScheduleEvents.ADD){
-			addCourse(event.getCourse());
+			CourseSelectionItem item = addCourse(event.getCourse());
+			
+			if( event.getWidgetSourse() != null ){
+				CourseAddAnimation animation = new CourseAddAnimation(item, event.getWidgetSourse());
+				animation.run(1000);
+			}
+			
 		} else if (event.event == StudentScheduleEvents.REMOVE){
 			removeCourse(event.getCourse());
 		}
 	
 	}
 	
-	private void addCourse( Course course ){
+	private CourseSelectionItem addCourse( Course course ){
 		CourseSelectionItem item = new CourseSelectionItem(selectionController, course);
 
 		this.add(item);
+		
+		return item;
 	}
 	
 	private void removeCourse( Course course ){
