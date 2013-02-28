@@ -7,6 +7,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.WidgetCollection;
 
+import edu.wpi.scheduler.client.controller.HasCourse;
 import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.Department;
 
@@ -14,10 +15,10 @@ public class CourseList extends ComplexPanel {
 	
 	private final CourseSelectionController selectionController;
 	
-	private static class CourseComparator implements Comparator<CourseListItemBase>{
+	public static class CourseComparator implements Comparator<HasCourse>{
 
 		@Override
-		public int compare(CourseListItemBase o1, CourseListItemBase o2) {
+		public int compare(HasCourse o1, HasCourse o2) {
 			Course course1 = o1.getCourse();
 			Course course2 = o2.getCourse();
 			
@@ -26,7 +27,7 @@ public class CourseList extends ComplexPanel {
 		
 	}
 	
-	private static final CourseComparator comparator = new CourseComparator();
+	public static final CourseComparator comparator = new CourseComparator();
 
 	public CourseList(CourseSelectionController selectionController) {
 		this.setElement(DOM.createTable());
@@ -51,7 +52,7 @@ public class CourseList extends ComplexPanel {
 		WidgetCollection children = getChildren();
 		
 		for( int i = 0; i < children.size(); i++ ){
-			if( comparator.compare(child, (CourseListItemBase) children.get(i) ) == -1){
+			if( comparator.compare(child, (HasCourse) children.get(i) ) <= 0){
 				this.insert(child, this.getElement(), i, true);
 				return;
 			}

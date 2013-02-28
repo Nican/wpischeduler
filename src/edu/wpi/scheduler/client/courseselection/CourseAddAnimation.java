@@ -1,7 +1,6 @@
 package edu.wpi.scheduler.client.courseselection;
 
 import com.google.gwt.animation.client.Animation;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
@@ -22,7 +21,6 @@ public class CourseAddAnimation extends Animation {
 
 		element.getStyle().setBorderColor("#000000");
 		element.getStyle().setBorderStyle(BorderStyle.SOLID);
-		element.getStyle().setBorderWidth(5.0, Unit.PX);
 		element.getStyle().setPosition(Position.FIXED);
 
 	}
@@ -62,6 +60,7 @@ public class CourseAddAnimation extends Animation {
 		element.getStyle().setTop(startY + (endY-startY) * progress, Unit.PX);
 		element.getStyle().setWidth(startWidth + (endWidth-startWidth) * progress, Unit.PX);
 		element.getStyle().setHeight(startHeight + (endHeight-startHeight) * progress, Unit.PX);		
+		element.getStyle().setBorderWidth(1.0 + progress * 3.0, Unit.PX);
 	}
 
 }

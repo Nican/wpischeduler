@@ -7,9 +7,10 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import edu.wpi.scheduler.client.controller.HasCourse;
 import edu.wpi.scheduler.shared.model.Course;
 
-public class CourseListItemBase extends ComplexPanel implements ClickHandler {
+public class CourseListItemBase extends ComplexPanel implements ClickHandler, HasCourse {
 
 	private Course course;
 	private CourseSelectionController selectionController;
@@ -57,6 +58,7 @@ public class CourseListItemBase extends ComplexPanel implements ClickHandler {
 		selectionController.selectCourse(course);
 	}
 
+	@Override
 	public Course getCourse() {
 		return course;
 	}
