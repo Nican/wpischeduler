@@ -14,12 +14,13 @@ import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 
+import edu.wpi.scheduler.client.controller.FavoriteEvent;
 import edu.wpi.scheduler.client.controller.FavoriteEventHandler;
 import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
 import edu.wpi.scheduler.client.controller.ScheduleProducer;
-import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.controller.ScheduleProducer.ProducerEventHandler;
+import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.permutation.view.CanvasProgress;
 import edu.wpi.scheduler.client.permutation.view.ConflictResolverWidget;
 import edu.wpi.scheduler.client.permutation.view.DetailedView;
@@ -41,7 +42,7 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 	private ViewMode viewMode = null;
 	private ViewMode selectedViewMode = ViewMode.GRID;
 	
-	Element body = DOM.createDiv();
+	public final Element body = DOM.createDiv();
 	public Widget bodyWidget;
 	ToggleButton favoriteButton;
 
@@ -109,6 +110,7 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 	protected void onUnload() {
 		controller.removeSelectListner(this);
 		controller.removeProduceHandler(this);
+		controller.getStudentSchedule().removeFavoriteHandler(this);
 	}
 	
 	public void update(){
@@ -197,7 +199,7 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 	}
 
 	@Override
-	public void onFavoriteUpdate() {
+	public void onFavoriteUpdate(FavoriteEvent favoriteEvent) {
 		update();
 	}
 

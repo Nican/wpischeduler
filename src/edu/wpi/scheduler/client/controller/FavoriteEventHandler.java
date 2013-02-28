@@ -4,6 +4,6 @@ import com.google.gwt.event.shared.EventHandler;
 
 public interface FavoriteEventHandler extends EventHandler{
 
-	void onFavoriteUpdate();
+	void onFavoriteUpdate(FavoriteEvent favoriteEvent);
 
 }

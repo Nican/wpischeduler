@@ -7,15 +7,14 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class CourseAddAnimation extends Animation {
 
-	private Widget start;
-	private Widget end;
+	private Element start;
+	private Element end;
 	private Element element = DOM.createDiv();
 
-	public CourseAddAnimation(Widget start, Widget end) {
+	public CourseAddAnimation(Element start, Element end) {
 		this.start = start;
 		this.end = end;
 
@@ -39,7 +38,7 @@ public class CourseAddAnimation extends Animation {
 
 	@Override
 	protected void onUpdate(double progress) {
-		if( !start.isAttached() || !end.isAttached() ){
+		if( !start.hasParentElement() || !end.hasParentElement() ){
 			this.cancel();
 			return;
 		}
@@ -48,13 +47,13 @@ public class CourseAddAnimation extends Animation {
 			
 		int startX = start.getAbsoluteLeft();
 		int startY = start.getAbsoluteTop();
-		int startWidth = start.getElement().getOffsetWidth();
-		int startHeight = start.getElement().getOffsetHeight();
+		int startWidth = start.getOffsetWidth();
+		int startHeight = start.getOffsetHeight();
 		
 		int endX = end.getAbsoluteLeft();
 		int endY = end.getAbsoluteTop();
-		int endWidth = end.getElement().getOffsetWidth();
-		int endHeight = end.getElement().getOffsetHeight();
+		int endWidth = end.getOffsetWidth();
+		int endHeight = end.getOffsetHeight();
 		
 		element.getStyle().setLeft(startX + (endX-startX) * progress, Unit.PX);
 		element.getStyle().setTop(startY + (endY-startY) * progress, Unit.PX);

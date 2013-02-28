@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 
+import edu.wpi.scheduler.client.controller.FavoriteEvent;
 import edu.wpi.scheduler.client.controller.FavoriteEventHandler;
 import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
@@ -38,7 +39,7 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 	private final FlowPanel favoriteList = new FlowPanel();
 
 	private final ScrollPanel scroll = new ScrollPanel(scheduleList);
-	private final ToggleButton favoriteButtom = new ToggleButton("Favorites (0)", this);
+	public final ToggleButton favoriteButtom = new ToggleButton("Favorites (0)", this);
 
 	public static final double favoriteButtonSize = 20.0;
 
@@ -244,18 +245,6 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 	}
 
 	@Override
-	public void onFavoriteUpdate() {
-		update();
-		
-		favoriteList.clear();
-		
-		System.out.println("Favorite size: " + controller.getStudentSchedule().favoritePermutations.size() );
-		
-		for( SchedulePermutation permutation : controller.getStudentSchedule().favoritePermutations )
-			addPermutation(permutation, favoriteList);
-	}
-
-	@Override
 	public void onClick(ClickEvent event) {
 		update();
 	}
@@ -268,6 +257,16 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 		} else {
 			scroll.setWidget(scheduleList);
 		}
+	}
+
+	@Override
+	public void onFavoriteUpdate(FavoriteEvent favoriteEvent) {
+		update();
+		
+		favoriteList.clear();
+		
+		for( SchedulePermutation permutation : controller.getStudentSchedule().favoritePermutations )
+			addPermutation(permutation, favoriteList);
 	}
 
 }

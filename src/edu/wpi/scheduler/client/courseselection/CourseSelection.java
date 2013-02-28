@@ -131,8 +131,8 @@ public class CourseSelection extends ComplexPanel implements StudentScheduleEven
 			CourseSelectionItem item = addCourse(event.getCourse());
 			
 			if( event.getWidgetSourse() != null ){
-				CourseAddAnimation animation = new CourseAddAnimation(item, event.getWidgetSourse());
-				animation.run(300);
+				CourseAddAnimation animation = new CourseAddAnimation(item.getElement(), event.getWidgetSourse().getElement());
+				animation.run(500);
 			}
 			
 		} else if (event.event == StudentScheduleEvents.REMOVE){

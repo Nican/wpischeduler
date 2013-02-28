@@ -18,6 +18,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.Scheduler;
+import edu.wpi.scheduler.client.controller.FavoriteEvent.FavoriteEventType;
 import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.Department;
 import edu.wpi.scheduler.shared.model.Section;
@@ -134,7 +135,7 @@ public class StudentSchedule implements HasHandlers
 
 		this.favoritePermutations.add(permutation);
 
-		fireEvent(new FavoriteEvent());
+		fireEvent(new FavoriteEvent(FavoriteEventType.ADD));
 	}
 
 	public void removeFavorite(SchedulePermutation permutation) {
@@ -142,7 +143,7 @@ public class StudentSchedule implements HasHandlers
 			SchedulePermutation perm = iter.next();
 			if (perm.equals(permutation)) {
 				iter.remove();
-				fireEvent(new FavoriteEvent());
+				fireEvent(new FavoriteEvent(FavoriteEventType.REMOVE));
 				return;
 			}
 		}

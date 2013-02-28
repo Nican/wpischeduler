@@ -9,10 +9,14 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import edu.wpi.scheduler.client.controller.FavoriteEvent;
+import edu.wpi.scheduler.client.controller.FavoriteEventHandler;
 import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
+import edu.wpi.scheduler.client.controller.FavoriteEvent.FavoriteEventType;
+import edu.wpi.scheduler.client.courseselection.CourseAddAnimation;
 
-public class PermutationChooserView extends Composite {
+public class PermutationChooserView extends Composite implements FavoriteEventHandler {
 
 	private static PermutationChooserViewUiBinder uiBinder = GWT
 			.create(PermutationChooserViewUiBinder.class);
@@ -68,6 +72,25 @@ public class PermutationChooserView extends Composite {
 		}
 
 		scheduleView.update();
+	}
+	
+	@Override
+	protected void onLoad() {
+		studentSchedule.addFavoriteHandler(this);
+		update();
+	}
+
+	@Override
+	protected void onUnload() {
+		studentSchedule.removeFavoriteHandler(this);
+	}
+
+	@Override
+	public void onFavoriteUpdate(FavoriteEvent favoriteEvent) {
+		if( favoriteEvent.type == FavoriteEventType.ADD ){
+			CourseAddAnimation anim = new CourseAddAnimation(thumbList.favoriteButtom.getElement(), scheduleView.body);
+			anim.run(500);
+		}
 	}
 
 }
