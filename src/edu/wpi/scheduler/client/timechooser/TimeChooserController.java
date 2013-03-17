@@ -7,11 +7,18 @@ public class TimeChooserController
 {
 	
 	TimeChooser view;
+	TimeTable view2;
 	StudentChosenTimes model;
 	
 	TimeChooserController(TimeChooser v, StudentChosenTimes model)
 	{
 		this.view = v;
+		this.model = model;
+	}
+
+	public TimeChooserController(TimeTable v, StudentChosenTimes model) 
+	{
+		this.view2 = v;
 		this.model = model;
 	}
 
@@ -43,7 +50,7 @@ public class TimeChooserController
 				}
 			}
 			// Update View
-			view.redraw();
+			view2.update();
 		}
 	}
 	
@@ -58,8 +65,8 @@ public class TimeChooserController
 			int i2 = (int) Math.max(dragY, dropY);
 			int j2 = (int) Math.max(dragX, dropX);
 			// Update View
-			view.redraw();
-			view.control.drawDrag(i1, j1, i2, j2, isSelected);
+			view2.update();
+			//view2.drawDrag(i1, j1, i2, j2, isSelected);
 		}
 	}
 	
@@ -71,8 +78,9 @@ public class TimeChooserController
 	
 	private boolean isSelected(double dragX, double dragY)
 	{
-		int i = (int) Math.floor((dragY/view.height) * view.numRows);
+		/*int i = (int) Math.floor((dragY/view.height) * view.numRows);
 		int j = (int) Math.floor((dragX/view.width) * view.numColumns);
-		return model.isTimeSelected(i, j);
+		return model.isTimeSelected(i, j);*/
+		return false;
 	}
 }
