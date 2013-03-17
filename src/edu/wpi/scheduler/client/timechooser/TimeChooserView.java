@@ -6,9 +6,11 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.controller.StudentSchedule;
+import edu.wpi.scheduler.shared.model.Term;
 import edu.wpi.scheduler.shared.model.Time;
 import edu.wpi.scheduler.shared.model.TimeCell;
 
@@ -16,7 +18,7 @@ public class TimeChooserView extends Composite
 {
 	private static TimeChooserViewUiBinder uiBinder = GWT.create(TimeChooserViewUiBinder.class);
 
-	@UiField AbsolutePanel ATermGrid;
+	@UiField SimplePanel ATerm;
 	@UiField AbsolutePanel ATermHours;
 	@UiField AbsolutePanel ATermDays;
 	@UiField AbsolutePanel BTermGrid;
@@ -43,7 +45,11 @@ public class TimeChooserView extends Composite
 
 	public TimeChooserView(StudentSchedule studentSchedule) 
 	{
-		try
+		initWidget(uiBinder.createAndBindUi(this));
+		ATerm.add(new TimeTable(Term.A, studentSchedule.ATermTimes));
+	}
+		
+		/*try
 		{
 			initWidget(uiBinder.createAndBindUi(this));
 
@@ -88,12 +94,5 @@ public class TimeChooserView extends Composite
 			TimeChooserPanel.add(new Label("Your internet browser does not support canvases; All class times are selected by default\n" +
 											"If you would like to select specific times to take classes, please use the latest version of IE, Firefox, or Chrome"));
 		}
-
-		createWelcome();
-	}
-
-	private void createWelcome()
-	{
-		WelcomeHelp.add(new Label("Welcome to the new WPI Scheduler!\nPossible space to include helpful information for non-inuitive things"));
-	}
+	}*/
 }

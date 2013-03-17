@@ -41,13 +41,13 @@ public class TabList extends Composite {
 		courseSelection = new CourseSelectionTab(studentSchedule);
 		timeChooser = new TimeTab(studentSchedule);
 		
-		addTab(  timeChooser );
 		addTab( courseSelection  );
+		addTab(  timeChooser );
 		addTab( new PermutationTab(studentSchedule)  );		
 	}
 	
 	public Widget getHomeView(){
-		return timeChooser.getBody();
+		return courseSelection.getBody();
 	}
 	
 	public void addTab( final BaseTab baseTab ){
@@ -86,9 +86,5 @@ public class TabList extends Composite {
 			
 			widget.setStyleName( i == count-1 ? "sched-TopButton" : "sched-TopButton-notLast");
 		}
-		
-		
 	}
-
-
 }

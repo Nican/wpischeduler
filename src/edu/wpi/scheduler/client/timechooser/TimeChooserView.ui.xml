@@ -8,7 +8,7 @@
 				<g:HorizontalPanel>
 					<g:DockPanel>
 						<g:Dock direction="CENTER">
-							<g:AbsolutePanel ui:field="ATermGrid" />
+							<g:SimplePanel ui:field="ATerm" />
 						</g:Dock>
 						<g:Dock direction="WEST">
 							<g:AbsolutePanel ui:field="ATermHours" />
