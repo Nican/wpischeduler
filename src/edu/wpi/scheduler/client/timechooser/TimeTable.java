@@ -47,10 +47,12 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 	}
 
 	StudentChosenTimes model;
-	TimeChooserController tcc;
+	Element table; 
+	TimeChooserController controller;
 	HandlerRegistration mouseDown;
 	HandlerRegistration mouseMove;
 	HandlerRegistration mouseUp;
+	
 	int dragX = -1;
 	int dragY = -1;
 	int dropX = -1;
@@ -59,9 +61,11 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 	public TimeTable(StudentChosenTimes model) 
 	{
 		this.model = model;
-		tcc = new TimeChooserController(this, model);
+		controller = new TimeChooserController(this, model);
 		// Create blank table
-		setElement(DOM.createTable());
+		table = DOM.createTable();
+		table.setDraggable(Element.DRAGGABLE_FALSE);
+		setElement(table);
 		// For each row
 		Time t = new Time(TimeCell.START_HOUR, TimeCell.START_MIN);
 		for (int y = 0; y < TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR ; y++) 
@@ -77,14 +81,27 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 				cell.setDay(x);
 				cell.getStyle().setHeight(9, Unit.PX);
 				cell.getStyle().setWidth(44, Unit.PX);
-				cell.getStyle().setBackgroundColor("#FFEEEE");
 				// cell.setInnerHTML(x + " " + y);
-
 				row.appendChild(cell);
 			}
 			t.increment(0, 60 / TimeCell.CELLS_PER_HOUR);
 			// Add the new row to the table
 			getElement().appendChild(row);
+		}
+		update();
+	}
+	
+	public void update()
+	{
+		for(int y = 0; y < table.getChildCount(); y++)
+		{
+			Element row = table.getChild(y).cast();
+			for(int x = 0; x < row.getChildCount(); x++)
+			{
+				TimeElement cell = row.getChild(x).cast();
+				String color = model.isTimeSelected(cell.getTime(), cell.getDay()) ? "#339900" : "#FFDEDE";
+				cell.getStyle().setBackgroundColor(color);
+			}
 		}
 	}
 
@@ -162,7 +179,7 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 			dropX = elem.getDay();
 			dropY = elem.getTime();
 			System.out.println(dragX+ ", " +  dragY+ " ; " + dropX + ", " + dropY);
-			tcc.timeChosen(dragX, dragY, dropX, dropY);
+			controller.timeChosen(dragX, dragY, dropX, dropY);
 			dragX = dragY = dropX = dropY = -1;
 		}
 		// Element or its values were undefined

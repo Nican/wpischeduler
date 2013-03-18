@@ -57,7 +57,7 @@ public class TimeChooserController
 				}
 			}
 			// Update View
-			//view2.update();
+			view2.update();
 		}
 		//System.out.println(model.toString());
 	}
