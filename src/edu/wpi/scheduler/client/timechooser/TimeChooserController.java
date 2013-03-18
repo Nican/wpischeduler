@@ -50,7 +50,7 @@ public class TimeChooserController
 				}
 			}
 			// Update View
-			view2.update();
+			//view2.update();
 		}
 	}
 	
@@ -65,7 +65,7 @@ public class TimeChooserController
 			int i2 = (int) Math.max(dragY, dropY);
 			int j2 = (int) Math.max(dragX, dropX);
 			// Update View
-			view2.update();
+			//view2.update();
 			//view2.drawDrag(i1, j1, i2, j2, isSelected);
 		}
 	}
