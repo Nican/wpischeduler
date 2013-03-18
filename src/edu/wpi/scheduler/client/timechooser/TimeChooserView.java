@@ -46,7 +46,7 @@ public class TimeChooserView extends Composite
 	public TimeChooserView(StudentSchedule studentSchedule) 
 	{
 		initWidget(uiBinder.createAndBindUi(this));
-		ATerm.add(new TimeTable());
+		ATerm.add(new TimeTable(studentSchedule.ATermTimes));
 	}
 		
 		/*try

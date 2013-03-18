@@ -2,14 +2,15 @@ package edu.wpi.scheduler.client.timechooser;
 
 import edu.wpi.scheduler.client.controller.StudentChosenTimes;
 import edu.wpi.scheduler.client.timechooser.TimeChooser;
+import edu.wpi.scheduler.shared.model.TimeCell;
 
 public class TimeChooserController 
 {
-	
+
 	TimeChooser view;
 	TimeTable view2;
 	StudentChosenTimes model;
-	
+
 	TimeChooserController(TimeChooser v, StudentChosenTimes model)
 	{
 		this.view = v;
@@ -22,29 +23,35 @@ public class TimeChooserController
 		this.model = model;
 	}
 
-	void timeChosen(double dragX, double dragY, double dropX, double dropY)
+	void timeChosen(int dragX, int dragY, int dropX, int dropY)
 	{
-		if(dragX > 0 && dragY > 0 && dropX > 0 && dropY > 0)
+		if(dragX >= 0 && dragY >= 0 && dropX >= 0 && dropY >= 0)
 		{
 			// Calculate grid points
-			int i1 = (int) Math.floor((Math.min(dragY, dropY)/view.height) * view.numRows);
-			int j1 = (int) Math.floor((Math.min(dragX, dropX)/view.width) * view.numColumns);
-			int i2 = (int) Math.ceil((Math.max(dragY, dropY)/view.height) * view.numRows);
-			int j2 = (int) Math.ceil((Math.max(dragX, dropX)/view.width) * view.numColumns);
+			int i1 = Math.min(dragY, dropY);
+			int j1 = Math.min(dragX, dropX);
+			int i2 = Math.max(dragY, dropY);
+			int j2 = Math.max(dragX, dropX);
 			// Update Model
-			boolean isSelected = isSelected(dragX, dragY);
+			boolean isSelected = isSelected(i1, j1);
+			System.out.println(isSelected);
 			if(isSelected)
 			{
-				for( int i = i1; i < i2; i++){
-					for( int j = j1; j < j2; j++){
+				for( int i = i1; i <= i2; i++)
+				{
+					for( int j = j1; j <= j2; j++)
+					{
+						System.out.println("DESELECT: " + i + ", " + j);
 						model.deselectTime(i, j);
 					}
 				}
 			}
 			else
 			{
-				for( int i = i1; i < i2; i++){
-					for( int j = j1; j < j2; j++){
+				for( int i = i1; i <= i2; i++)
+				{
+					for( int j = j1; j <= j2; j++)
+					{
 						model.selectTime(i, j);
 					}
 				}
@@ -52,11 +59,12 @@ public class TimeChooserController
 			// Update View
 			//view2.update();
 		}
+		//System.out.println(model.toString());
 	}
-	
+
 	void mouseDrag(double dragX, double dragY, double dropX, double dropY)
 	{
-		if(dragX > 0 && dragY > 0 && dropX > 0 && dropY > 0)
+		/*if(dragX > 0 && dragY > 0 && dropX > 0 && dropY > 0)
 		{
 			// Calculate grid points
 			boolean isSelected = isSelected(dragX, dragY);
@@ -67,20 +75,21 @@ public class TimeChooserController
 			// Update View
 			//view2.update();
 			//view2.drawDrag(i1, j1, i2, j2, isSelected);
-		}
+		}*/
 	}
-	
+
 	void mouseOut()
 	{
-		// Update View
-		view.redraw();
+		/*// Update View
+		view.redraw();*/
 	}
-	
-	private boolean isSelected(double dragX, double dragY)
+
+	private boolean isSelected(int i, int j)
 	{
-		/*int i = (int) Math.floor((dragY/view.height) * view.numRows);
+		/*
+		int i = (int) Math.floor((dragY/view.height) * view.numRows);
 		int j = (int) Math.floor((dragX/view.width) * view.numColumns);
-		return model.isTimeSelected(i, j);*/
-		return false;
+		 */
+		return model.isTimeSelected(i, j);
 	}
 }

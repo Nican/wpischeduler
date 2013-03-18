@@ -7,13 +7,13 @@ import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
-import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import edu.wpi.scheduler.client.controller.StudentChosenTimes;
 import edu.wpi.scheduler.shared.model.DayOfWeek;
 import edu.wpi.scheduler.shared.model.Time;
 import edu.wpi.scheduler.shared.model.TimeCell;
@@ -46,6 +46,8 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		}-*/;
 	}
 
+	StudentChosenTimes model;
+	TimeChooserController tcc;
 	HandlerRegistration mouseDown;
 	HandlerRegistration mouseMove;
 	HandlerRegistration mouseUp;
@@ -54,8 +56,10 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 	int dropX = -1;
 	int dropY = -1;
 
-	public TimeTable() 
+	public TimeTable(StudentChosenTimes model) 
 	{
+		this.model = model;
+		tcc = new TimeChooserController(this, model);
 		// Create blank table
 		setElement(DOM.createTable());
 		// For each row
@@ -102,37 +106,23 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		mouseMove.removeHandler();
 		mouseUp.removeHandler();
 	}
-
-	@Override
-	public void onMouseUp(MouseUpEvent event) 
-	{
-		TimeElement elem = event.getNativeEvent().getEventTarget().cast();
-		try 
-		{
-			DayOfWeek day = TimeCell.week[elem.getDay() + TimeCell.START_DAY];
-			Time time = new Time(TimeCell.START_HOUR, TimeCell.START_MIN);
-			time.increment(0, elem.getTime() * (60 / TimeCell.CELLS_PER_HOUR));
-			System.out.println("Up: " + day + ", " + time);
-		}
-		// Element or its values were undefined
-		catch(Exception e)
-		{
-			System.out.println("Up: Outside");
-		}
-	}
-
+	
 	@Override
 	public void onMouseDown(MouseDownEvent event) 
 	{
+		// Get the cell this happened in
 		TimeElement elem = event.getNativeEvent().getEventTarget().cast();
+		// Valid cell mouse down
 		try 
 		{
 			DayOfWeek day = TimeCell.week[elem.getDay() + TimeCell.START_DAY];
 			Time time = new Time(TimeCell.START_HOUR, TimeCell.START_MIN);
 			time.increment(0, elem.getTime() * (60 / TimeCell.CELLS_PER_HOUR));
 			System.out.println("Down: " + day + ", " + time);
+			dragX = elem.getDay();
+			dragY = elem.getTime();
 		}
-		// Element or its values were undefined
+		// Element or its values were undefined; was not an event fired within a cell
 		catch(Exception e)
 		{
 			System.out.println("Down: Outside");
@@ -148,12 +138,38 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 			DayOfWeek day = TimeCell.week[elem.getDay() + TimeCell.START_DAY];
 			Time time = new Time(TimeCell.START_HOUR, TimeCell.START_MIN);
 			time.increment(0, elem.getTime() * (60 / TimeCell.CELLS_PER_HOUR));
-			System.out.println("Move: " + day + ", " + time);
+			//System.out.println("Move: " + day + ", " + time);
+			dropX = elem.getDay();
+			dropY = elem.getTime();
 		}
 		// Element or its values were undefined
 		catch(Exception e)
 		{
-			System.out.println("Move: Outside");
+			//System.out.println("Move: Outside");
+		}
+	}
+	
+	@Override
+	public void onMouseUp(MouseUpEvent event) 
+	{
+		TimeElement elem = event.getNativeEvent().getEventTarget().cast();
+		try 
+		{
+			DayOfWeek day = TimeCell.week[elem.getDay() + TimeCell.START_DAY];
+			Time time = new Time(TimeCell.START_HOUR, TimeCell.START_MIN);
+			time.increment(0, elem.getTime() * (60 / TimeCell.CELLS_PER_HOUR));
+			System.out.println("Up: " + day + ", " + time);
+			dropX = elem.getDay();
+			dropY = elem.getTime();
+			System.out.println(dragX+ ", " +  dragY+ " ; " + dropX + ", " + dropY);
+			tcc.timeChosen(dragX, dragY, dropX, dropY);
+			dragX = dragY = dropX = dropY = -1;
+		}
+		// Element or its values were undefined
+		catch(Exception e)
+		{
+			System.out.println("Up: Outside");
+			dragX = dragY = dropX = dropY = -1;
 		}
 	}
 }
