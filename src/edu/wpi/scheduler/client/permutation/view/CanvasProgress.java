@@ -9,6 +9,7 @@ import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.Context2d.TextAlign;
 import com.google.gwt.canvas.dom.client.Context2d.TextBaseline;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
@@ -157,9 +158,11 @@ public class CanvasProgress extends ComplexPanel implements ProducerEventHandler
 			context.setTextBaseline(TextBaseline.BOTTOM);
 			context.fillText(title, width / 2, courseY - 4);
 		}
+		
+		Element titleElement = title.getElement();
 
-		title.getElement().getStyle().setLeft(width / 2 - title.getElement().getClientWidth() / 2, Unit.PX);
-		title.getElement().getStyle().setTop(height / 2 - title.getElement().getClientHeight() / 2, Unit.PX);
+		titleElement.getStyle().setLeft(width / 2 - titleElement.getClientWidth() / 2, Unit.PX);
+		titleElement.getStyle().setTop(height / 2 - titleElement.getClientHeight() / 2, Unit.PX);
 	}
 
 	public void redraw() {
@@ -188,7 +191,7 @@ public class CanvasProgress extends ComplexPanel implements ProducerEventHandler
 	public void execute(double timestamp) {
 		updateSize();
 
-		ScheduleProducer prdocuer = controller.getProducer();
+		ScheduleProducer producer = controller.getProducer();
 		Context2d context = canvas.getContext2d();
 		int width = canvas.getCoordinateSpaceWidth();
 		int height = canvas.getCoordinateSpaceHeight();
@@ -199,11 +202,11 @@ public class CanvasProgress extends ComplexPanel implements ProducerEventHandler
 		context.clearRect(0.0, 0.0, (double) width, (double) height);
 		context.drawImage(background.getCanvasElement(), 0.0, 0.0);
 
-		if (prdocuer.treeSearchState.size() > 1) {
+		if (producer.treeSearchState.size() > 1) {
 
-			for (int i = 1; i < prdocuer.treeSearchState.size(); i++) {
-				CanvasProgressSection progress = getBySection(prdocuer.getSectionFromTree(i - 1));
-				CanvasProgressSection progress2 = getBySection(prdocuer.getSectionFromTree(i));
+			for (int i = 1; i < producer.treeSearchState.size(); i++) {
+				CanvasProgressSection progress = getBySection(producer.getSectionFromTree(i - 1));
+				CanvasProgressSection progress2 = getBySection(producer.getSectionFromTree(i));
 
 				context.beginPath();
 				context.moveTo(progress.x + progress.w / 2, progress.y + progress.h + 1);
@@ -213,7 +216,7 @@ public class CanvasProgress extends ComplexPanel implements ProducerEventHandler
 
 		}
 		
-		if(isAttached() && prdocuer.isActive())
+		if(isAttached() && producer.isActive())
 			redraw();
 	}
 

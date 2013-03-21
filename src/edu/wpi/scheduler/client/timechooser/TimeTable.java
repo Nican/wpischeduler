@@ -64,7 +64,8 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		controller = new TimeChooserController(this, model);
 		// Create blank table
 		table = DOM.createTable();
-		table.setDraggable(Element.DRAGGABLE_FALSE);
+		//table.setDraggable(Element.DRAGGABLE_FALSE);
+		table.setAttribute("draggable", "");
 		setElement(table);
 		// For each row
 		Time t = new Time(TimeCell.START_HOUR, TimeCell.START_MIN);

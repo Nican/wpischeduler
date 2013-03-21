@@ -88,7 +88,7 @@ public class PermutationChooserView extends Composite implements FavoriteEventHa
 	@Override
 	public void onFavoriteUpdate(FavoriteEvent favoriteEvent) {
 		if( favoriteEvent.type == FavoriteEventType.ADD ){
-			CourseAddAnimation anim = new CourseAddAnimation(thumbList.favoriteButtom.getElement(), scheduleView.body);
+			CourseAddAnimation anim = new CourseAddAnimation(thumbList.favoriteButton.getElement(), scheduleView.body);
 			anim.run(500);
 		}
 	}

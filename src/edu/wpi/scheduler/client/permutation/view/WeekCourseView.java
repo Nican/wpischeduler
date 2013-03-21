@@ -146,7 +146,7 @@ public class WeekCourseView extends CellPanel implements ResizeHandler, TimeRang
 
 		Element termLabel = DOM.createDiv();
 		termLabel.setInnerHTML(builder.toString());
-		termLabel.getStyle().setProperty("opacity", "0.05");
+		termLabel.getStyle().setProperty("opacity", "0.14");
 		termLabel.getStyle().setProperty("fontSize", "325px");
 		termLabel.getStyle().setProperty("position", "absolute");
 		termLabel.getStyle().setProperty("right", "128px");

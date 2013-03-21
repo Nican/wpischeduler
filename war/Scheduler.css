@@ -106,7 +106,8 @@ h1 {
 
 .permutationCanvas {
 	border-radius: 10px;
-	border: 1px #CCCCCC solid;
+	border: 2px #CCCCCC solid;
+	cursor: pointer;
 }
 
 .permutationHourMarker {

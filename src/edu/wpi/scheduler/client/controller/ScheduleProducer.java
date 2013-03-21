@@ -307,8 +307,9 @@ public class ScheduleProducer {
 
 	public void updateCourseRelation(Course course1, Course course2, boolean hasConflicts) {
 		CoursePair coursePair = null;
-
-		for (CoursePair pair : courseRelations) {
+		
+		for( int i = courseRelations.size() - 1; i >= 0; i--){
+			CoursePair pair = courseRelations.get(i);
 			if (pair.equals(course1, course2)) {
 				coursePair = pair;
 				break;

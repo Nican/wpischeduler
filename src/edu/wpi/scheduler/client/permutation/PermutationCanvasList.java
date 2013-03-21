@@ -2,9 +2,12 @@ package edu.wpi.scheduler.client.permutation;
 
 import java.util.List;
 
+import com.google.gwt.animation.client.Animation;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
+import com.google.gwt.core.client.Duration;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
@@ -30,7 +33,9 @@ import edu.wpi.scheduler.shared.model.Section;
 import edu.wpi.scheduler.shared.model.Term;
 import edu.wpi.scheduler.shared.model.Time;
 
-public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEventHandler, ProducerEventHandler, ScrollHandler, FavoriteEventHandler, ClickHandler {
+public class PermutationCanvasList extends FlowPanel implements
+		TimeRangeChangEventHandler, ProducerEventHandler, ScrollHandler,
+		FavoriteEventHandler, ClickHandler {
 
 	private PermutationController controller;
 	private Canvas background;
@@ -39,34 +44,71 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 	private final FlowPanel favoriteList = new FlowPanel();
 
 	private final ScrollPanel scroll = new ScrollPanel(scheduleList);
-	public final ToggleButton favoriteButtom = new ToggleButton("Favorites (0)", this);
+	public final ToggleButton favoriteButton = new ToggleButton(
+			"Favorites (0)", this);
 
 	public static final double favoriteButtonSize = 20.0;
+
+	public static class CanvasAnimation extends Animation {
+
+		private Canvas canvas;
+
+		public CanvasAnimation(Canvas canvas) {
+			this.canvas = canvas;
+		}
+
+		@Override
+		protected void onUpdate(double progress) {
+			double left = -canvas.getCoordinateSpaceWidth() * (1-progress);
+			getStyle().setLeft(left, Unit.PX);
+		}
+
+		@Override
+		protected void onComplete() {
+			super.onComplete();
+			getStyle().clearPosition();
+			getStyle().clearLeft();
+		}
+
+		@Override
+		protected void onStart() {
+			super.onStart();
+			getStyle().setPosition(Position.RELATIVE);
+		}
+
+		protected Style getStyle() {
+			return canvas.getElement().getStyle();
+		}
+
+	}
 
 	public PermutationCanvasList(PermutationController controller) {
 		this.controller = controller;
 		updateBackground();
 
-		add(favoriteButtom, getElement());
+		add(favoriteButton, getElement());
 		add(scroll, getElement());
+		
+		Style favoriteStyle = favoriteButton.getElement().getStyle();
+		Style scrollStyle = scroll.getElement().getStyle();
 
-		favoriteButtom.getElement().getStyle().setTextAlign(TextAlign.CENTER);
-		favoriteButtom.getElement().getStyle().setLeft(0.0, Unit.PX);
-		favoriteButtom.getElement().getStyle().setRight(0.0, Unit.PX);
-		favoriteButtom.getElement().getStyle().setTop(0.0, Unit.PX);
-		favoriteButtom.getElement().getStyle().setHeight(favoriteButtonSize, Unit.PX);
+		favoriteStyle.setTextAlign(TextAlign.CENTER);
+		favoriteStyle.setLeft(0.0, Unit.PX);
+		favoriteStyle.setRight(0.0, Unit.PX);
+		favoriteStyle.setTop(0.0, Unit.PX);
+		favoriteStyle.setHeight(favoriteButtonSize, Unit.PX);
 
-		scroll.getElement().getStyle().setPosition(Position.ABSOLUTE);
-		scroll.getElement().getStyle().setLeft(0.0, Unit.PX);
-		scroll.getElement().getStyle().setRight(0.0, Unit.PX);
-		scroll.getElement().getStyle().setTop(favoriteButtonSize + 8, Unit.PX);
-		scroll.getElement().getStyle().setBottom(0.0, Unit.PX);
+		scrollStyle.setPosition(Position.ABSOLUTE);
+		scrollStyle.setLeft(0.0, Unit.PX);
+		scrollStyle.setRight(0.0, Unit.PX);
+		scrollStyle.setTop(favoriteButtonSize + 8, Unit.PX);
+		scrollStyle.setBottom(0.0, Unit.PX);
 
 		scroll.addScrollHandler(this);
-
 	}
 
-	protected void addPermutation(final SchedulePermutation permutation, FlowPanel panel) {
+	protected Canvas addPermutation(final SchedulePermutation permutation,
+			FlowPanel panel) {
 
 		Canvas canvas = Canvas.createIfSupported();
 		canvas.setCoordinateSpaceHeight(background.getCoordinateSpaceHeight());
@@ -75,8 +117,10 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 
 		Context2d context = canvas.getContext2d();
 
-		double columnWidth = ((double) canvas.getCoordinateSpaceWidth()) / controller.getValidDaysOfWeek().size();
-		double hourHeight = ((double) canvas.getCoordinateSpaceHeight()) / (controller.getEndHour() - controller.getStartHour());
+		double columnWidth = ((double) canvas.getCoordinateSpaceWidth())
+				/ controller.getValidDaysOfWeek().size();
+		double hourHeight = ((double) canvas.getCoordinateSpaceHeight())
+				/ (controller.getEndHour() - controller.getStartHour());
 		List<DayOfWeek> daysOfWeek = controller.getValidDaysOfWeek();
 
 		// context.setFillStyle("black");
@@ -94,10 +138,9 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 							double start = getDayProgress(period.startTime);
 							double end = getDayProgress(period.endTime);
 
-							context.fillRect(
-									i * columnWidth + columnWidth * term.ordinal() * 0.25,
-									start * hourHeight,
-									columnWidth * 0.25,
+							context.fillRect(i * columnWidth + columnWidth
+									* term.ordinal() * 0.25,
+									start * hourHeight, columnWidth * 0.25,
 									(end - start) * hourHeight);
 						}
 					}
@@ -113,11 +156,13 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 				controller.selectPermutation(permutation);
 			}
 		});
-
+		
+		return canvas;
 	}
 
 	private double getDayProgress(Time time) {
-		return ((double) time.hour) - controller.getStartHour() + ((double) time.minutes) / 60;
+		return ((double) time.hour) - controller.getStartHour()
+				+ ((double) time.minutes) / 60.0;
 	}
 
 	/**
@@ -126,7 +171,8 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 	 */
 	@Override
 	public void onScroll(ScrollEvent event) {
-		if (scroll.getVerticalScrollPosition() + 300 < scroll.getMaximumVerticalScrollPosition())
+		if (scroll.getVerticalScrollPosition() + 300 < scroll
+				.getMaximumVerticalScrollPosition())
 			return;
 
 		updateThumbnails();
@@ -142,6 +188,7 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 		controller.addProduceHandler(this);
 		controller.getStudentSchedule().addFavoriteHandler(this);
 		updateBackground();
+		scheduleList.clear();
 		updateThumbnails();
 		update();
 	}
@@ -164,14 +211,17 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 		background.getElement().setAttribute("width", "150px");
 		background.getElement().setAttribute("height", "150px");
 		Context2d context = background.getContext2d();
-		double heightPerHour = 150.0 / (controller.getEndHour() - controller.getStartHour());
+		double heightPerHour = 150.0 / (controller.getEndHour() - controller
+				.getStartHour());
 
 		context.setLineWidth(1.0);
 
-		for (double hour = controller.getStartHour(); hour <= controller.getEndHour(); hour += 1.0) {
+		for (double hour = controller.getStartHour(); hour <= controller
+				.getEndHour(); hour += 1.0) {
 			// Draw in the middle:
 			// http://stackoverflow.com/questions/9311428/draw-single-pixel-line-in-html5-canvas
-			double yValue = Math.floor((hour - controller.getStartHour()) * heightPerHour) + 0.5;
+			double yValue = Math.floor((hour - controller.getStartHour())
+					* heightPerHour) + 0.5;
 
 			if (hour == 12.0) {
 				context.setStrokeStyle(CssColor.make(200, 200, 200));
@@ -196,7 +246,7 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 	}
 
 	public boolean onFavorites() {
-		return favoriteButtom.isDown();
+		return favoriteButton.isDown();
 	}
 
 	@Override
@@ -230,7 +280,8 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 	}
 
 	public void updateThumbnails() {
-		List<SchedulePermutation> permutations = controller.getProducer().getPermutations();
+		List<SchedulePermutation> permutations = controller.getProducer()
+				.getPermutations();
 		int thumbSize = scheduleList.getWidgetCount();
 		int permutationSize = permutations.size();
 
@@ -240,7 +291,9 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 		int limit = Math.min(thumbSize + 20, permutationSize);
 
 		for (int i = thumbSize; i < limit; i++) {
-			addPermutation(permutations.get(i), scheduleList);
+			Canvas canvas = addPermutation(permutations.get(i), scheduleList);
+			
+			new CanvasAnimation(canvas).run(500, Duration.currentTimeMillis() + 50 * (i-thumbSize));
 		}
 	}
 
@@ -250,7 +303,9 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 	}
 
 	private void update() {
-		favoriteButtom.setText("Favorites (" + controller.getStudentSchedule().favoritePermutations.size() + ")");
+		favoriteButton.setText("Favorites ("
+				+ controller.getStudentSchedule().favoritePermutations.size()
+				+ ")");
 
 		if (onFavorites()) {
 			scroll.setWidget(favoriteList);
@@ -262,10 +317,10 @@ public class PermutationCanvasList extends FlowPanel implements TimeRangeChangEv
 	@Override
 	public void onFavoriteUpdate(FavoriteEvent favoriteEvent) {
 		update();
-		
+
 		favoriteList.clear();
-		
-		for( SchedulePermutation permutation : controller.getStudentSchedule().favoritePermutations )
+
+		for (SchedulePermutation permutation : controller.getStudentSchedule().favoritePermutations)
 			addPermutation(permutation, favoriteList);
 	}
 
