@@ -14,11 +14,17 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.controller.StudentChosenTimes;
-import edu.wpi.scheduler.shared.model.Time;
 import edu.wpi.scheduler.shared.model.TimeCell;
 
 public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandler, MouseMoveHandler 
 {
+	// CSS constants
+	static final String CELL = "TimeTable_Cell";
+	static final String SELECTED = "TimeTable_Cell_Selected";
+	static final String DESELECTED = "TimeTable_Cell_Deselected";
+	static final String EVEN = "TimeTable_Cell_Even";
+	static final String ODD = "TimeTable_Cell_Odd";
+	
 	// Native DOM Cell Element
 	public static class TimeElement extends Element 
 	{
@@ -63,11 +69,10 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		controller = new TimeChooserController(this, model);
 		// Create blank table
 		table = DOM.createTable();
-		//table.setDraggable(Element.DRAGGABLE_FALSE);
-		table.setAttribute("draggable", "");
+		table.setDraggable(Element.DRAGGABLE_FALSE);
+		table.setAttribute("class", "TimeTable");
 		setElement(table);
 		// For each row
-		Time t = new Time(TimeCell.START_HOUR, TimeCell.START_MIN);
 		for (int y = 0; y < TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR ; y++) 
 		{
 			// Create each row
@@ -84,7 +89,6 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 				// cell.setInnerHTML(x + " " + y);
 				row.appendChild(cell);
 			}
-			t.increment(0, 60 / TimeCell.CELLS_PER_HOUR);
 			// Add the new row to the table
 			getElement().appendChild(row);
 		}
@@ -93,15 +97,26 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 	
 	public void update()
 	{
+		// Update the cells
+		// Starting with an even row
+		String current_row = EVEN;
 		for(int y = 0; y < table.getChildCount(); y++)
 		{
 			Element row = table.getChild(y).cast();
 			for(int x = 0; x < row.getChildCount(); x++)
 			{
+				// Update cell visual state
 				TimeElement cell = row.getChild(x).cast();
-				String color = model.isTimeSelected(cell.getTime(), cell.getDay()) ? "#339900" : "#FFDEDE";
-				cell.getStyle().setBackgroundColor(color);
+				String classID = CELL + " ";
+				// Add whether the cell is selected or unselected
+				classID += model.isTimeSelected(cell.getTime(), cell.getDay()) ? SELECTED : DESELECTED;
+				// Add whether the cell is an even or odd cell
+				classID += " " + current_row;
+				// Set the CSS classes
+				cell.setAttribute("class", classID);	
 			}
+			// Update row counter
+			current_row = current_row.equals(EVEN) ? ODD : EVEN;
 		}
 	}
 
@@ -133,8 +148,8 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		// Event occurred in an actual cell
 		try 
 		{
-			Time time = new Time(TimeCell.START_HOUR, TimeCell.START_MIN);
-			time.increment(0, elem.getTime() * (60 / TimeCell.CELLS_PER_HOUR));
+			//Time time = new Time(TimeCell.START_HOUR, TimeCell.START_MIN);
+			//time.increment(0, elem.getTime() * (60 / TimeCell.CELLS_PER_HOUR));
 			//DayOfWeek day = TimeCell.week[elem.getDay() + TimeCell.START_DAY];
 			//System.out.println("Down: " + day + ", " + time);
 			dragX = elem.getDay();
@@ -156,8 +171,8 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		// Event occurred in an actual cell
 		try 
 		{
-			Time time = new Time(TimeCell.START_HOUR, TimeCell.START_MIN);
-			time.increment(0, elem.getTime() * (60 / TimeCell.CELLS_PER_HOUR));
+			//Time time = new Time(TimeCell.START_HOUR, TimeCell.START_MIN);
+			//time.increment(0, elem.getTime() * (60 / TimeCell.CELLS_PER_HOUR));
 			//DayOfWeek day = TimeCell.week[elem.getDay() + TimeCell.START_DAY];
 			//System.out.println("Move: " + day + ", " + time);
 			dropX = elem.getDay();
@@ -179,8 +194,8 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		// Event occurred in an actual cell
 		try 
 		{
-			Time time = new Time(TimeCell.START_HOUR, TimeCell.START_MIN);
-			time.increment(0, elem.getTime() * (60 / TimeCell.CELLS_PER_HOUR));
+			//Time time = new Time(TimeCell.START_HOUR, TimeCell.START_MIN);
+			//time.increment(0, elem.getTime() * (60 / TimeCell.CELLS_PER_HOUR));
 			//DayOfWeek day = TimeCell.week[elem.getDay() + TimeCell.START_DAY];
 			//System.out.println("Up: " + day + ", " + time);
 			dropX = elem.getDay();

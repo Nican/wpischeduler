@@ -171,3 +171,37 @@ h1 {
 	padding: 4px;
 	width: 100%;
 }
+
+.TimeTable {
+	border-width:2px; 
+	border-style:solid;
+	border-color:black;
+	border-spacing:0;
+	border-collapse:collapse;
+}
+
+.TimeTable_Cell {
+	border-right-width:1px;
+	border-right-style:solid;
+	border-color:black;
+}
+
+.TimeTable_Cell_Selected {
+	background-color:#339900;
+}
+
+.TimeTable_Cell_Deselected {
+	background-color:#FFDEDE;
+}
+
+.TimeTable_Cell_Even {
+	border-top-width:1px;
+	border-top-style:solid;
+	border-color:black;
+}
+
+.TimeTable_Cell_Odd {
+	border-top-width:1px;
+	border-top-style:dotted;
+	border-color:black;
+}
