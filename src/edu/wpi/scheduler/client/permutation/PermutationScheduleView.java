@@ -10,6 +10,7 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ComplexPanel;
+import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
@@ -44,8 +45,11 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 	
 	public final Element body = DOM.createDiv();
 	public Widget bodyWidget;
+	
 	ToggleButton favoriteButton;
-
+	ToggleButton gridButton;
+	ToggleButton singleButton;
+	
 	public PermutationScheduleView(final PermutationController controller) {
 		setElement(DOM.createDiv());
 		this.controller = controller;
@@ -57,19 +61,41 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 		body.getStyle().setBottom(0.0, Unit.PX);
 		body.getStyle().setPosition(Position.ABSOLUTE);
 
-		Button gridButton = new Button("Grid", new ClickHandler() {
+		gridButton = new ToggleButton("Grid", new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				setView(ViewMode.GRID);
 			}
 		});
+		gridButton.getElement().getStyle().setFloat(Float.LEFT);
 
-		Button singleButton = new Button("Detail", new ClickHandler() {
+		singleButton = new ToggleButton("Detail", new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				setView(ViewMode.DETAIL);
 			}
 		});
+		singleButton.getElement().getStyle().setFloat(Float.LEFT);
+		
+		Button shareButton = new Button("Share", new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				final DecoratedPopupPanel simplePopup = new DecoratedPopupPanel(true);
+			    simplePopup.ensureDebugId("cwBasicPopup-simplePopup");
+			    simplePopup.setWidth("200px");
+			    simplePopup.setWidget(new ShareWidget(controller.getSelectedPermutation()));
+			    
+			    Widget source = (Widget) event.getSource();
+	            int left = source.getAbsoluteLeft() + 10 - 200;
+	            int top = source.getAbsoluteTop() + 10;
+	            simplePopup.setPopupPosition(left, top);
+	            simplePopup.getElement().getStyle().setZIndex(5);
+
+	            // Show the popup
+	            simplePopup.show();
+			}
+		});
+		shareButton.getElement().getStyle().setFloat(Float.RIGHT);
 
 		favoriteButton = new ToggleButton("Favorite (insert star)", new ClickHandler() {
 			@Override
@@ -91,7 +117,8 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 		add(gridButton, header);
 		add(singleButton, header);
 		add(favoriteButton, header);
-
+		add(shareButton, header );
+		
 		getElement().appendChild(header);
 		getElement().appendChild(body);
 
@@ -148,6 +175,9 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 	public void setView(ViewMode mode) {
 		selectedViewMode = mode;
 		update();
+		
+		gridButton.setDown( selectedViewMode == ViewMode.GRID );
+		singleButton.setDown( selectedViewMode == ViewMode.DETAIL );
 	}
 
 	private Widget getNewView(ViewMode mode) {

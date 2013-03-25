@@ -53,6 +53,8 @@ public class TabList extends Composite {
 	public void addTab( final BaseTab baseTab ){
 		this.horizontalPanel.add( baseTab );
 		
+		horizontalPanel.setCellHeight(baseTab, "100%");
+		
 		baseTab.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -79,10 +81,14 @@ public class TabList extends Composite {
 			Style style = widget.getElement().getStyle();
 			
 			style.setZIndex(count-i);
-			style.setBackgroundColor(bgColor);
 			
-			if( lastSelected == widget)
+			
+			if( lastSelected == widget){
+				style.setBackgroundColor("#EFFFEF");
 				bgColor = null;
+			} else {
+				style.setBackgroundColor(bgColor);
+			}
 			
 			widget.setStyleName( i == count-1 ? "sched-TopButton" : "sched-TopButton-notLast");
 		}

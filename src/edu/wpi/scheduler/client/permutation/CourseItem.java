@@ -85,7 +85,7 @@ public class CourseItem extends CellPanel implements ClickHandler {
 		
 		
 		if( periodsRow.getStyle().getDisplay().equals(Display.NONE.getCssName()) ){
-			periodsRow.getStyle().setProperty("display", null);
+			periodsRow.getStyle().setProperty("display", "");
 			collapseButton.setText("\\/");
 		} else {
 			periodsRow.getStyle().setDisplay(Display.NONE);
