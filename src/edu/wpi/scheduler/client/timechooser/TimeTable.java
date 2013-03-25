@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.Widget;
 import edu.wpi.scheduler.client.controller.StudentChosenTimes;
 import edu.wpi.scheduler.shared.model.TimeCell;
 
-public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandler, MouseMoveHandler 
+public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandler, MouseMoveHandler
 {
 	// CSS constants
 	static final String CELL = "TimeTable_Cell";
@@ -26,7 +26,7 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 	static final String ODD = "TimeTable_Cell_Odd";
 
 	// Native DOM Cell Element
-	public static class TimeElement extends Element 
+	public static class TimeElement extends Element
 	{
 		protected TimeElement() {}
 
@@ -84,8 +84,6 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 				TimeElement cell = DOM.createTD().cast();
 				cell.setTime(y);
 				cell.setDay(x);
-				cell.getStyle().setHeight(9, Unit.PX);
-				cell.getStyle().setWidth(44, Unit.PX);
 				// cell.setInnerHTML(x + " " + y);
 				row.appendChild(cell);
 			}
@@ -93,6 +91,7 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 			getElement().appendChild(row);
 		}
 		update();
+		setSize();
 	}
 
 	private void update()
@@ -142,6 +141,28 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 					// Set the CSS classes
 					cell.setAttribute("class", classID);	
 				}
+			}
+		}
+	}
+
+	public void setSize() 
+	{
+		// Update the table
+		table.getStyle().setWidth(720, Unit.PX);
+		table.getStyle().setHeight(480, Unit.PX);
+		int cellWidth = 720 / TimeCell.NUM_DAYS;
+		int cellHeight = 0;
+		// Update the cells
+		for(int y = 0; y < table.getChildCount(); y++)
+		{
+			Element row = table.getChild(y).cast();
+			cellHeight = 480 / (TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR);
+			for(int x = 0; x < row.getChildCount(); x++)
+			{
+				// Update cell's size
+				TimeElement cell = row.getChild(x).cast();
+				cell.getStyle().setWidth(cellWidth, Unit.PX);
+				cell.getStyle().setHeight(cellHeight, Unit.PX);
 			}
 		}
 	}
