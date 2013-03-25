@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.controller.StudentChosenTimes;
-import edu.wpi.scheduler.shared.model.DayOfWeek;
 import edu.wpi.scheduler.shared.model.Time;
 import edu.wpi.scheduler.shared.model.TimeCell;
 
@@ -114,6 +113,7 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		mouseMove = this.addDomHandler(this, MouseMoveEvent.getType());
 		// Add global handler to catch mouse-ups outside of this grid
 		mouseUp = RootPanel.get().addDomHandler(this, MouseUpEvent.getType());
+		update();
 	}
 	
 	@Override 
@@ -130,64 +130,70 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 	{
 		// Get the cell this happened in
 		TimeElement elem = event.getNativeEvent().getEventTarget().cast();
-		// Valid cell mouse down
+		// Event occurred in an actual cell
 		try 
 		{
-			DayOfWeek day = TimeCell.week[elem.getDay() + TimeCell.START_DAY];
 			Time time = new Time(TimeCell.START_HOUR, TimeCell.START_MIN);
 			time.increment(0, elem.getTime() * (60 / TimeCell.CELLS_PER_HOUR));
-			System.out.println("Down: " + day + ", " + time);
+			//DayOfWeek day = TimeCell.week[elem.getDay() + TimeCell.START_DAY];
+			//System.out.println("Down: " + day + ", " + time);
 			dragX = elem.getDay();
 			dragY = elem.getTime();
 		}
-		// Element or its values were undefined; was not an event fired within a cell
+		// Event occurred outside an actual cell
 		catch(Exception e)
 		{
-			System.out.println("Down: Outside");
+			//System.out.println("Down: Outside");
 		}
+		update();
 	}
 
 	@Override
 	public void onMouseMove(MouseMoveEvent event) 
 	{
+		// Get the cell this happened in
 		TimeElement elem = event.getNativeEvent().getEventTarget().cast();
+		// Event occurred in an actual cell
 		try 
 		{
-			DayOfWeek day = TimeCell.week[elem.getDay() + TimeCell.START_DAY];
 			Time time = new Time(TimeCell.START_HOUR, TimeCell.START_MIN);
 			time.increment(0, elem.getTime() * (60 / TimeCell.CELLS_PER_HOUR));
+			//DayOfWeek day = TimeCell.week[elem.getDay() + TimeCell.START_DAY];
 			//System.out.println("Move: " + day + ", " + time);
 			dropX = elem.getDay();
 			dropY = elem.getTime();
 		}
-		// Element or its values were undefined
+		// Event occurred outside an actual cell
 		catch(Exception e)
 		{
 			//System.out.println("Move: Outside");
 		}
+		update();
 	}
 	
 	@Override
 	public void onMouseUp(MouseUpEvent event) 
 	{
+		// Get the cell this happened in
 		TimeElement elem = event.getNativeEvent().getEventTarget().cast();
+		// Event occurred in an actual cell
 		try 
 		{
-			DayOfWeek day = TimeCell.week[elem.getDay() + TimeCell.START_DAY];
 			Time time = new Time(TimeCell.START_HOUR, TimeCell.START_MIN);
 			time.increment(0, elem.getTime() * (60 / TimeCell.CELLS_PER_HOUR));
-			System.out.println("Up: " + day + ", " + time);
+			//DayOfWeek day = TimeCell.week[elem.getDay() + TimeCell.START_DAY];
+			//System.out.println("Up: " + day + ", " + time);
 			dropX = elem.getDay();
 			dropY = elem.getTime();
-			System.out.println(dragX+ ", " +  dragY+ " ; " + dropX + ", " + dropY);
-			controller.timeChosen(dragX, dragY, dropX, dropY);
-			dragX = dragY = dropX = dropY = -1;
+			//System.out.println(dragX+ ", " +  dragY+ " ; " + dropX + ", " + dropY);
 		}
-		// Element or its values were undefined
+		// Event occurred outside an actual cell
 		catch(Exception e)
 		{
-			System.out.println("Up: Outside");
-			dragX = dragY = dropX = dropY = -1;
+			//System.out.println("Up: Outside");
 		}
+		controller.timeChosen(dragX, dragY, dropX, dropY);
+		dragX = dragY = dropX = dropY = -1;
+		update();
 	}
 }

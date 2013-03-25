@@ -5,14 +5,10 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.controller.StudentSchedule;
-import edu.wpi.scheduler.shared.model.Term;
-import edu.wpi.scheduler.shared.model.Time;
-import edu.wpi.scheduler.shared.model.TimeCell;
 
 public class TimeChooserView extends Composite 
 {
