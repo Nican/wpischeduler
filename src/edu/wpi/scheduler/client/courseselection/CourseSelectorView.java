@@ -15,6 +15,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 
+import edu.wpi.scheduler.client.IncomingAnimation;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.shared.model.Department;
 
@@ -100,6 +101,8 @@ public class CourseSelectorView extends Composite implements
 		if( departments.size() > 0 && selectionController.getSelectedCourse() == null ){
 			selectionController.selectCourse( departments.get(0).courses.get(0) );
 		}
+		
+		new IncomingAnimation( courseList.getElement() ).run();
 	}
 
 	/**

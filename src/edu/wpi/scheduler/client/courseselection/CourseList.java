@@ -57,7 +57,7 @@ public class CourseList extends ComplexPanel {
 				return;
 			}
 		}
-		
+
 		//Could not find a place to insert, put it at the end!
 		this.add( child, this.getElement() );
 	}

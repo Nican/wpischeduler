@@ -2,11 +2,9 @@ package edu.wpi.scheduler.client.permutation;
 
 import java.util.List;
 
-import com.google.gwt.animation.client.Animation;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
-import com.google.gwt.core.client.Duration;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.TextAlign;
@@ -20,6 +18,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 
+import edu.wpi.scheduler.client.IncomingAnimation;
 import edu.wpi.scheduler.client.controller.FavoriteEvent;
 import edu.wpi.scheduler.client.controller.FavoriteEventHandler;
 import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
@@ -48,39 +47,6 @@ public class PermutationCanvasList extends FlowPanel implements
 			"Favorites (0)", this);
 
 	public static final double favoriteButtonSize = 20.0;
-
-	public static class CanvasAnimation extends Animation {
-
-		private Canvas canvas;
-
-		public CanvasAnimation(Canvas canvas) {
-			this.canvas = canvas;
-		}
-
-		@Override
-		protected void onUpdate(double progress) {
-			double left = -canvas.getCoordinateSpaceWidth() * (1-progress);
-			getStyle().setLeft(left, Unit.PX);
-		}
-
-		@Override
-		protected void onComplete() {
-			super.onComplete();
-			getStyle().clearPosition();
-			getStyle().clearLeft();
-		}
-
-		@Override
-		protected void onStart() {
-			super.onStart();
-			getStyle().setPosition(Position.RELATIVE);
-		}
-
-		protected Style getStyle() {
-			return canvas.getElement().getStyle();
-		}
-
-	}
 
 	public PermutationCanvasList(PermutationController controller) {
 		this.controller = controller;
@@ -156,6 +122,8 @@ public class PermutationCanvasList extends FlowPanel implements
 				controller.selectPermutation(permutation);
 			}
 		});
+		
+		new IncomingAnimation(canvas.getElement()).run();
 		
 		return canvas;
 	}
@@ -291,9 +259,7 @@ public class PermutationCanvasList extends FlowPanel implements
 		int limit = Math.min(thumbSize + 20, permutationSize);
 
 		for (int i = thumbSize; i < limit; i++) {
-			Canvas canvas = addPermutation(permutations.get(i), scheduleList);
-			
-			new CanvasAnimation(canvas).run(500, Duration.currentTimeMillis() + 50 * (i-thumbSize));
+			addPermutation(permutations.get(i), scheduleList);
 		}
 	}
 
