@@ -2,6 +2,16 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:c="urn:import:edu.wpi.scheduler.client.courseselection">
 
+	<ui:style>
+		.pretty {	
+		    font-weight: bold;
+		    margin-bottom: 5px;
+		    padding: 3px;
+		    text-align: center;
+		    background-color: lightgrey;
+		    border-top: 2px grey solid;
+		}
+	</ui:style>
 
 	<g:SplitLayoutPanel>
 		<g:west size="250">
@@ -15,7 +25,10 @@
 				</g:center>
 				<g:south size="250">
 					<g:ScrollPanel>
-						<c:CourseSelection ui:field="courseSelection" />
+						<g:FlowPanel>
+							<g:HTMLPanel styleName='{style.pretty}'>Courses</g:HTMLPanel>
+							<c:CourseSelection ui:field="courseSelection" />
+						</g:FlowPanel>
 					</g:ScrollPanel>
 				</g:south>
 			</g:DockLayoutPanel>
