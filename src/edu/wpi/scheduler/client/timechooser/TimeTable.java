@@ -24,7 +24,7 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 	static final String DESELECTED = "TimeTable_Cell_Deselected";
 	static final String EVEN = "TimeTable_Cell_Even";
 	static final String ODD = "TimeTable_Cell_Odd";
-	
+
 	// Native DOM Cell Element
 	public static class TimeElement extends Element 
 	{
@@ -57,7 +57,7 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 	HandlerRegistration mouseDown;
 	HandlerRegistration mouseMove;
 	HandlerRegistration mouseUp;
-	
+
 	int dragX = -1;
 	int dragY = -1;
 	int dropX = -1;
@@ -94,8 +94,8 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		}
 		update();
 	}
-	
-	public void update()
+
+	private void update()
 	{
 		// Update the cells
 		// Starting with an even row
@@ -120,6 +120,32 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		}
 	}
 
+	private void drawDrag() 
+	{
+		if(dragX >= 0 && dragY >= 0 && dropX >= 0 && dropY >= 0)
+		{
+			int x1 = Math.min(dragX, dropX);
+			int y1 = Math.min(dragY, dropY);
+			int x2 = Math.max(dragX, dropX);
+			int y2 = Math.max(dragY, dropY);
+			boolean isAlreadySelected = model.isTimeSelected(dragY, dragX);
+			// Figure out if the cells should be marked as being selected or not
+			String classID = isAlreadySelected ? DESELECTED : SELECTED;
+			// Mark the cells being dragged
+			for(int y = y1; y <= y2; y++)
+			{
+				Element row = table.getChild(y).cast();
+				for(int x = x1; x <= x2; x++)
+				{
+					// Update cell visual state
+					TimeElement cell = row.getChild(x).cast();
+					// Set the CSS classes
+					cell.setAttribute("class", classID);	
+				}
+			}
+		}
+	}
+
 	@Override
 	public void onLoad()
 	{
@@ -130,7 +156,7 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		mouseUp = RootPanel.get().addDomHandler(this, MouseUpEvent.getType());
 		update();
 	}
-	
+
 	@Override 
 	public void onUnload()
 	{
@@ -139,7 +165,7 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		mouseMove.removeHandler();
 		mouseUp.removeHandler();
 	}
-	
+
 	@Override
 	public void onMouseDown(MouseDownEvent event) 
 	{
@@ -184,8 +210,9 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 			//System.out.println("Move: Outside");
 		}
 		update();
+		drawDrag();
 	}
-	
+
 	@Override
 	public void onMouseUp(MouseUpEvent event) 
 	{
