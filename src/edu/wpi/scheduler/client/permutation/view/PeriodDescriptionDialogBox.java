@@ -33,13 +33,15 @@ public class PeriodDescriptionDialogBox extends DialogBox {
 	public final PeriodDataGrid periodInfo;
 	public final Label title = new Label();
 	public final FlowPanel conflictList = new FlowPanel();
+	
+	public static final String dialogWidth = "800px";
 
 	public PeriodDescriptionDialogBox(PermutationController controller, Section section) {
 		super(true, true, new TitleCheckbox(controller.getStudentSchedule(), section));
 		this.section = section;
 		periodInfo = new PeriodDataGrid(section);
 		
-		getElement().getStyle().setProperty("width", "50%");
+		getElement().getStyle().setProperty("width", dialogWidth);
 		getElement().getStyle().setZIndex(10);
 
 		ConflictedList list = controller.getConflictController().getConflicts(section);
@@ -53,19 +55,20 @@ public class PeriodDescriptionDialogBox extends DialogBox {
 			if( list.size() > 0 ){
 				PeriodSelectList periodList = new PeriodSelectList(controller);
 				periodList.setSections(list, false);
-				periodList.setStyleName("sectionConflictList");
 				
 				conflictList.add(periodList);
 			} else {
 				conflictList.add( new Label("There are no sections with time conflicts with this section."));
 			}
 			dockPanel.add(conflictList, DockPanel.EAST);
+			dockPanel.setCellWidth(conflictList, "200px");
 		}
 
 		dockPanel.add(this.periodInfo, DockPanel.SOUTH);
 		dockPanel.add(new Label(getDescription()), DockPanel.CENTER);
 		
 		dockPanel.setCellVerticalAlignment(periodInfo, DockPanel.ALIGN_BOTTOM);
+		dockPanel.setWidth(dialogWidth);
 
 		add(dockPanel);
 	}
