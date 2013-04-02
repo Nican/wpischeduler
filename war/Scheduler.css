@@ -180,30 +180,35 @@ h1 {
 .TimeTable_Cell {
 	display:inline-block;
 	font-size:0px;
+	border-right-width:1px;
+	border-top-width:1px;
 }
 
 .TimeTable_Cell_Static {
-	border-right-width:1px;
 	border-right-style:solid;
 	border-color:black;
 }
 
 .TimeTable_Cell_Selected {
 	background-color:#339900;
+	border-right-style:solid;
+	border-top-style:solid;
+	border-color:#339900;
 }
 
 .TimeTable_Cell_Deselected {
 	background-color:#FFDEDE;
+	border-right-style:solid;
+	border-top-style:solid;
+	border-color:#FFDEDE;
 }
 
 .TimeTable_Cell_Even {
-	border-top-width:1px;
 	border-top-style:solid;
 	border-color:black;
 }
 
 .TimeTable_Cell_Odd {
-	border-top-width:1px;
 	border-top-style:dotted;
 	border-color:black;
 }

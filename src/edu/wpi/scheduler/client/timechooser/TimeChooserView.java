@@ -5,6 +5,7 @@ import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
@@ -34,13 +35,7 @@ public class TimeChooserView extends Composite implements ResizeHandler
 	
 	TimeTable ATermTable; 
 
-	final int totalWidth = 512;
-	final int totalHeight = 384;
-	final int columnWidth = 55;
-	final int rowHeight = 20;
-	final int gridWidth = totalWidth - columnWidth;
-	final int gridHeight = totalHeight - rowHeight;
-
+	HandlerRegistration resize;
 	interface TimeChooserViewUiBinder extends UiBinder<Widget, TimeChooserView> {}
 
 	public TimeChooserView(StudentSchedule studentSchedule) 
@@ -60,14 +55,20 @@ public class TimeChooserView extends Composite implements ResizeHandler
 	@Override
 	public void onLoad()
 	{
-		Window.addResizeHandler(this);
+		resize = Window.addResizeHandler(this);
+		onResize(null);
+	}
+	
+	@Override
+	public void onUnload()
+	{
+		resize.removeHandler();
 	}
 
 	@Override
 	public void onResize(ResizeEvent event) 
 	{
 		ATermTable.setSize(ATerm.getElement().getClientWidth(), ATerm.getElement().getClientHeight());
-		//System.err.println(ATerm.getElement().getClientWidth() + ", " + ATerm.getElement().getClientHeight());
 	}
 		
 		/*try

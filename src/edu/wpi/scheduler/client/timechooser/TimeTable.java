@@ -72,6 +72,7 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		// Create blank "table"
 		table = DOM.createDiv();
 		table.setAttribute("class", "TimeTable");
+		table.setDraggable(Element.DRAGGABLE_FALSE);
 		setElement(table);
 		// For each row
 		for (int y = 0; y < TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR ; y++) 
@@ -151,15 +152,14 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 	public void setSize(int width, int height) 
 	{
 		// Update the table
-		table.getStyle().setWidth(width, Unit.PX);
+		table.getStyle().setWidth(width+TimeCell.NUM_DAYS, Unit.PX);
 		table.getStyle().setHeight(height, Unit.PX);
-		double cellWidth = width / (TimeCell.NUM_DAYS *2);
-		double cellHeight = 0;
+		double cellWidth = Math.floor(width / (TimeCell.NUM_DAYS));
+		double cellHeight = Math.floor(height / (TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR));
 		// Update the cells
 		for(int y = 0; y < table.getChildCount(); y++)
 		{
 			Element row = table.getChild(y).cast();
-			cellHeight = height / (TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR);
 			for(int x = 0; x < row.getChildCount(); x++)
 			{
 				// Update cell's size
