@@ -1,14 +1,25 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	
+
+	<ui:style>
+		.timeTablePanel
+		{
+			left:0px;
+			right:0px;
+			top:0px;
+			bottom:0px;
+			position:ABSOLUTE:
+		}
+	</ui:style>
+
 	<g:AbsolutePanel ui:field="TimeChooserPanel">
 		<g:HorizontalPanel>
 			<g:VerticalPanel>
 				<g:HorizontalPanel>
 					<g:DockPanel>
 						<g:Dock direction="CENTER">
-							<g:SimplePanel ui:field="ATerm" />
+							<g:SimplePanel ui:field="ATerm" styleName='{style.timeTablePanel}'/>
 						</g:Dock>
 						<g:Dock direction="WEST">
 							<g:AbsolutePanel ui:field="ATermHours" />
