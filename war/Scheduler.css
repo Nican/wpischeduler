@@ -130,13 +130,6 @@ h1 {
 	background: #F3F7FB;
 }
 
-.sectionConflictList {
-	width: 175px;
-}
-
-.sectionConflictList>span {
-	display: block;
-}
 
 .PeriodSelectProf {
 	float: right;
@@ -172,16 +165,15 @@ h1 {
 	width: 100%;
 }
 
-.TimeTable_NoFont {
-	font-size:0px;
+.TimeTable {
+	border-width:2px; 
+	border-style:solid;
+	border-color:black;
+	border-spacing:0;
+	border-collapse:collapse;
 }
 
 .TimeTable_Cell {
-	display:inline-block;
-	font-size:0px;
-}
-
-.TimeTable_Cell_Static {
 	border-right-width:1px;
 	border-right-style:solid;
 	border-color:black;
