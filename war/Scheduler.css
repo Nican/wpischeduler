@@ -173,7 +173,16 @@ h1 {
 	border-collapse:collapse;
 }
 
+.TimeTable_NoFont {
+	font-size:0px;
+}
+
 .TimeTable_Cell {
+	display:inline-block;
+	font-size:0px;
+}
+
+.TimeTable_Cell_Static {
 	border-right-width:1px;
 	border-right-style:solid;
 	border-color:black;
