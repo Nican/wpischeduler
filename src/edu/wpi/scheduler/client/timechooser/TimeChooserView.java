@@ -1,8 +1,13 @@
 package edu.wpi.scheduler.client.timechooser;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -10,7 +15,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.controller.StudentSchedule;
 
-public class TimeChooserView extends Composite 
+public class TimeChooserView extends Composite implements ResizeHandler 
 {
 	private static TimeChooserViewUiBinder uiBinder = GWT.create(TimeChooserViewUiBinder.class);
 
@@ -26,9 +31,8 @@ public class TimeChooserView extends Composite
 	@UiField AbsolutePanel DTermGrid;
 	@UiField AbsolutePanel DTermHours;
 	@UiField AbsolutePanel DTermDays;
-
-	@UiField AbsolutePanel TimeChooserPanel;
-	@UiField AbsolutePanel WelcomeHelp;
+	
+	TimeTable ATermTable; 
 
 	final int totalWidth = 512;
 	final int totalHeight = 384;
@@ -42,7 +46,28 @@ public class TimeChooserView extends Composite
 	public TimeChooserView(StudentSchedule studentSchedule) 
 	{
 		initWidget(uiBinder.createAndBindUi(this));
-		ATerm.add(new TimeTable(studentSchedule.ATermTimes));
+		getElement().getStyle().setLeft(0, Unit.PX);
+		getElement().getStyle().setRight(0, Unit.PX);
+		getElement().getStyle().setTop(0, Unit.PX);
+		getElement().getStyle().setBottom(0, Unit.PX);
+		getElement().getStyle().setPosition(Position.ABSOLUTE);
+		
+		ATermTable = new TimeTable(studentSchedule.ATermTimes); 
+		ATerm.add(ATermTable);
+		onResize(null);
+	}
+	
+	@Override
+	public void onLoad()
+	{
+		Window.addResizeHandler(this);
+	}
+
+	@Override
+	public void onResize(ResizeEvent event) 
+	{
+		ATermTable.setSize(ATerm.getElement().getClientWidth(), ATerm.getElement().getClientHeight());
+		//System.err.println(ATerm.getElement().getClientWidth() + ", " + ATerm.getElement().getClientHeight());
 	}
 		
 		/*try

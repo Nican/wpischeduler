@@ -19,7 +19,9 @@ import edu.wpi.scheduler.shared.model.TimeCell;
 public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandler, MouseMoveHandler
 {
 	// CSS constants
+	static final String NOFONT = "TimeTable_NoFont";
 	static final String CELL = "TimeTable_Cell";
+	static final String STATIC = "TimeTable_Cell_Static";
 	static final String SELECTED = "TimeTable_Cell_Selected";
 	static final String DESELECTED = "TimeTable_Cell_Deselected";
 	static final String EVEN = "TimeTable_Cell_Even";
@@ -52,7 +54,7 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 	}
 
 	StudentChosenTimes model;
-	Element table; 
+	Element table;
 	TimeChooserController controller;
 	HandlerRegistration mouseDown;
 	HandlerRegistration mouseMove;
@@ -67,31 +69,30 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 	{
 		this.model = model;
 		controller = new TimeChooserController(this, model);
-		// Create blank table
-		table = DOM.createTable();
-		table.setDraggable(null);
+		// Create blank "table"
+		table = DOM.createDiv();
 		table.setAttribute("class", "TimeTable");
 		setElement(table);
 		// For each row
 		for (int y = 0; y < TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR ; y++) 
 		{
 			// Create each row
-			Element row = DOM.createTR();
+			Element row = DOM.createDiv();
+			row.setAttribute("class", NOFONT);
 			// For each cell in a row
 			for (int x = 0; x < TimeCell.NUM_DAYS; x++)
 			{
 				// Create the cell and set it to the proper values
-				TimeElement cell = DOM.createTD().cast();
+				TimeElement cell = DOM.createDiv().cast();
 				cell.setTime(y);
 				cell.setDay(x);
 				// cell.setInnerHTML(x + " " + y);
 				row.appendChild(cell);
 			}
 			// Add the new row to the table
-			getElement().appendChild(row);
+			table.appendChild(row);
 		}
 		update();
-		setSize();
 	}
 
 	private void update()
@@ -106,7 +107,7 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 			{
 				// Update cell visual state
 				TimeElement cell = row.getChild(x).cast();
-				String classID = CELL + " ";
+				String classID = CELL + " " + STATIC + " ";
 				// Add whether the cell is selected or unselected
 				classID += model.isTimeSelected(cell.getTime(), cell.getDay()) ? SELECTED : DESELECTED;
 				// Add whether the cell is an even or odd cell
@@ -128,8 +129,10 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 			int x2 = Math.max(dragX, dropX);
 			int y2 = Math.max(dragY, dropY);
 			boolean isAlreadySelected = model.isTimeSelected(dragY, dragX);
+			// Update cell visual state
+			String classID = CELL + " ";
 			// Figure out if the cells should be marked as being selected or not
-			String classID = isAlreadySelected ? DESELECTED : SELECTED;
+			classID += isAlreadySelected ? DESELECTED : SELECTED;
 			// Mark the cells being dragged
 			for(int y = y1; y <= y2; y++)
 			{
@@ -145,18 +148,18 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		}
 	}
 
-	public void setSize() 
+	public void setSize(int width, int height) 
 	{
 		// Update the table
-		table.getStyle().setWidth(720, Unit.PX);
-		table.getStyle().setHeight(480, Unit.PX);
-		int cellWidth = 720 / TimeCell.NUM_DAYS;
-		int cellHeight = 0;
+		table.getStyle().setWidth(width, Unit.PX);
+		table.getStyle().setHeight(height, Unit.PX);
+		double cellWidth = width / (TimeCell.NUM_DAYS *2);
+		double cellHeight = 0;
 		// Update the cells
 		for(int y = 0; y < table.getChildCount(); y++)
 		{
 			Element row = table.getChild(y).cast();
-			cellHeight = 480 / (TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR);
+			cellHeight = height / (TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR);
 			for(int x = 0; x < row.getChildCount(); x++)
 			{
 				// Update cell's size
