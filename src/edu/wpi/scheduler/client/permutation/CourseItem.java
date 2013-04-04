@@ -1,13 +1,16 @@
 package edu.wpi.scheduler.client.permutation;
 
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CellPanel;
 
+import edu.wpi.scheduler.client.IncomingAnimation;
 import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.courseselection.TermViewSelection;
 import edu.wpi.scheduler.shared.model.Course;
@@ -27,6 +30,7 @@ public class CourseItem extends CellPanel implements ClickHandler {
 	private Element periodsRow = null;
 	private PeriodSelectList itemPeriods = null;
 	protected Button collapseButton = new Button(">");
+	boolean isHidden = true;
 
 	public CourseItem(PermutationController permutationController, SectionProducer producer) {
 		this.permutationController = permutationController;
@@ -74,8 +78,9 @@ public class CourseItem extends CellPanel implements ClickHandler {
 			itemPeriods = new PeriodSelectList(permutationController);
 			itemPeriods.setSections(producer.getCourse().sections, true);
 			
-			periodsRow.getStyle().setDisplay(Display.NONE);
+			//periodsRow.getStyle().setDisplay(Display.NONE);
 			periodsCell.setAttribute("colspan", "3");
+			periodsCell.getStyle().setOverflow(Overflow.HIDDEN);
 
 			DOM.appendChild(periodsRow, periodsCell);
 			DOM.appendChild(getBody(), periodsRow);
@@ -84,12 +89,18 @@ public class CourseItem extends CellPanel implements ClickHandler {
 		}
 		
 		
-		if( periodsRow.getStyle().getDisplay().equals(Display.NONE.getCssName()) ){
-			periodsRow.getStyle().setProperty("display", "");
+		if( isHidden ){
+			isHidden = false;
+			//periodsRow.getStyle().setProperty("display", "");
 			collapseButton.setText("\\/");
+			
+			new IncomingAnimation(itemPeriods.getElement(), false).run();
 		} else {
-			periodsRow.getStyle().setDisplay(Display.NONE);
+			isHidden = true;
+			//periodsRow.getStyle().setDisplay(Display.NONE);
 			collapseButton.setText(">");
+			
+			new IncomingAnimation(itemPeriods.getElement(), false, true).run();
 		}
 
 		

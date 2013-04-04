@@ -14,6 +14,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.OptGroupElement;
 import com.google.gwt.dom.client.OptionElement;
 import com.google.gwt.dom.client.SelectElement;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.storage.client.Storage;
@@ -48,7 +49,10 @@ public class DepartmentListBox extends ListBox {
 	public DepartmentListBox(StudentSchedule studentSchedule) {
 		super(true); // Create is a multi-select
 		
-		this.getElement().getStyle().setHeight(100.0, Unit.PCT);
+		Style style = this.getElement().getStyle();
+		style.setHeight(100.0, Unit.PCT);
+		style.setBorderWidth(0.0, Unit.PX);
+		style.setMargin(0.0, Unit.PX);
 	}
 
 	private AcademicGroup findAcademicGroup(Department department) {

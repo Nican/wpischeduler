@@ -6,22 +6,28 @@
 	<ui:style>
 		.rightTabs {
 			float: right;
-			height: 64px;
+			height: 50px;
 		}
 		
 		.rightTabs > button {
-			height: 64px;
+			height: 50px;
 		}
 		
 		.topBar {
-			border-bottom: 1px solid #AAAAAA;
+			border-bottom: 1px solid #000;
+			background-color: #c41230;
+		}
+		
+		.headerTitle{
+			color: white;
+			font-size: 50px;
 		}
 	</ui:style>
 	<g:DockLayoutPanel ui:field="layoutPanel">
-		<g:north size="64">
+		<g:north size="50">
 			<g:DockLayoutPanel styleName='{style.topBar}'>
-				<g:west size="198">
-					<g:Image resource='{res.logo}' />
+				<g:west size="256">
+					<g:Label styleName='{style.headerTitle}'>Scheduler</g:Label>
 				</g:west>
 				<g:center>
 					<g:SimplePanel>

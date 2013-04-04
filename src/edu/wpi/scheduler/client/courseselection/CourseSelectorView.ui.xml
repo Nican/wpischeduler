@@ -9,7 +9,6 @@
 		    padding: 3px;
 		    text-align: center;
 		    background-color: lightgrey;
-		    border-top: 2px grey solid;
 		}
 	</ui:style>
 
@@ -19,7 +18,7 @@
 		</g:west>
 
 		<g:east size='250'>
-			<g:DockLayoutPanel>
+			<g:SplitLayoutPanel>
 				<g:center>
 					<c:CourseDescriptionInfo ui:field="courseDescription" />
 				</g:center>
@@ -31,7 +30,7 @@
 						</g:FlowPanel>
 					</g:ScrollPanel>
 				</g:south>
-			</g:DockLayoutPanel>
+			</g:SplitLayoutPanel>
 		</g:east>
 
 		<g:center>
