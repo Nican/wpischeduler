@@ -1,74 +1,68 @@
 package edu.wpi.scheduler.client.timechooser;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.Grid;
 
 import edu.wpi.scheduler.client.controller.StudentSchedule;
 
-public class TimeChooserView extends Composite implements ResizeHandler 
+public class TimeChooserView extends Grid implements ResizeHandler 
 {
-	private static TimeChooserViewUiBinder uiBinder = GWT.create(TimeChooserViewUiBinder.class);
+	TimeTable ATermTable;
+	TimeTable BTermTable; 
+	TimeTable CTermTable; 
+	TimeTable DTermTable; 
 
-	@UiField SimplePanel ATerm;
-	@UiField AbsolutePanel ATermHours;
-	@UiField AbsolutePanel ATermDays;
-	@UiField AbsolutePanel BTermGrid;
-	@UiField AbsolutePanel BTermHours;
-	@UiField AbsolutePanel BTermDays;
-	@UiField AbsolutePanel CTermGrid;
-	@UiField AbsolutePanel CTermHours;
-	@UiField AbsolutePanel CTermDays;
-	@UiField AbsolutePanel DTermGrid;
-	@UiField AbsolutePanel DTermHours;
-	@UiField AbsolutePanel DTermDays;
-	
-	TimeTable ATermTable; 
-
-	HandlerRegistration resize;
-	interface TimeChooserViewUiBinder extends UiBinder<Widget, TimeChooserView> {}
+	HandlerRegistration resizeHandler;
 
 	public TimeChooserView(StudentSchedule studentSchedule) 
 	{
-		initWidget(uiBinder.createAndBindUi(this));
-		getElement().getStyle().setLeft(0, Unit.PX);
-		getElement().getStyle().setRight(0, Unit.PX);
-		getElement().getStyle().setTop(0, Unit.PX);
-		getElement().getStyle().setBottom(0, Unit.PX);
-		getElement().getStyle().setPosition(Position.ABSOLUTE);
+		super(2,2);
+		getElement().getStyle().setWidth(100.0, Unit.PCT);
+		getElement().getStyle().setHeight(100.0, Unit.PCT);
 		
-		ATermTable = new TimeTable(studentSchedule.ATermTimes); 
-		ATerm.add(ATermTable);
+		ATermTable = new TimeTable(studentSchedule.ATermTimes);
+		BTermTable = new TimeTable(studentSchedule.BTermTimes);
+		CTermTable = new TimeTable(studentSchedule.CTermTimes);
+		DTermTable = new TimeTable(studentSchedule.DTermTimes);
+		this.addTimeTable(0, 0, ATermTable);
+		this.addTimeTable(1, 0, BTermTable);
+		this.addTimeTable(0, 1, CTermTable);
+		this.addTimeTable(1, 1, DTermTable);
+		
 		onResize(null);
+	}
+	
+	public void addTimeTable( int row, int column, TimeTable table )
+	{
+		setWidget(row, column, table);
+		getCellFormatter().setWidth(row, column, "50%");
+		getCellFormatter().setHeight(row, column, "50%");
 	}
 	
 	@Override
 	public void onLoad()
 	{
-		resize = Window.addResizeHandler(this);
+		resizeHandler = Window.addResizeHandler(this);
 		onResize(null);
 	}
 	
 	@Override
 	public void onUnload()
 	{
-		resize.removeHandler();
+		resizeHandler.removeHandler();
 	}
 
 	@Override
 	public void onResize(ResizeEvent event) 
 	{
-		ATermTable.setSize(ATerm.getElement().getClientWidth(), ATerm.getElement().getClientHeight());
+		ATermTable.setSize((int) (getElement().getClientWidth() * 0.5), (int) (getElement().getClientHeight() * 0.5));
+		BTermTable.setSize((int) (getElement().getClientWidth() * 0.5), (int) (getElement().getClientHeight() * 0.5));
+		CTermTable.setSize((int) (getElement().getClientWidth() * 0.5), (int) (getElement().getClientHeight() * 0.5));
+		DTermTable.setSize((int) (getElement().getClientWidth() * 0.5), (int) (getElement().getClientHeight() * 0.5));
 	}
 		
 		/*try
