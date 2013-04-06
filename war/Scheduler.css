@@ -171,17 +171,25 @@ h1 {
 	border-color:black;
 	border-spacing:0;
 	border-collapse:collapse;
+	/**display:inline;*/
+	draggable:false;
 }
 
-.TimeTable_NoFont {
+.TimeTable_Row {
 	font-size:0px;
+	vertical-align:top;
+	draggable:false;
 }
 
 .TimeTable_Cell {
-	display:inline-block;
 	font-size:0px;
 	border-right-width:1px;
 	border-top-width:1px;
+	vertical-align:top;
+	display:inline-block;
+	*display:inline;
+	zoom:1;
+	draggable:false;
 }
 
 .TimeTable_Cell_Static {

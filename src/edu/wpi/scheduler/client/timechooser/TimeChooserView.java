@@ -1,5 +1,6 @@
 package edu.wpi.scheduler.client.timechooser;
 
+import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
@@ -23,6 +24,7 @@ public class TimeChooserView extends Grid implements ResizeHandler
 		super(2,2);
 		getElement().getStyle().setWidth(100.0, Unit.PCT);
 		getElement().getStyle().setHeight(100.0, Unit.PCT);
+		getElement().getStyle().setPosition(Position.ABSOLUTE);
 		
 		ATermTable = new TimeTable(studentSchedule.ATermTimes);
 		BTermTable = new TimeTable(studentSchedule.BTermTimes);
@@ -59,10 +61,10 @@ public class TimeChooserView extends Grid implements ResizeHandler
 	@Override
 	public void onResize(ResizeEvent event) 
 	{
-		ATermTable.setSize((int) (getElement().getClientWidth() * 0.5), (int) (getElement().getClientHeight() * 0.5));
-		BTermTable.setSize((int) (getElement().getClientWidth() * 0.5), (int) (getElement().getClientHeight() * 0.5));
-		CTermTable.setSize((int) (getElement().getClientWidth() * 0.5), (int) (getElement().getClientHeight() * 0.5));
-		DTermTable.setSize((int) (getElement().getClientWidth() * 0.5), (int) (getElement().getClientHeight() * 0.5));
+		ATermTable.setSize((int) (getElement().getClientWidth() * 0.4), (int) (getElement().getClientHeight() * 0.4));
+		BTermTable.setSize((int) (getElement().getClientWidth() * 0.4), (int) (getElement().getClientHeight() * 0.4));
+		CTermTable.setSize((int) (getElement().getClientWidth() * 0.4), (int) (getElement().getClientHeight() * 0.4));
+		DTermTable.setSize((int) (getElement().getClientWidth() * 0.4), (int) (getElement().getClientHeight() * 0.4));
 	}
 		
 		/*try
