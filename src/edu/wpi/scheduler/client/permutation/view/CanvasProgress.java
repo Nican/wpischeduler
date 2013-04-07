@@ -20,9 +20,9 @@ import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RequiresResize;
 
-import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
-import edu.wpi.scheduler.client.controller.ScheduleProducer;
-import edu.wpi.scheduler.client.controller.ScheduleProducer.ProducerEventHandler;
+import edu.wpi.scheduler.client.generator.ScheduleProducer;
+import edu.wpi.scheduler.client.generator.ProducerUpdateEvent.UpdateType;
+import edu.wpi.scheduler.client.generator.ScheduleProducer.ProducerEventHandler;
 import edu.wpi.scheduler.client.permutation.PermutationController;
 import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.Section;
@@ -103,12 +103,12 @@ public class CanvasProgress extends ComplexPanel implements ProducerEventHandler
 		ScheduleProducer prdocuer = controller.getProducer();
 		double width = (double) canvas.getCoordinateSpaceWidth();
 		double height = (double) canvas.getCoordinateSpaceHeight();
-		int courseCount = prdocuer.producedSections.size();
+		int courseCount = prdocuer.courses.size();
 		int maxSectionSize = 0;
 		double coursesHeight = height / courseCount;
 
 		for (int i = 0; i < courseCount; i++) {
-			maxSectionSize = Math.max(maxSectionSize, prdocuer.producedSections.get(i).size());
+			maxSectionSize = Math.max(maxSectionSize, prdocuer.courses.get(i).size());
 		}
 
 		if (maxSectionSize == 0)
@@ -120,7 +120,7 @@ public class CanvasProgress extends ComplexPanel implements ProducerEventHandler
 		context.setTextAlign(TextAlign.CENTER);
 
 		for (int i = 0; i < courseCount; i++) {
-			List<Section> sections = prdocuer.producedSections.get(i);
+			List<Section> sections = prdocuer.courses.get(i);
 			double courseY = coursesHeight * i + coursesHeight / 2 - lineHeight / 2;
 
 			if (sections.size() == 0)
@@ -201,7 +201,8 @@ public class CanvasProgress extends ComplexPanel implements ProducerEventHandler
 
 		context.clearRect(0.0, 0.0, (double) width, (double) height);
 		context.drawImage(background.getCanvasElement(), 0.0, 0.0);
-
+		
+		/*
 		if (producer.treeSearchState.size() > 1) {
 
 			for (int i = 1; i < producer.treeSearchState.size(); i++) {
@@ -218,6 +219,7 @@ public class CanvasProgress extends ComplexPanel implements ProducerEventHandler
 		
 		if(isAttached() && producer.isActive())
 			redraw();
+			*/
 	}
 
 	@Override

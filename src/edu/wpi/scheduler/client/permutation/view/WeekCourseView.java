@@ -12,6 +12,7 @@ import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CellPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -161,8 +162,12 @@ public class WeekCourseView extends CellPanel implements ResizeHandler, TimeRang
 	protected void onLoad() {
 		resizeHandle = Window.addResizeHandler(this);
 		controller.addTimeChangeListner(this);
-
-		this.createTimeColumn();
+		
+		new Timer(){
+			public void run() {
+				createTimeColumn();
+			}
+		}.schedule(100);
 	}
 
 	@Override

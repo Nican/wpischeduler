@@ -9,6 +9,7 @@ h1 {
 }
 
 .sched-TopButton, .sched-TopButton-notLast {
+	font-size: 20px;
 	left: 50px;
 	position: relative;
 	margin: 0px 50px 0px -100px;

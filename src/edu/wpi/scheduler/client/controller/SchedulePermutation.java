@@ -3,11 +3,19 @@ package edu.wpi.scheduler.client.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.wpi.scheduler.client.generator.AbstractProblem;
+import edu.wpi.scheduler.client.generator.ScheduleProducer.SearchState;
 import edu.wpi.scheduler.shared.model.Section;
 
 public class SchedulePermutation {
 	
-	public List<Section> sections = new ArrayList<Section>();
+	public final List<Section> sections;
+	public final List<AbstractProblem> solutions;
+	
+	public SchedulePermutation(SearchState state){
+		sections = new ArrayList<Section>(state.sections);
+		solutions = new ArrayList<AbstractProblem>(state.solutions);
+	}
 	
 	@Override
 	public boolean equals( Object object ){

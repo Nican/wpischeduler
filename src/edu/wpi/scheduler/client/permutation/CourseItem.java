@@ -6,11 +6,9 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CellPanel;
 
-import edu.wpi.scheduler.client.IncomingAnimation;
 import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.courseselection.TermViewSelection;
 import edu.wpi.scheduler.shared.model.Course;
@@ -91,16 +89,16 @@ public class CourseItem extends CellPanel implements ClickHandler {
 		
 		if( isHidden ){
 			isHidden = false;
-			//periodsRow.getStyle().setProperty("display", "");
+			periodsRow.getStyle().setProperty("display", "");
 			collapseButton.setText("\\/");
 			
-			new IncomingAnimation(itemPeriods.getElement(), false).run();
+			//new IncomingAnimation(itemPeriods.getElement(), false).run();
 		} else {
 			isHidden = true;
-			//periodsRow.getStyle().setDisplay(Display.NONE);
+			periodsRow.getStyle().setDisplay(Display.NONE);
 			collapseButton.setText(">");
 			
-			new IncomingAnimation(itemPeriods.getElement(), false, true).run();
+			//new IncomingAnimation(itemPeriods.getElement(), false, true).run();
 		}
 
 		

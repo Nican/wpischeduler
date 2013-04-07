@@ -1,29 +1,22 @@
 package edu.wpi.scheduler.client.permutation.view;
 
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
 
-import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
-import edu.wpi.scheduler.client.controller.ScheduleProducer;
-import edu.wpi.scheduler.client.controller.ScheduleProducer.CoursePair;
-import edu.wpi.scheduler.client.controller.ScheduleProducer.ProducerEventHandler;
-import edu.wpi.scheduler.client.controller.SectionProducer;
-import edu.wpi.scheduler.client.permutation.PeriodSelectList;
+import edu.wpi.scheduler.client.controller.SchedulePermutation;
+import edu.wpi.scheduler.client.generator.ConflictProblem;
+import edu.wpi.scheduler.client.generator.ProducerUpdateEvent.UpdateType;
+import edu.wpi.scheduler.client.generator.ScheduleProducer;
+import edu.wpi.scheduler.client.generator.ScheduleProducer.ProducerEventHandler;
 import edu.wpi.scheduler.client.permutation.PermutationController;
-import edu.wpi.scheduler.shared.model.Course;
-import edu.wpi.scheduler.shared.model.Section;
 
-public class ConflictResolverWidget extends FlexTable implements ProducerEventHandler {
+public class ConflictResolverWidget extends FlowPanel implements ProducerEventHandler {
 
 	public final PermutationController controller;
 
+	/*
 	public class ConflictCourse extends FlexTable {
 
 		private Course course;
@@ -85,9 +78,43 @@ public class ConflictResolverWidget extends FlexTable implements ProducerEventHa
 		}
 
 	}
+	*/
+	
+	public class ConflictWidget extends ComplexPanel {
+		
+		private ConflictProblem problem;
+
+		public ConflictWidget( ConflictProblem problem ){
+			setElement(DOM.createDiv());
+			this.problem = problem;
+			
+			
+			
+		}
+		
+		
+		
+	}
+	
+	ScheduleProducer producer;
 
 	public ConflictResolverWidget(PermutationController controller) {
 		this.controller = controller;
+		ScheduleProducer producer = controller.getProducer();
+		
+		if( producer.getCourses().size() == 0 ){
+			add(new Label("There are no courses selected. Add a course/enable a section of a course first."), getElement());
+		} else {
+			this.producer = new  ScheduleProducer(producer);
+			this.producer.setMaxSolutions(1);
+			
+			for( int i = 0; i < 10000 && this.producer.canGenerate(); i++)
+				this.producer.step();
+			
+			for( SchedulePermutation permutation : this.producer.getPermutations() ){
+				add( new Label(permutation.solutions.get(0).solutionDescription()), getElement());
+			}
+		}
 
 		update();
 	}
@@ -104,6 +131,14 @@ public class ConflictResolverWidget extends FlexTable implements ProducerEventHa
 	}
 	
 	public void update(){
+		//There is nothing to search for, 0 courses have been selected! Just abort.
+		if( this.producer == null )
+			return;
+		
+		
+		
+		
+		/*
 		FlexCellFormatter cellFormatter = getFlexCellFormatter();
 		ScheduleProducer producer = controller.getProducer();
 		String header = "<h1>Oops! Unable to generate any schedules!</h1>";
@@ -136,8 +171,10 @@ public class ConflictResolverWidget extends FlexTable implements ProducerEventHa
 				header += "<h2>Unable to find solution... TODO: Brute force what course to add/remove</h2>";
 			}
 		}
+		
 
 		setHTML(0, 0, header);
+		*/
 	}
 
 	@Override

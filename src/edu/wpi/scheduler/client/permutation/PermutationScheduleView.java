@@ -17,11 +17,11 @@ import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.controller.FavoriteEvent;
 import edu.wpi.scheduler.client.controller.FavoriteEventHandler;
-import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
-import edu.wpi.scheduler.client.controller.ScheduleProducer;
-import edu.wpi.scheduler.client.controller.ScheduleProducer.ProducerEventHandler;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
+import edu.wpi.scheduler.client.generator.ScheduleProducer;
+import edu.wpi.scheduler.client.generator.ProducerUpdateEvent.UpdateType;
+import edu.wpi.scheduler.client.generator.ScheduleProducer.ProducerEventHandler;
 import edu.wpi.scheduler.client.permutation.view.CanvasProgress;
 import edu.wpi.scheduler.client.permutation.view.ConflictResolverWidget;
 import edu.wpi.scheduler.client.permutation.view.DetailedView;
@@ -151,7 +151,7 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 			favoriteButton.setDown(studentSchedule.containsFavorite(permutation));
 
 		if (size == 0){
-			target = producer.isActive() ? ViewMode.PROGRESS : ViewMode.CONFLICT;
+			target = producer.canGenerate() ? ViewMode.PROGRESS : ViewMode.CONFLICT;
 		}
 			
 		if (target == viewMode)

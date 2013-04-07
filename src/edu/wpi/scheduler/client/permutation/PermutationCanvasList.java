@@ -21,11 +21,10 @@ import com.google.gwt.user.client.ui.ToggleButton;
 import edu.wpi.scheduler.client.IncomingAnimation;
 import edu.wpi.scheduler.client.controller.FavoriteEvent;
 import edu.wpi.scheduler.client.controller.FavoriteEventHandler;
-import edu.wpi.scheduler.client.controller.ProducerUpdateEvent.UpdateType;
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
-import edu.wpi.scheduler.client.controller.ScheduleProducer;
-import edu.wpi.scheduler.client.controller.ScheduleProducer.CoursePair;
-import edu.wpi.scheduler.client.controller.ScheduleProducer.ProducerEventHandler;
+import edu.wpi.scheduler.client.generator.ProducerUpdateEvent.UpdateType;
+import edu.wpi.scheduler.client.generator.ScheduleProducer;
+import edu.wpi.scheduler.client.generator.ScheduleProducer.ProducerEventHandler;
 import edu.wpi.scheduler.shared.model.DayOfWeek;
 import edu.wpi.scheduler.shared.model.Period;
 import edu.wpi.scheduler.shared.model.Section;
@@ -232,17 +231,11 @@ public class PermutationCanvasList extends FlowPanel implements
 
 		if (type == UpdateType.FINISH) {
 			ScheduleProducer producer = controller.getProducer();
-
+			
+			
 			if (producer.getPermutations().size() == 0) {
 				scheduleList.clear();
-				CoursePair pair = producer.getConflictCourse();
-
-				String msg = "Can not find any schedules!";
-
-				if (pair != null)
-					msg += pair.course1 + " - " + pair.course2;
-
-				scheduleList.add(new Label(msg));
+				scheduleList.add(new Label("Unable to find schedules..."));
 			}
 		}
 	}
