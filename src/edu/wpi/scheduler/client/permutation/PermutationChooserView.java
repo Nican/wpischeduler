@@ -6,14 +6,12 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.controller.FavoriteEvent;
-import edu.wpi.scheduler.client.controller.FavoriteEventHandler;
-import edu.wpi.scheduler.client.controller.SectionProducer;
-import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.controller.FavoriteEvent.FavoriteEventType;
+import edu.wpi.scheduler.client.controller.FavoriteEventHandler;
+import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.courseselection.CourseAddAnimation;
 
 public class PermutationChooserView extends Composite implements FavoriteEventHandler {
@@ -31,8 +29,8 @@ public class PermutationChooserView extends Composite implements FavoriteEventHa
 	@UiField(provided = true)
 	public final PermutationScheduleView scheduleView;
 
-	@UiField
-	public VerticalPanel courseList;
+	@UiField(provided = true)
+	public StudentCourseList courseList;
 
 	boolean initalized = false;
 
@@ -44,6 +42,7 @@ public class PermutationChooserView extends Composite implements FavoriteEventHa
 		this.studentSchedule = studentSchedule;
 		this.thumbList = new PermutationCanvasList(permutationController);
 		this.scheduleView = new PermutationScheduleView(permutationController);
+		this.courseList = new StudentCourseList(permutationController);
 
 		initWidget(uiBinder.createAndBindUi(this));
 
@@ -57,27 +56,14 @@ public class PermutationChooserView extends Composite implements FavoriteEventHa
 	}
 
 	public void update() {
-		courseList.clear();
-		boolean first = true;
-
-		for (SectionProducer producer : studentSchedule.sectionProducers) {
-			CourseItem item = new CourseItem(permutationController, producer);
-			
-			courseList.add( item );
-			
-			if( first ){
-				item.togglePeriods();
-				first = false;
-			}
-		}
-
 		scheduleView.update();
+		courseList.update();
 	}
 	
 	@Override
 	protected void onLoad() {
 		studentSchedule.addFavoriteHandler(this);
-		update();
+		
 	}
 
 	@Override

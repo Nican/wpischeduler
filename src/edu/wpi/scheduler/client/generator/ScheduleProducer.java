@@ -196,8 +196,9 @@ public class ScheduleProducer {
 				
 				SearchState newState2 = new SearchState(state);
 				newState2.solutions.add(new ConflictProblem(section, newSection));
-				//Here, we remove the other section
+				//Here, we remove the conflicting section, and add the new one.
 				newState2.sections.remove(section);
+				newState2.sections.add(newSection);
 				
 				addNewState(newState);
 				addNewState(newState2);

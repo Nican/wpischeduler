@@ -153,10 +153,11 @@ h1 {
 	opacity: 0.95;
 }
 
-.ConflictResolverTable > tbody > tr > td {
+.ConflictResolverItem {
 	border: 1px solid #BBBBBB;
 	border-radius: 10px;
 	padding: 4px;
+	margin: 4px;
 }
 
 .DetailedSection {

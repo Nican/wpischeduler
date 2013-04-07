@@ -32,6 +32,10 @@ public class SchedulePermutation {
 				return false;
 		}
 		
+		return equalSolution(other);
+	}
+	
+	public boolean equalSolution( SchedulePermutation other ){
 		if( other.solutions.size() != solutions.size() )
 			return false;
 		
