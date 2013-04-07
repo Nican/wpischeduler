@@ -1,5 +1,6 @@
 package edu.wpi.scheduler.client.timechooser;
 
+import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -19,7 +20,7 @@ import edu.wpi.scheduler.shared.model.TimeCell;
 public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandler, MouseMoveHandler
 {
 	// CSS constants
-	static final String NOFONT = "TimeTable_NoFont";
+	static final String ROW = "TimeTable_Row";
 	static final String CELL = "TimeTable_Cell";
 	static final String STATIC = "TimeTable_Cell_Static";
 	static final String SELECTED = "TimeTable_Cell_Selected";
@@ -73,13 +74,14 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		table = DOM.createDiv();
 		table.setAttribute("class", "TimeTable");
 		table.setDraggable(Element.DRAGGABLE_FALSE);
+		table.setAttribute("draggable", "false");
 		setElement(table);
 		// For each row
 		for (int y = 0; y < TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR ; y++) 
 		{
 			// Create each row
 			Element row = DOM.createDiv();
-			row.setAttribute("class", NOFONT);
+			row.setAttribute("class", ROW);
 			// For each cell in a row
 			for (int x = 0; x < TimeCell.NUM_DAYS; x++)
 			{
@@ -152,9 +154,10 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 	public void setSize(int width, int height) 
 	{
 		// Update the table
-		table.getStyle().setWidth(width+TimeCell.NUM_DAYS, Unit.PX);
-		table.getStyle().setHeight(height, Unit.PX);
-		double cellWidth = Math.floor(width / (TimeCell.NUM_DAYS));
+		table.getStyle().setWidth(width+25, Unit.PX);
+		table.getStyle().setHeight(height+25, Unit.PX);
+		//table.getStyle().setPosition(Position.RELATIVE);
+		double cellWidth = Math.floor(width / (TimeCell.NUM_DAYS)) - 1;
 		double cellHeight = Math.floor(height / (TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR));
 		// Update the cells
 		for(int y = 0; y < table.getChildCount(); y++)
