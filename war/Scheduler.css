@@ -168,19 +168,48 @@ h1 {
 }
 
 .TimeTable {
+	font-size:0px;
 	border-width:2px; 
 	border-style:solid;
 	border-color:black;
 	border-spacing:0;
 	border-collapse:collapse;
 	/**display:inline;*/
-	draggable:false;
 }
 
 .TimeTable_Row {
 	font-size:0px;
 	vertical-align:top;
-	draggable:false;
+}
+
+.TimeTable_TermLabel {
+	font-size:12px;
+	font-weight:bold;
+	text-align:center;
+	vertical-align:top;
+	display:inline-block;
+	*display:inline;
+	zoom:1;
+}
+
+.TimeTable_DayLabels {
+	font-size:9px;
+	text-align:center;
+	vertical-align:top;
+	display:inline-block;
+	*display:inline;
+	zoom:1;
+}
+
+.TimeTable_HourLabels {
+	font-size:9px;
+	text-align:left;
+	vertical-align:top;
+	display:inline-block;
+	*display:inline;
+	zoom:1;
+	border-right-width:1px;
+	border-top-width:1px
 }
 
 .TimeTable_Cell {
@@ -191,7 +220,6 @@ h1 {
 	display:inline-block;
 	*display:inline;
 	zoom:1;
-	draggable:false;
 }
 
 .TimeTable_Cell_Static {

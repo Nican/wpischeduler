@@ -10,6 +10,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Grid;
 
 import edu.wpi.scheduler.client.controller.StudentSchedule;
+import edu.wpi.scheduler.shared.model.Term;
 
 public class TimeChooserView extends Grid implements ResizeHandler 
 {
@@ -27,10 +28,10 @@ public class TimeChooserView extends Grid implements ResizeHandler
 		getElement().getStyle().setHeight(100.0, Unit.PCT);
 		getElement().getStyle().setPosition(Position.ABSOLUTE);
 		
-		ATermTable = new TimeTable(studentSchedule.ATermTimes);
-		BTermTable = new TimeTable(studentSchedule.BTermTimes);
-		CTermTable = new TimeTable(studentSchedule.CTermTimes);
-		DTermTable = new TimeTable(studentSchedule.DTermTimes);
+		ATermTable = new TimeTable(Term.A, studentSchedule.ATermTimes);
+		BTermTable = new TimeTable(Term.B, studentSchedule.BTermTimes);
+		CTermTable = new TimeTable(Term.C, studentSchedule.CTermTimes);
+		DTermTable = new TimeTable(Term.D, studentSchedule.DTermTimes);
 		this.addTimeTable(0, 0, ATermTable);
 		this.addTimeTable(1, 0, BTermTable);
 		this.addTimeTable(0, 1, CTermTable);
@@ -60,10 +61,10 @@ public class TimeChooserView extends Grid implements ResizeHandler
 	@Override
 	public void onResize(ResizeEvent event) 
 	{
-		ATermTable.setSize((int) (getParentElement().getClientWidth() * 0.5), (int) (getParentElement().getClientHeight() * 0.5));
-		BTermTable.setSize((int) (getParentElement().getClientWidth() * 0.5), (int) (getParentElement().getClientHeight() * 0.5));
-		CTermTable.setSize((int) (getParentElement().getClientWidth() * 0.5), (int) (getParentElement().getClientHeight() * 0.5));
-		DTermTable.setSize((int) (getParentElement().getClientWidth() * 0.5), (int) (getParentElement().getClientHeight() * 0.5));
+		ATermTable.setSize((int) (getParentElement().getClientWidth() * 0.45), (int) (getParentElement().getClientHeight() * 0.45));
+		BTermTable.setSize((int) (getParentElement().getClientWidth() * 0.45), (int) (getParentElement().getClientHeight() * 0.45));
+		CTermTable.setSize((int) (getParentElement().getClientWidth() * 0.45), (int) (getParentElement().getClientHeight() * 0.45));
+		DTermTable.setSize((int) (getParentElement().getClientWidth() * 0.45), (int) (getParentElement().getClientHeight() * 0.45));
 	}
 	
 	public Element getParentElement(){
