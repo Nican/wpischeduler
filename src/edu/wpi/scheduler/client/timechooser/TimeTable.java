@@ -154,10 +154,10 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 	public void setSize(int width, int height) 
 	{
 		// Update the table
-		table.getStyle().setWidth(width+25, Unit.PX);
-		table.getStyle().setHeight(height+25, Unit.PX);
+		table.getStyle().setWidth(width, Unit.PX);
+		table.getStyle().setHeight(height, Unit.PX);
 		//table.getStyle().setPosition(Position.RELATIVE);
-		double cellWidth = Math.floor(width / (TimeCell.NUM_DAYS)) - 1;
+		double cellWidth = Math.floor(width / (TimeCell.NUM_DAYS));
 		double cellHeight = Math.floor(height / (TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR));
 		// Update the cells
 		for(int y = 0; y < table.getChildCount(); y++)
@@ -167,8 +167,8 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 			{
 				// Update cell's size
 				TimeElement cell = row.getChild(x).cast();
-				cell.getStyle().setWidth(cellWidth, Unit.PX);
-				cell.getStyle().setHeight(cellHeight, Unit.PX);
+				cell.getStyle().setWidth(cellWidth - 1, Unit.PX);
+				cell.getStyle().setHeight(cellHeight - 1, Unit.PX);
 			}
 		}
 	}
