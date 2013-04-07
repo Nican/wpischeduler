@@ -1,5 +1,7 @@
 package edu.wpi.scheduler.client.permutation.view;
 
+import java.util.ArrayList;
+
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -80,15 +82,17 @@ public class ConflictResolverWidget extends FlowPanel implements ProducerEventHa
 	}
 	*/
 	
+	public ArrayList<ConflictWidget> conflicts = new ArrayList<ConflictWidget>();
+	
 	public class ConflictWidget extends ComplexPanel {
 		
-		private ConflictProblem problem;
+		public final SchedulePermutation permutation;
 
-		public ConflictWidget( ConflictProblem problem ){
+		public ConflictWidget( SchedulePermutation permutation ){
 			setElement(DOM.createDiv());
-			this.problem = problem;
+			this.permutation = permutation;
 			
-			
+			getElement().setInnerHTML(permutation.toString());
 			
 		}
 		
@@ -112,7 +116,8 @@ public class ConflictResolverWidget extends FlowPanel implements ProducerEventHa
 				this.producer.step();
 			
 			for( SchedulePermutation permutation : this.producer.getPermutations() ){
-				add( new Label(permutation.solutions.get(0).solutionDescription()), getElement());
+				//add( new Label(permutation.solutions.get(0).solutionDescription()), getElement());
+				addPermutation(permutation);
 			}
 		}
 
@@ -128,6 +133,20 @@ public class ConflictResolverWidget extends FlowPanel implements ProducerEventHa
 	@Override
 	protected void onUnload() {
 		controller.removeProduceHandler(this);
+	}
+	
+	public void addPermutation(SchedulePermutation permutation){
+		//Check if we already do not have the permutation
+		
+		for( ConflictWidget widget : conflicts ){
+			if( widget.permutation.equals(permutation))
+				return;
+		}
+		
+		ConflictWidget widget = new ConflictWidget(permutation);
+		
+		add( widget, getElement() );
+		conflicts.add(widget);
 	}
 	
 	public void update(){

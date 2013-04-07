@@ -32,6 +32,14 @@ public class SchedulePermutation {
 				return false;
 		}
 		
+		if( other.solutions.size() != solutions.size() )
+			return false;
+		
+		for( AbstractProblem problem : solutions ){
+			if( !other.solutions.contains(problem) )
+				return false;
+		}
+		
 		return true;
 	}
 }
