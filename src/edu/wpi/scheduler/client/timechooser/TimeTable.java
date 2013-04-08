@@ -73,8 +73,6 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		// Create blank "table"
 		table = DOM.createDiv();
 		table.setAttribute("class", "TimeTable");
-		table.setDraggable(Element.DRAGGABLE_FALSE);
-		table.setAttribute("draggable", "false");
 		setElement(table);
 		// Add Days Row
 		Element days_row = DOM.createDiv();

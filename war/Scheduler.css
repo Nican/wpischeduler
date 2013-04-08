@@ -174,13 +174,11 @@ h1 {
 	border-spacing:0;
 	border-collapse:collapse;
 	/**display:inline;*/
-	draggable:false;
 }
 
 .TimeTable_Row {
 	font-size:0px;
 	vertical-align:top;
-	draggable:false;
 }
 
 .TimeTable_DayLabels {
@@ -190,7 +188,6 @@ h1 {
 	display:inline-block;
 	*display:inline;
 	zoom:1;
-	draggable:false;
 }
 
 .TimeTable_Cell {
@@ -201,7 +198,6 @@ h1 {
 	display:inline-block;
 	*display:inline;
 	zoom:1;
-	draggable:false;
 }
 
 .TimeTable_Cell_Static {
