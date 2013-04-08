@@ -8,7 +8,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.controller.StudentSchedule;
@@ -20,7 +19,7 @@ public class TimeChooserView extends Composite
 
 	@UiField SplitLayoutPanel SplitPanel;
 	TimeTablesGrid timeChoosers;
-	VerticalPanel sectionProducers;
+	AbsolutePanel studentCourses;
 	
 	public TimeChooserView( final StudentSchedule studentSchedule) 
 	{	
@@ -32,9 +31,9 @@ public class TimeChooserView extends Composite
 		getElement().getStyle().setPosition(Position.ABSOLUTE);
 		
 		timeChoosers = new TimeTablesGrid(studentSchedule);
-		sectionProducers = new VerticalPanel();
+		studentCourses = new AbsolutePanel();
 		SplitPanel.forceLayout();
-		SplitPanel.addEast(sectionProducers, 200);
+		SplitPanel.addEast(studentCourses, 200);
 		SplitPanel.add(timeChoosers);
 		SplitPanel.onResize();
 	}

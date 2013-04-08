@@ -10,7 +10,7 @@ import edu.wpi.scheduler.client.tabs.BaseTab;
 public class TimeTab extends BaseTab implements StudentScheduleEventHandler 
 {
 
-	TimeChooserView chooserView;
+	TimeTablesGrid chooserView;
 	
 	public TimeTab(StudentSchedule studentSchedule) 
 	{
@@ -22,7 +22,7 @@ public class TimeTab extends BaseTab implements StudentScheduleEventHandler
 	@Override
 	public Widget getBody() 
 	{
-		if( chooserView == null ) chooserView = new TimeChooserView(studentSchedule);
+		if( chooserView == null ) chooserView = new TimeTablesGrid(studentSchedule);
 		return chooserView;
 	}
 
