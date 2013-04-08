@@ -8,7 +8,7 @@ h1 {
 	text-align: center;
 }
 
-.sched-TopButton, .sched-TopButton-notLast {
+.sched-TopButton,.sched-TopButton-notLast {
 	font-size: 20px;
 	left: 50px;
 	position: relative;
@@ -17,9 +17,9 @@ h1 {
 	text-decoration: none;
 	cursor: pointer;
 	cursor: hand;
-	font-size:small;
+	font-size: small;
 	/* background: url("images/hborder.png") repeat-x 0px -2077px; */
-	border:1px solid #bbb;
+	border: 1px solid #bbb;
 	border-left: 0px;
 	border-bottom: 0px;
 	border-top: 0px;
@@ -27,7 +27,7 @@ h1 {
 }
 
 .sched-TopButton-notLast {
-	border-radius: 0px 50px 0px 0px; 
+	border-radius: 0px 50px 0px 0px;
 }
 
 .sendButton {
@@ -131,7 +131,6 @@ h1 {
 	background: #F3F7FB;
 }
 
-
 .PeriodSelectProf {
 	float: right;
 	cursor: pointer;
@@ -153,7 +152,7 @@ h1 {
 	opacity: 0.95;
 }
 
-.ConflictResolverTable > tbody > tr > td {
+.ConflictResolverTable>tbody>tr>td {
 	border: 1px solid #BBBBBB;
 	border-radius: 10px;
 	padding: 4px;
@@ -167,85 +166,85 @@ h1 {
 }
 
 .TimeTable {
-	font-size:0px;
-	border-width:2px; 
-	border-style:solid;
-	border-color:black;
-	border-spacing:0;
-	border-collapse:collapse;
+	font-size: 0px;
+	border-width: 2px;
+	border-style: solid;
+	border-color: black;
+	border-spacing: 0;
+	border-collapse: collapse;
 	/**display:inline;*/
 }
 
 .TimeTable_Row {
-	font-size:0px;
-	vertical-align:top;
+	font-size: 0px;
+	vertical-align: top;
 }
 
 .TimeTable_TermLabel {
-	font-size:12px;
-	font-weight:bold;
-	text-align:center;
-	vertical-align:top;
-	display:inline-block;
-	*display:inline;
-	zoom:1;
+	font-size: 12px;
+	font-weight: bold;
+	text-align: center;
+	vertical-align: top;
+	display: inline-block; *
+	display: inline;
+	zoom: 1;
 }
 
 .TimeTable_DayLabels {
-	font-size:9px;
-	text-align:center;
-	vertical-align:top;
-	display:inline-block;
-	*display:inline;
-	zoom:1;
+	font-size: 9px;
+	text-align: center;
+	vertical-align: top;
+	display: inline-block; *
+	display: inline;
+	zoom: 1;
 }
 
 .TimeTable_HourLabels {
-	font-size:9px;
-	text-align:left;
-	vertical-align:top;
-	display:inline-block;
-	*display:inline;
-	zoom:1;
-	border-right-width:1px;
-	border-top-width:1px
+	font-size: 9px;
+	text-align: left;
+	vertical-align: top;
+	display: inline-block; *
+	display: inline;
+	zoom: 1;
+	border-right-width: 1px;
+	border-top-width: 1px;
 }
 
 .TimeTable_Cell {
-	font-size:0px;
-	border-right-width:1px;
-	border-top-width:1px;
-	vertical-align:top;
-	display:inline-block;
-	*display:inline;
-	zoom:1;
+	font-size: 0px;
+	border-right-width: 1px;
+	border-top-width: 1px;
+	vertical-align: top;
+	display: inline-block; *
+	display: inline;
+	zoom: 1;
 }
 
 .TimeTable_Cell_Static {
-	border-right-style:solid;
-	border-color:black;
+	border-right-style: solid;
+	border-color: black;
 }
 
 .TimeTable_Cell_Selected {
-	background-color:#339900;
-	border-right-style:solid;
-	border-top-style:solid;
-	border-color:#339900;
+	background-color: #339900;
+	border-right-style: solid;
+	border-top-style: solid;
+	border-color: #339900;
 }
 
 .TimeTable_Cell_Deselected {
-	background-color:#FFDEDE;
-	border-right-style:solid;
-	border-top-style:solid;
-	border-color:#FFDEDE;
+	background-color: #FFDEDE;
+	border-right-style: solid;
+	border-top-style: solid;
+	border-color: #FFDEDE;
 }
 
 .TimeTable_Cell_Even {
-	border-top-style:solid;
-	border-color:black;
+	border-top-style: solid;
+	border-color: black;
 }
 
 .TimeTable_Cell_Odd {
-	border-top-style:dotted;
-	border-color:black;
+	border-top-style: dotted;
+	border-color: black;
 }
