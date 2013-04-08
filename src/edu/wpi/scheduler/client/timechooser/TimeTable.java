@@ -185,7 +185,7 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 	{
 		// Update the table
 		table.getStyle().setWidth(width, Unit.PX);
-		table.getStyle().setHeight(height-1, Unit.PX);
+		table.getStyle().setHeight(height, Unit.PX);
 		//table.getStyle().setPosition(Position.RELATIVE);
 		double cellWidth = ((double) width) / (TimeCell.NUM_DAYS + 1);
 		double cellHeight = ((double)height) / ((TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR) + 1);
