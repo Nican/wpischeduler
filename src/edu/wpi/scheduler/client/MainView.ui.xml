@@ -21,6 +21,7 @@
 		.headerTitle{
 			color: white;
 			font-size: 50px;
+			font-family: Arial;
 		}
 	</ui:style>
 	<g:DockLayoutPanel ui:field="layoutPanel">

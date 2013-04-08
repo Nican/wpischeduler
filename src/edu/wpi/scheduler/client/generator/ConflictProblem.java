@@ -20,12 +20,6 @@ public class ConflictProblem extends AbstractProblem {
 	}
 
 	@Override
-	public String solutionDescription() {
-		return conflict.course.toString() + " is conflicting with "
-				+ other.course.toString();
-	}
-
-	@Override
 	public void applySolution(StudentSchedule schedule) {
 
 	}
@@ -37,7 +31,17 @@ public class ConflictProblem extends AbstractProblem {
 
 		ConflictProblem conflict = (ConflictProblem) other;
 
-		return this.conflict.equals(conflict.conflict)
-				&& this.other.equals(conflict.other);
+		return this.conflict.course.equals(conflict.conflict.course)
+				&& this.other.course.equals(conflict.other.course);
+	}
+
+	@Override
+	public String getTitle() {
+		return "Disable " + conflict.course.toString();
+	}
+
+	@Override
+	public String getDescription() {
+		return conflict.course.toString() + " is conflicting with " + other.course.toString() ;
 	}
 }

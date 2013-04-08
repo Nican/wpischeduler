@@ -1,14 +1,20 @@
 package edu.wpi.scheduler.client.permutation.view;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
-import edu.wpi.scheduler.client.generator.ConflictProblem;
+import edu.wpi.scheduler.client.generator.AbstractProblem;
 import edu.wpi.scheduler.client.generator.ProducerUpdateEvent.UpdateType;
 import edu.wpi.scheduler.client.generator.ScheduleProducer;
 import edu.wpi.scheduler.client.generator.ScheduleProducer.ProducerEventHandler;
@@ -87,13 +93,32 @@ public class ConflictResolverWidget extends FlowPanel implements ProducerEventHa
 	public class ConflictWidget extends ComplexPanel {
 		
 		public final SchedulePermutation permutation;
+		final Element titleElem = DOM.createDiv();
+		final Element descriptionelem = DOM.createDiv();
 
 		public ConflictWidget( SchedulePermutation permutation ){
 			setElement(DOM.createDiv());
 			this.permutation = permutation;
 			
-			getElement().setInnerHTML(permutation.toString());
+			String title = "";
 			
+			for(AbstractProblem problem : permutation.solutions ){
+				title += problem.getTitle() + "<br>";
+				
+				Element problemDesc = DOM.createDiv();
+				problemDesc.setInnerText(problem.getDescription());
+				descriptionelem.appendChild(problemDesc);
+			}
+			
+			titleElem.getStyle().setFontWeight(FontWeight.BOLD);
+			descriptionelem.getStyle().setMarginLeft(20, Unit.PX);
+			
+			titleElem.setInnerHTML(title);
+			
+			getElement().appendChild(titleElem);
+			getElement().appendChild(descriptionelem);
+			
+			setStyleName("ConflictResolverItem");
 		}
 		
 		
@@ -104,23 +129,14 @@ public class ConflictResolverWidget extends FlowPanel implements ProducerEventHa
 
 	public ConflictResolverWidget(PermutationController controller) {
 		this.controller = controller;
-		ScheduleProducer producer = controller.getProducer();
 		
-		if( producer.getCourses().size() == 0 ){
-			add(new Label("There are no courses selected. Add a course/enable a section of a course first."), getElement());
-		} else {
-			this.producer = new  ScheduleProducer(producer);
-			this.producer.setMaxSolutions(1);
-			
-			for( int i = 0; i < 10000 && this.producer.canGenerate(); i++)
-				this.producer.step();
-			
-			for( SchedulePermutation permutation : this.producer.getPermutations() ){
-				//add( new Label(permutation.solutions.get(0).solutionDescription()), getElement());
-				addPermutation(permutation);
-			}
-		}
-
+		getElement().getStyle().setOverflowY(Overflow.SCROLL);
+		getElement().getStyle().setLeft(0, Unit.PX);
+		getElement().getStyle().setRight(0, Unit.PX);
+		getElement().getStyle().setTop(0, Unit.PX);
+		getElement().getStyle().setBottom(0, Unit.PX);
+		getElement().getStyle().setPosition(Position.ABSOLUTE);
+		
 		update();
 	}
 	
@@ -139,7 +155,7 @@ public class ConflictResolverWidget extends FlowPanel implements ProducerEventHa
 		//Check if we already do not have the permutation
 		
 		for( ConflictWidget widget : conflicts ){
-			if( widget.permutation.equals(permutation))
+			if( widget.permutation.equalSolution(permutation) )
 				return;
 		}
 		
@@ -150,50 +166,29 @@ public class ConflictResolverWidget extends FlowPanel implements ProducerEventHa
 	}
 	
 	public void update(){
-		//There is nothing to search for, 0 courses have been selected! Just abort.
-		if( this.producer == null )
-			return;
+		this.clear();
+		conflicts.clear();
 		
-		
-		
-		
-		/*
-		FlexCellFormatter cellFormatter = getFlexCellFormatter();
 		ScheduleProducer producer = controller.getProducer();
-		String header = "<h1>Oops! Unable to generate any schedules!</h1>";
-
-		setSize("100%", "100%");
-		getElement().getStyle().setPadding(3.0, Unit.PX);
-
-		cellFormatter.setAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER, HasVerticalAlignment.ALIGN_MIDDLE);
-		cellFormatter.setColSpan(0, 0, 2);
-		cellFormatter.setHeight(0, 0, "128px");
 		
-		setWidget(1, 0, null);
-		setWidget(1, 1, null);
-
-		// First, lets check we have any material to generate schedules with!
-		if (producer.producedSections.size() == 0) {
-			header += "<h2>There are no sections to generate schedules from.</h2>";
-
+		if( producer.getCourses().size() == 0 ){
+			add(new Label("There are no courses selected. Add a course/enable a section of a course first."), getElement());
 		} else {
-			CoursePair pair = producer.getConflictCourse();
+			this.producer = new  ScheduleProducer(producer);
+			this.producer.setMaxSolutions(30);
 			
-			if( pair != null ){
-				header += "<h2>Two courses can not exist in the same schedule.<br>All sections have conflicting times.</h2>";
-				
-				setWidget(1, 0, new ConflictCourse(pair.course1));
-				cellFormatter.setWidth(1, 0, "50%");
-				setWidget(1, 1, new ConflictCourse(pair.course2));
-				cellFormatter.setWidth(1, 1, "50%");
-			} else {
-				header += "<h2>Unable to find solution... TODO: Brute force what course to add/remove</h2>";
+			for( int i = 0; i < 100000 && this.producer.canGenerate(); i++)
+				this.producer.step();
+			
+			List<SchedulePermutation> permutations = this.producer.getPermutations();
+			
+			for( SchedulePermutation permutation : permutations ){
+				//add( new Label(permutation.solutions.get(0).solutionDescription()), getElement());
+				addPermutation(permutation);
 			}
 		}
 		
-
-		setHTML(0, 0, header);
-		*/
+		
 	}
 
 	@Override

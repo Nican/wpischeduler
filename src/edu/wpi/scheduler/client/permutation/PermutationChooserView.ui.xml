@@ -10,7 +10,7 @@
 	<g:SplitLayoutPanel>
 		<g:west size="200">
 			<g:ScrollPanel>
-				<g:VerticalPanel ui:field="courseList" />
+				<p:StudentCourseList ui:field="courseList" />
 			</g:ScrollPanel>
 		</g:west>
 		<g:west size="170">
