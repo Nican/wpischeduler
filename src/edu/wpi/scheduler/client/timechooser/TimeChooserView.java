@@ -60,10 +60,10 @@ public class TimeChooserView extends Grid implements ResizeHandler
 	@Override
 	public void onResize(ResizeEvent event) 
 	{
-		ATermTable.setSize((int) (getParentElement().getClientWidth() * 0.5), (int) (getParentElement().getClientHeight() * 0.5));
-		BTermTable.setSize((int) (getParentElement().getClientWidth() * 0.5), (int) (getParentElement().getClientHeight() * 0.5));
-		CTermTable.setSize((int) (getParentElement().getClientWidth() * 0.5), (int) (getParentElement().getClientHeight() * 0.5));
-		DTermTable.setSize((int) (getParentElement().getClientWidth() * 0.5), (int) (getParentElement().getClientHeight() * 0.5));
+		ATermTable.setSize((int) (getParentElement().getClientWidth() * 0.45), (int) (getParentElement().getClientHeight() * 0.45));
+		BTermTable.setSize((int) (getParentElement().getClientWidth() * 0.45), (int) (getParentElement().getClientHeight() * 0.45));
+		CTermTable.setSize((int) (getParentElement().getClientWidth() * 0.45), (int) (getParentElement().getClientHeight() * 0.45));
+		DTermTable.setSize((int) (getParentElement().getClientWidth() * 0.45), (int) (getParentElement().getClientHeight() * 0.45));
 	}
 	
 	public Element getParentElement(){

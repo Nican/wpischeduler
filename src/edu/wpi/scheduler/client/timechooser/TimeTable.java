@@ -1,6 +1,5 @@
 package edu.wpi.scheduler.client.timechooser;
 
-import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -21,6 +20,7 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 {
 	// CSS constants
 	static final String ROW = "TimeTable_Row";
+	static final String DAY = "TimeTable_DayLabels";
 	static final String CELL = "TimeTable_Cell";
 	static final String STATIC = "TimeTable_Cell_Static";
 	static final String SELECTED = "TimeTable_Cell_Selected";
@@ -76,8 +76,19 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		table.setDraggable(Element.DRAGGABLE_FALSE);
 		table.setAttribute("draggable", "false");
 		setElement(table);
-		// For each row
-		for (int y = 0; y < TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR ; y++) 
+		// Add Days Row
+		Element days_row = DOM.createDiv();
+		days_row.setAttribute("class", ROW);
+		for(int x = 0; x < TimeCell.NUM_DAYS; x++)
+		{
+			Element cell = DOM.createDiv();
+			cell.setInnerText(TimeCell.week[TimeCell.START_DAY+x].getName().toUpperCase());
+			cell.setAttribute("class", DAY);
+			days_row.appendChild(cell);
+		}
+		table.appendChild(days_row);
+		// Add time choosing rows
+		for (int y = 1; y < TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR ; y++) 
 		{
 			// Create each row
 			Element row = DOM.createDiv();
@@ -87,7 +98,7 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 			{
 				// Create the cell and set it to the proper values
 				TimeElement cell = DOM.createDiv().cast();
-				cell.setTime(y);
+				cell.setTime(y-1);
 				cell.setDay(x);
 				// cell.setInnerHTML(x + " " + y);
 				row.appendChild(cell);
@@ -103,7 +114,7 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		// Update the cells
 		// Starting with an even row
 		String current_row = EVEN;
-		for(int y = 0; y < table.getChildCount(); y++)
+		for(int y = 1; y < table.getChildCount(); y++)
 		{
 			Element row = table.getChild(y).cast();
 			for(int x = 0; x < row.getChildCount(); x++)
@@ -137,7 +148,7 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 			// Figure out if the cells should be marked as being selected or not
 			classID += isAlreadySelected ? DESELECTED : SELECTED;
 			// Mark the cells being dragged
-			for(int y = y1; y <= y2; y++)
+			for(int y = y1+1; y <= y2+1; y++)
 			{
 				Element row = table.getChild(y).cast();
 				for(int x = x1; x <= x2; x++)
@@ -164,7 +175,6 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		{
 			Element row = table.getChild(y).cast();
 			row.getStyle().setHeight(cellHeight, Unit.PX);
-			
 			for(int x = 0; x < row.getChildCount(); x++)
 			{
 				// Update cell's size
