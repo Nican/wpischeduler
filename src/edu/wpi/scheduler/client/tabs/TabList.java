@@ -74,6 +74,22 @@ public class TabList extends Composite {
 	
 	public void update(){
 		int count = horizontalPanel.getWidgetCount();
+		String useClass = "sched-TopButtonSelected";
+		
+		for( int i = 0; i < count; i++ ){
+			Widget widget = horizontalPanel.getWidget(i);
+			Style style = widget.getElement().getStyle();
+			
+			style.setZIndex(count-i);
+			widget.setStyleName(useClass);
+			
+			if( lastSelected == widget){
+				useClass = "sched-TopButton";
+			}	
+		}
+		
+		/*
+		int count = horizontalPanel.getWidgetCount();
 		String bgColor = "#FFFFFF";
 		
 		for( int i = 0; i < count; i++ ){
@@ -92,5 +108,6 @@ public class TabList extends Composite {
 			
 			widget.setStyleName( i == count-1 ? "sched-TopButton" : "sched-TopButton-notLast");
 		}
+		*/
 	}
 }

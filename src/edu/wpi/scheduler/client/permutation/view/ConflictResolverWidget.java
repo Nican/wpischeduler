@@ -7,6 +7,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -29,6 +30,7 @@ public class ConflictResolverWidget extends FlowPanel implements
 
 	public final PermutationController controller;
 	public ArrayList<ConflictWidget> conflicts = new ArrayList<ConflictWidget>();
+	public FlowPanel conflictList = new FlowPanel();
 
 	public class ConflictWidget extends ComplexPanel implements ClickHandler {
 
@@ -46,7 +48,7 @@ public class ConflictResolverWidget extends FlowPanel implements
 				title += problem.getTitle() + "<br>";
 
 				Element problemDesc = DOM.createDiv();
-				problemDesc.setInnerText(problem.getDescription());
+				problemDesc.setInnerHTML(problem.getDescription());
 				descriptionelem.appendChild(problemDesc);
 			}
 
@@ -90,6 +92,14 @@ public class ConflictResolverWidget extends FlowPanel implements
 		getElement().getStyle().setTop(0, Unit.PX);
 		getElement().getStyle().setBottom(0, Unit.PX);
 		getElement().getStyle().setPosition(Position.ABSOLUTE);
+		
+		
+		Element title = DOM.createDiv();
+		title.setInnerHTML("<h2>No schedules can be generated. :(<br>We are finding a few solutions.");
+		title.getStyle().setTextAlign(TextAlign.CENTER);
+		
+		getElement().appendChild(title);
+		add(conflictList, getElement());
 
 		updateProducer();
 	}
@@ -123,7 +133,7 @@ public class ConflictResolverWidget extends FlowPanel implements
 
 		ConflictWidget widget = new ConflictWidget(permutation);
 
-		add(widget, getElement());
+		conflictList.add(widget);
 		conflicts.add(widget);
 	}
 
@@ -146,15 +156,14 @@ public class ConflictResolverWidget extends FlowPanel implements
 	}
 
 	public void update() {
-		this.clear();
+		conflictList.clear();
 		conflicts.clear();
 
 		ScheduleProducer producer = controller.getProducer();
 
 		if (producer.getCourses().size() == 0) {
-			add(new Label(
-					"There are no courses selected. Add a course/enable a section of a course first."),
-					getElement());
+			conflictList.add(new Label(
+					"There are no courses selected. Add a course/enable a section of a course first."));
 			return;
 		}
 
@@ -165,7 +174,7 @@ public class ConflictResolverWidget extends FlowPanel implements
 			Label lbl = new Label("Attempting to find solution with "
 					+ this.producer.maxSolutions + " steps.");
 
-			add(lbl, getElement());
+			conflictList.add(lbl);
 			return;
 		}
 

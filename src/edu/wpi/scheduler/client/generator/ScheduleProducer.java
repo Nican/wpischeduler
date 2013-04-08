@@ -219,7 +219,19 @@ public class ScheduleProducer {
 			searchStack.push(newState);
 		} else {
 			//We reached the end of the tree, and therefore we have a a schedule! :D
-			permutations.add(new SchedulePermutation(newState));
+			SchedulePermutation permutation = new SchedulePermutation(newState);
+			
+			//Remove all items that require the same solution
+			while(!searchStack.isEmpty()){
+				SearchState state = searchStack.peek();
+				
+				if(!state.solutions.equals(newState.solutions))
+					break;
+				
+				searchStack.pop();			
+			}
+			
+			permutations.add(permutation);
 		}
 	}
 
