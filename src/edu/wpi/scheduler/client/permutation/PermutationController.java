@@ -212,7 +212,7 @@ public class PermutationController implements HasHandlers, StudentScheduleEventH
 	public void generateSchedules(){
 		int count = producer.getPermutations().size();
 		
-		for(int i = 0; i < 50000 && producer.canGenerate(); i++){
+		for(int i = 0; i < 2500 && producer.canGenerate(); i++){
 			producer.step();
 		}
 		

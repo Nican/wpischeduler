@@ -122,11 +122,7 @@ public class ScheduleProducer {
 		this.courses = new ArrayList<List<Section>>(producer.courses);		
 		
 		addInitialState();
-	}
-	
-	public void setMaxSolutions(int solutions){
-		this.maxSolutions = solutions;
-	}
+	}	
 	
 	private void addInitialState(){
 		//Well then, there is nothing to do here.

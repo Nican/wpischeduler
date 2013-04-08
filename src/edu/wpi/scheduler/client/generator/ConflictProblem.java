@@ -1,5 +1,6 @@
 package edu.wpi.scheduler.client.generator;
 
+import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.shared.model.Section;
 
@@ -21,7 +22,12 @@ public class ConflictProblem extends AbstractProblem {
 
 	@Override
 	public void applySolution(StudentSchedule schedule) {
-
+		SectionProducer producer = schedule.getSectionProducer(conflict.course);
+		
+		for( Section section : conflict.course.sections ){
+			producer.denySection(section);
+		}
+		
 	}
 
 	@Override
