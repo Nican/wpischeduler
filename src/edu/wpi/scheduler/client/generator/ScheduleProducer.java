@@ -6,11 +6,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
+import java.util.HashMap;
 import com.google.gwt.event.shared.EventHandler;
 
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
 import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
+import edu.wpi.scheduler.client.controller.StudentTermTimes;
 import edu.wpi.scheduler.client.generator.ProducerUpdateEvent.UpdateType;
 import edu.wpi.scheduler.client.permutation.PermutationController;
 import edu.wpi.scheduler.shared.model.DayOfWeek;
@@ -170,6 +172,10 @@ public class ScheduleProducer {
 		//First to check if we can add the section due to time conflict.
 		if(hasTimeConflicts(section)){
 			// push solutions
+			if(state.canAddSolutions())
+			{
+				pushTimeConflictSolutions(state, section);
+			}
 			return;
 		}
 		//Then check for conflicts with current sections
@@ -187,6 +193,21 @@ public class ScheduleProducer {
 		addNewState( newState );
 	}
 	
+	private boolean hasTimeConflicts(Section section) 
+	{
+		HashMap<Term, List<TimeCell>> conflicts = getTimeConflicts(section);
+		List<Term> offeredTerms = section.getTerms();
+		// For each term
+		for(Term t : offeredTerms)
+		{
+			if(!(conflicts.get(t).isEmpty()))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void pushConflictSolutions(SearchState state, Section newSection) {
 		//There are two courses in conflict, we can do two things:
 		//1. Remove the course that we are trying to add
@@ -209,6 +230,15 @@ public class ScheduleProducer {
 				addNewState(newState2);
 			}
 		}
+	}
+	
+	private void pushTimeConflictSolutions(SearchState state, Section section) 
+	{
+		SearchState newState = new SearchState(state);
+		newState.solutions.add(new TimeConflictProblem(this, section));
+		newState.sections.add(section);
+		
+		addNewState(newState);
 	}
 	
 	private void addNewState( SearchState newState ){
@@ -244,12 +274,15 @@ public class ScheduleProducer {
 		return false;
 	}
 	
-	private boolean hasTimeConflicts(Section section) 
+	public HashMap<Term, List<TimeCell>> getTimeConflicts(Section section) 
 	{
 		List<Term> offeredTerms = section.getTerms();
+		HashMap<Term, List<TimeCell>> conflicts = new HashMap<Term, List<TimeCell>>();
 		// For each term
 		for(Term t : offeredTerms)
 		{
+			List<TimeCell> termConflicts = new ArrayList<TimeCell>();
+			conflicts.put(t, termConflicts);
 			// For each period
 			for(Period p : section.periods)
 			{
@@ -265,14 +298,19 @@ public class ScheduleProducer {
 						if(!(chosenTimes.contains(periodTime)))
 						{
 							//System.out.println("CONFLICT");
-							return true;
+							Time conflict = new Time(periodTime.hour, periodTime.minutes);
+							if(!(termConflicts.contains(conflict)))
+							{
+								TimeCell full_conflict = new TimeCell(conflict, d);
+								termConflicts.add(full_conflict);
+							}
 						}
 						periodTime.increment(0, 60 / TimeCell.CELLS_PER_HOUR);
 					}
 				}	
 			}
 		}
-		return false;
+		return conflicts;
 	}
 
-}
+} 
