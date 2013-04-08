@@ -181,6 +181,16 @@ h1 {
 	vertical-align:top;
 }
 
+.TimeTable_TermLabel {
+	font-size:12px;
+	font-weight:bold;
+	text-align:center;
+	vertical-align:top;
+	display:inline-block;
+	*display:inline;
+	zoom:1;
+}
+
 .TimeTable_DayLabels {
 	font-size:9px;
 	text-align:center;
@@ -188,6 +198,17 @@ h1 {
 	display:inline-block;
 	*display:inline;
 	zoom:1;
+}
+
+.TimeTable_HourLabels {
+	font-size:9px;
+	text-align:left;
+	vertical-align:top;
+	display:inline-block;
+	*display:inline;
+	zoom:1;
+	border-right-width:1px;
+	border-top-width:1px
 }
 
 .TimeTable_Cell {

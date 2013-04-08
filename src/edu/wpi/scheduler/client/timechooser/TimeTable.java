@@ -14,13 +14,17 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.controller.StudentChosenTimes;
+import edu.wpi.scheduler.shared.model.Term;
+import edu.wpi.scheduler.shared.model.Time;
 import edu.wpi.scheduler.shared.model.TimeCell;
 
 public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandler, MouseMoveHandler
 {
 	// CSS constants
 	static final String ROW = "TimeTable_Row";
+	static final String TERM = "TimeTable_TermLabel";
 	static final String DAY = "TimeTable_DayLabels";
+	static final String HOUR = "TimeTable_HourLabels";
 	static final String CELL = "TimeTable_Cell";
 	static final String STATIC = "TimeTable_Cell_Static";
 	static final String SELECTED = "TimeTable_Cell_Selected";
@@ -66,7 +70,7 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 	int dropX = -1;
 	int dropY = -1;
 
-	public TimeTable(StudentChosenTimes model) 
+	public TimeTable(Term term, StudentChosenTimes model) 
 	{
 		this.model = model;
 		controller = new TimeChooserController(this, model);
@@ -77,32 +81,49 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		// Add Days Row
 		Element days_row = DOM.createDiv();
 		days_row.setAttribute("class", ROW);
+		// Add Term Cell
+		Element term_cell = DOM.createDiv();
+		term_cell.setInnerText(term.toString() + "-Term");
+		term_cell.setAttribute("class", TERM);
+		days_row.appendChild(term_cell);
+		// Add Days Cell
 		for(int x = 0; x < TimeCell.NUM_DAYS; x++)
 		{
-			Element cell = DOM.createDiv();
-			cell.setInnerText(TimeCell.week[TimeCell.START_DAY+x].getName().toUpperCase());
-			cell.setAttribute("class", DAY);
-			days_row.appendChild(cell);
+			Element day_cell = DOM.createDiv();
+			day_cell.setInnerText(TimeCell.week[TimeCell.START_DAY+x].getName().toUpperCase());
+			day_cell.setAttribute("class", DAY);
+			days_row.appendChild(day_cell);
 		}
 		table.appendChild(days_row);
-		// Add time choosing rows
-		for (int y = 1; y < TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR ; y++) 
+		// Add time choosing rows / hour labels
+		String current_row = EVEN;
+		Time time = new Time(TimeCell.START_HOUR, TimeCell.START_MIN);
+		for (int y = 0; y < TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR ; y++) 
 		{
 			// Create each row
 			Element row = DOM.createDiv();
 			row.setAttribute("class", ROW);
+			// Add hour label cell
+			Element hour_cell = DOM.createDiv();
+			String classID = HOUR + " " + STATIC + " " + current_row;
+			hour_cell.setAttribute("class", classID);
+			hour_cell.setInnerText(time.toString());
+			row.appendChild(hour_cell);
 			// For each cell in a row
 			for (int x = 0; x < TimeCell.NUM_DAYS; x++)
 			{
 				// Create the cell and set it to the proper values
 				TimeElement cell = DOM.createDiv().cast();
-				cell.setTime(y-1);
+				cell.setTime(y);
 				cell.setDay(x);
 				// cell.setInnerHTML(x + " " + y);
 				row.appendChild(cell);
 			}
 			// Add the new row to the table
 			table.appendChild(row);
+			// Update row counter
+			current_row = current_row.equals(EVEN) ? ODD : EVEN;
+			time.increment(0, 60 / TimeCell.CELLS_PER_HOUR);
 		}
 		update();
 	}
@@ -115,7 +136,7 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		for(int y = 1; y < table.getChildCount(); y++)
 		{
 			Element row = table.getChild(y).cast();
-			for(int x = 0; x < row.getChildCount(); x++)
+			for(int x = 1; x < row.getChildCount(); x++)
 			{
 				// Update cell visual state
 				TimeElement cell = row.getChild(x).cast();
@@ -149,7 +170,7 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 			for(int y = y1+1; y <= y2+1; y++)
 			{
 				Element row = table.getChild(y).cast();
-				for(int x = x1; x <= x2; x++)
+				for(int x = x1+1; x <= x2+1; x++)
 				{
 					// Update cell visual state
 					TimeElement cell = row.getChild(x).cast();
@@ -166,8 +187,8 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 		table.getStyle().setWidth(width, Unit.PX);
 		table.getStyle().setHeight(height, Unit.PX);
 		//table.getStyle().setPosition(Position.RELATIVE);
-		double cellWidth = ((double) width) / (TimeCell.NUM_DAYS);
-		double cellHeight = ((double)height) / (TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR);
+		double cellWidth = ((double) width) / (TimeCell.NUM_DAYS + 1);
+		double cellHeight = ((double)height) / ((TimeCell.NUM_HOURS * TimeCell.CELLS_PER_HOUR) + 1);
 		// Update the cells
 		for(int y = 0; y < table.getChildCount(); y++)
 		{
