@@ -13,7 +13,12 @@ import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.generator.ProducerUpdateEvent.UpdateType;
 import edu.wpi.scheduler.client.permutation.PermutationController;
+import edu.wpi.scheduler.shared.model.DayOfWeek;
+import edu.wpi.scheduler.shared.model.Period;
 import edu.wpi.scheduler.shared.model.Section;
+import edu.wpi.scheduler.shared.model.Term;
+import edu.wpi.scheduler.shared.model.Time;
+import edu.wpi.scheduler.shared.model.TimeCell;
 
 /**
  * Finds all conflicts between periods, and courses schedules.
@@ -163,6 +168,11 @@ public class ScheduleProducer {
 		Section section = state.getCurrentSection();
 		
 		//First to check if we can add the section due to time conflict.
+		if(hasTimeConflicts(section)){
+			// push solutions
+			return;
+		}
+		//Then check for conflicts with current sections
 		if(hasConflicts(state.sections, section)){
 			if(state.canAddSolutions()){
 				pushConflictSolutions(state, section);				
@@ -175,7 +185,6 @@ public class ScheduleProducer {
 		newState.sections.add(section);		
 		
 		addNewState( newState );
-		
 	}
 	
 	private void pushConflictSolutions(SearchState state, Section newSection) {
@@ -223,6 +232,35 @@ public class ScheduleProducer {
 		return false;
 	}
 	
-
+	private boolean hasTimeConflicts(Section section) 
+	{
+		List<Term> offeredTerms = section.getTerms();
+		// For each term
+		for(Term t : offeredTerms)
+		{
+			// For each period
+			for(Period p : section.periods)
+			{
+				// For each day
+				for(DayOfWeek d : p.days)
+				{
+					Time periodTime = new Time(p.startTime.hour, p.startTime.minutes);
+					List<Time> chosenTimes = controller.studentTermTimes.getTimesForTerm(t).getTimes(d);
+					// For each time cell
+					while(periodTime.compareTo(p.endTime) < 0)
+					{
+						//System.out.println(periodTime.toString());
+						if(!(chosenTimes.contains(periodTime)))
+						{
+							//System.out.println("CONFLICT");
+							return true;
+						}
+						periodTime.increment(0, 60 / TimeCell.CELLS_PER_HOUR);
+					}
+				}	
+			}
+		}
+		return false;
+	}
 
 }

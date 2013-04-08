@@ -31,10 +31,10 @@ public class TimeTablesGrid extends Grid implements ResizeHandler
 		getElement().getStyle().setHeight(100.0, Unit.PCT);
 		getElement().getStyle().setPosition(Position.ABSOLUTE);
 
-		ATermTable = new TimeTable(Term.A, studentSchedule.ATermTimes);
-		BTermTable = new TimeTable(Term.B, studentSchedule.BTermTimes);
-		CTermTable = new TimeTable(Term.C, studentSchedule.CTermTimes);
-		DTermTable = new TimeTable(Term.D, studentSchedule.DTermTimes);
+		ATermTable = new TimeTable(Term.A, studentSchedule.studentTermTimes.getTimesForTerm(Term.A));
+		BTermTable = new TimeTable(Term.B, studentSchedule.studentTermTimes.getTimesForTerm(Term.B));
+		CTermTable = new TimeTable(Term.C, studentSchedule.studentTermTimes.getTimesForTerm(Term.C));
+		DTermTable = new TimeTable(Term.D, studentSchedule.studentTermTimes.getTimesForTerm(Term.D));
 		this.addTimeTable(0, 0, ATermTable);
 		this.addTimeTable(0, 1, BTermTable);
 		this.addTimeTable(1, 0, CTermTable);

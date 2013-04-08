@@ -36,10 +36,8 @@ public class StudentSchedule implements HasHandlers
 	public final ArrayList<SchedulePermutation> favoritePermutations = new ArrayList<SchedulePermutation>();
 
 	private HandlerManager handlerManager = new HandlerManager(this);
-	public StudentChosenTimes ATermTimes = new StudentChosenTimes();
-	public StudentChosenTimes BTermTimes = new StudentChosenTimes();
-	public StudentChosenTimes CTermTimes = new StudentChosenTimes();
-	public StudentChosenTimes DTermTimes = new StudentChosenTimes();
+	
+	public StudentTermTimes studentTermTimes = new StudentTermTimes();
 
 	public StudentSchedule() {
 
