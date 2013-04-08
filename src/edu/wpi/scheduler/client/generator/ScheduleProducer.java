@@ -3,16 +3,15 @@ package edu.wpi.scheduler.client.generator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
-import java.util.HashMap;
 import com.google.gwt.event.shared.EventHandler;
 
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
 import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
-import edu.wpi.scheduler.client.controller.StudentTermTimes;
 import edu.wpi.scheduler.client.generator.ProducerUpdateEvent.UpdateType;
 import edu.wpi.scheduler.client.permutation.PermutationController;
 import edu.wpi.scheduler.shared.model.DayOfWeek;

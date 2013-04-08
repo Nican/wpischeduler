@@ -5,10 +5,8 @@ import java.util.List;
 
 import edu.wpi.scheduler.client.controller.StudentChosenTimes;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
-import edu.wpi.scheduler.client.controller.StudentTermTimes;
 import edu.wpi.scheduler.shared.model.Section;
 import edu.wpi.scheduler.shared.model.Term;
-import edu.wpi.scheduler.shared.model.Time;
 import edu.wpi.scheduler.shared.model.TimeCell;
 
 public class TimeConflictProblem extends AbstractProblem 
@@ -61,5 +59,6 @@ public class TimeConflictProblem extends AbstractProblem
 				chosenTimes.selectTime(conflict.timeToGrid(), conflict.dayToGrid());
 			}
 		}
+		schedule.courseUpdated(section.course);
 	}
 }

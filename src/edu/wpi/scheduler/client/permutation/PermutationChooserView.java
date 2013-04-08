@@ -63,7 +63,7 @@ public class PermutationChooserView extends Composite implements FavoriteEventHa
 	@Override
 	protected void onLoad() {
 		studentSchedule.addFavoriteHandler(this);
-		
+		update();		
 	}
 
 	@Override
