@@ -11,3 +11,4 @@ war/WEB-INF/classes/edu/wpi/scheduler/client
 war/WEB-INF/deploy
 war/scheduler
 gwt-unitCache
+/test-classes
