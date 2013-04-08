@@ -251,13 +251,15 @@ public class ScheduleProducer {
 			SchedulePermutation permutation = new SchedulePermutation(newState);
 			
 			//Remove all items that require the same solution
-			while(!searchStack.isEmpty()){
-				SearchState state = searchStack.peek();
-				
-				if(!state.solutions.equals(newState.solutions))
-					break;
-				
-				searchStack.pop();			
+			if( newState.solutions.size() > 0 ){
+				while(!searchStack.isEmpty()){
+					SearchState state = searchStack.peek();
+					
+					if(!state.solutions.equals(newState.solutions))
+						break;
+					
+					searchStack.pop();			
+				}
 			}
 			
 			permutations.add(permutation);

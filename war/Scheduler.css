@@ -8,30 +8,6 @@ h1 {
 	text-align: center;
 }
 
-/*
-.sched-TopButton,.sched-TopButton-notLast {
-	font-size: 20px;
-	left: 50px;
-	position: relative;
-	margin: 0px 50px 0px -100px;
-	padding: 0px 75px;
-	text-decoration: none;
-	cursor: pointer;
-	cursor: hand;
-	font-size: small;
-	border: 1px solid #bbb;
-	border-left: 0px;
-	border-bottom: 0px;
-	border-top: 0px;
-	box-shadow: inset -10px 0px 10px -10px black;
-}
-
-
-.sched-TopButton-notLast {
-	border-radius: 0px 50px 0px 0px;
-}
-*/
-
 .sched-TopButtonSelected {
 	background-color: #c41230;
 	color: white;
@@ -46,7 +22,7 @@ h1 {
 	text-decoration: none;
 	cursor: pointer;
 	cursor: hand;
-	border: 1px solid #bbb;
+	border: 0px solid #bbb;
 	border-left: 0px;
 	border-bottom: 0px;
 	border-top: 0px;
