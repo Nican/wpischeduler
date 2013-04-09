@@ -59,7 +59,6 @@ public class Scheduler implements EntryPoint {
 
 			@Override
 			public void OnSuccess(ScheduleDB database) {
-				// TODO Auto-generated method stub
 				System.out.println("Got success: ");
 				scheduleDB = database;
 
@@ -70,9 +69,7 @@ public class Scheduler implements EntryPoint {
 
 			@Override
 			public void OnFailure(Throwable failure) {
-				// TODO Auto-generated method stub
-				System.out.println("Unable to receive request: " + failure.getMessage());
-
+				Window.alert("Unable to receive request: " + failure.getMessage());
 			}
 		});
 		request.send();
@@ -81,7 +78,7 @@ public class Scheduler implements EntryPoint {
 		try {
 			builder.sendRequest(null, new RequestCallback() {
 				public void onError(Request request, Throwable exception) {
-					System.out.println("Unable to get course descriptions: " + exception.getMessage());
+					Window.alert("Unable to get course descriptions: " + exception.getMessage());
 					// Couldn't connect to server (could be timeout, SOP
 					// violation, etc.)
 				}
@@ -94,7 +91,7 @@ public class Scheduler implements EntryPoint {
 					} else {
 						// Handle the error. Can get the status text from
 						// response.getStatusText()
-						System.out.println("Unable to get course descriptions2: " + response.getStatusText());
+						Window.alert("Unable to parse course descriptions: " + response.getStatusText());
 					}
 				}
 			});
