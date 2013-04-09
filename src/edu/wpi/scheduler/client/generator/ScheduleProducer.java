@@ -170,6 +170,10 @@ public class ScheduleProducer {
 		//First to check if we can add the section due to time conflict.
 		if(hasTimeConflicts(section)){
 			// push solutions
+			if(state.canAddSolutions())
+			{
+				pushTimeConflictSolutions(state, section);
+			}
 			return;
 		}
 		//Then check for conflicts with current sections
@@ -209,6 +213,15 @@ public class ScheduleProducer {
 				addNewState(newState2);
 			}
 		}
+	}
+	
+	private void pushTimeConflictSolutions(SearchState state, Section section) 
+	{
+		SearchState newState = new SearchState(state);
+		newState.solutions.add(new TimeConflictProblem(section));
+		newState.sections.add(section);
+		
+		addNewState(newState);
 	}
 	
 	private void addNewState( SearchState newState ){
