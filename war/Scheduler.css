@@ -43,6 +43,20 @@ h1 {
 	font-size: 16pt;
 }
 
+.sched-Button {
+  margin: 0;
+  padding: 3px 5px 3px 5px;
+  text-decoration: none;
+  cursor: pointer;
+  cursor: hand;
+  font-size:small;
+  background: url("scheduler/gwt/clean/images/hborder.png") repeat-x 0px -2077px;
+  border:1px solid #bbb;
+  border-bottom: 1px solid #a0a0a0;
+  border-radius: 3px;
+ -moz-border-radius: 3px;
+}
+
 /** Most GWT widgets already have a style name defined */
 .gwt-DialogBox {
 	width: 400px;

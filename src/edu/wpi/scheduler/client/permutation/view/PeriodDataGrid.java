@@ -1,16 +1,18 @@
 package edu.wpi.scheduler.client.permutation.view;
 
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.cellview.client.DataGrid;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
 
 import edu.wpi.scheduler.shared.model.DayOfWeek;
 import edu.wpi.scheduler.shared.model.Period;
 import edu.wpi.scheduler.shared.model.Section;
 
-public class PeriodDataGrid extends DataGrid<Period> {
+public class PeriodDataGrid extends CellTable<Period> {
 
 	public PeriodDataGrid(Section section) {
+		
+		getElement().getStyle().setWidth(100.0, Unit.PCT);
 
 		addColumn(new TextColumn<Period>() {
 			@Override
@@ -66,7 +68,7 @@ public class PeriodDataGrid extends DataGrid<Period> {
 
 		// I really hate for having to hard-code this, but debugging the
 		// DataGrid is near impossible
-		getElement().getStyle().setHeight(24.0 + section.periods.size() * 24.0 + 2.0, Unit.PX);
+		//getElement().getStyle().setHeight(24.0 + section.periods.size() * 24.0 + 2.0, Unit.PX);
 
 		redraw();
 	}

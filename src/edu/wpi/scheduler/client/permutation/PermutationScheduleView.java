@@ -55,7 +55,7 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 		this.controller = controller;
 		Element header = DOM.createDiv();
 
-		body.getStyle().setTop(32.0, Unit.PX);
+		body.getStyle().setTop(26.0, Unit.PX);
 		body.getStyle().setRight(0.0, Unit.PX);
 		body.getStyle().setLeft(0.0, Unit.PX);
 		body.getStyle().setBottom(0.0, Unit.PX);
@@ -96,8 +96,9 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 			}
 		});
 		shareButton.getElement().getStyle().setFloat(Float.RIGHT);
+		shareButton.setStyleName("sched-Button");
 
-		favoriteButton = new ToggleButton("Favorite (insert star)", new ClickHandler() {
+		favoriteButton = new ToggleButton("Favorite", new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				StudentSchedule studentSchedule = controller.getStudentSchedule();
@@ -147,8 +148,12 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 		SchedulePermutation permutation = controller.getSelectedPermutation();
 		int size = producer.getPermutations().size();
 		
-		if(permutation != null )
-			favoriteButton.setDown(studentSchedule.containsFavorite(permutation));
+		if(permutation != null ){
+			boolean containsFavorite = studentSchedule.containsFavorite(permutation);
+			favoriteButton.setDown(containsFavorite);
+			favoriteButton.setHTML(containsFavorite ? "&#9733;" : "&#9734;");
+			
+		}
 
 		if (size == 0){
 			target = producer.canGenerate() ? ViewMode.PROGRESS : ViewMode.CONFLICT;
