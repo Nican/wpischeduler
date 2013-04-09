@@ -12,12 +12,15 @@ public class StudentChosenTimes
 {
 	// Terms of chosen times
 	private final HashMap<DayOfWeek, List<Time>> termTimes = new HashMap<DayOfWeek, List<Time>>();
+	public final StudentSchedule studentSchedule;
 
 	/**
 	 * Constructs beginning chosen times
+	 * @param studentSchedule 
 	 */
-	public StudentChosenTimes()
+	public StudentChosenTimes(StudentSchedule studentSchedule)
 	{
+		this.studentSchedule = studentSchedule;
 		// Initialize hash map
 		for(int i = TimeCell.START_DAY; i <= TimeCell.NUM_DAYS; i++)
 		{

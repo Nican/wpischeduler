@@ -36,7 +36,7 @@ public class SectionCheckbox extends CheckBox implements StudentScheduleEventHan
 
 	@Override
 	public void onCoursesChanged(StudentScheduleEvent studentScheduleEvent) {
-		if( studentScheduleEvent.getCourse().equals(section.course))
+		if( section.course.equals(studentScheduleEvent.getCourse()))
 			this.update();
 	}
 	

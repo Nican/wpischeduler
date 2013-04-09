@@ -28,6 +28,10 @@ public class StudentScheduleEvent  extends GwtEvent<StudentScheduleEventHandler>
 		handler.onCoursesChanged(this);
 	}
 	
+	/**
+	 * The course may be null
+	 * @return
+	 */
 	public Course getCourse(){
 		return course;
 	}

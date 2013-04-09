@@ -48,6 +48,7 @@ public class TimeChooserController
 				}
 			}
 		}
+		model.studentSchedule.courseUpdated(null);
 		//System.out.println(model.toString());
 	}
 }

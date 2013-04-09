@@ -4,10 +4,17 @@ import edu.wpi.scheduler.shared.model.Term;
 
 public class StudentTermTimes 
 {
-	public StudentChosenTimes ATermTimes = new StudentChosenTimes();
-	public StudentChosenTimes BTermTimes = new StudentChosenTimes();
-	public StudentChosenTimes CTermTimes = new StudentChosenTimes();
-	public StudentChosenTimes DTermTimes = new StudentChosenTimes();
+	public final StudentChosenTimes ATermTimes;
+	public final StudentChosenTimes BTermTimes;
+	public final StudentChosenTimes CTermTimes;
+	public final StudentChosenTimes DTermTimes;
+
+	public StudentTermTimes(StudentSchedule studentSchedule) {
+		ATermTimes = new StudentChosenTimes(studentSchedule);
+		BTermTimes = new StudentChosenTimes(studentSchedule);
+		CTermTimes = new StudentChosenTimes(studentSchedule);
+		DTermTimes = new StudentChosenTimes(studentSchedule);
+	}
 
 	public StudentChosenTimes getTimesForTerm(Term t)
 	{

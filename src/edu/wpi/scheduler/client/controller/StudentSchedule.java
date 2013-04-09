@@ -37,7 +37,7 @@ public class StudentSchedule implements HasHandlers
 
 	private HandlerManager handlerManager = new HandlerManager(this);
 	
-	public StudentTermTimes studentTermTimes = new StudentTermTimes();
+	public StudentTermTimes studentTermTimes = new StudentTermTimes(this);
 
 	public StudentSchedule() {
 
@@ -184,8 +184,14 @@ public class StudentSchedule implements HasHandlers
 			return this.sections.indexOf(sectionName) != -1;
 		}-*/;
 	}
+	
+	boolean coursesLoaded = false;
 
 	private void saveSchedule() {
+		if( coursesLoaded == false ){
+			Window.alert("Saving courses before loading!");
+		}
+		
 		JsArray<SectionProducerData> sections = JavaScriptObject.createArray().cast();
 
 		for (SectionProducer producer : sectionProducers) {
@@ -228,6 +234,7 @@ public class StudentSchedule implements HasHandlers
 	}
 
 	public void loadSchedule() {
+		coursesLoaded = true;
 		Storage localStorage = Storage.getLocalStorageIfSupported();
 
 		if (localStorage == null)

@@ -75,7 +75,7 @@ public class TermViewSelection extends TermView implements ClickHandler, Student
 
 	@Override
 	public void onCoursesChanged(StudentScheduleEvent studentScheduleEvent) {
-		if (studentScheduleEvent.getCourse().equals(course))
+		if (course.equals(studentScheduleEvent.getCourse()))
 			update();
 	}
 
