@@ -237,6 +237,16 @@ public class ScheduleProducer {
 		newState.solutions.add(new TimeConflictProblem(this, section));
 		newState.sections.add(section);
 		
+		//If there is a conflict, even after adding the time
+		//We are going to need an extra solution to fix the course conflict
+		if(hasConflicts(state.sections, section)){
+			if(!newState.canAddSolutions())
+				return;
+			
+			pushConflictSolutions(newState, section);
+			return;
+		}
+		
 		addNewState(newState);
 	}
 	
