@@ -1,6 +1,8 @@
 package edu.wpi.scheduler.client.permutation.view;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -55,6 +57,9 @@ public class PeriodDescriptionDialogBox extends DialogBox {
 			if( list.size() > 0 ){
 				PeriodSelectList periodList = new PeriodSelectList(controller);
 				periodList.setSections(list, false);
+				Style periodStyle = periodList.getElement().getStyle();
+				periodStyle.setPropertyPx("maxHeight", 400);
+				periodStyle.setOverflowY(Overflow.SCROLL);
 				
 				conflictList.add(periodList);
 			} else {
