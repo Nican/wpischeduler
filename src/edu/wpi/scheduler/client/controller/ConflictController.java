@@ -96,14 +96,10 @@ public class ConflictController {
 	
 	public boolean hasConflicts(Section newSection, Section section) {
 		ConflictedList list1 = getConflicts(newSection);
-		
-		if(list1 != null)
-			return list1.contains(section);
-		
 		ConflictedList list2 = getConflicts(section);
 		
-		if(list2 != null)
-			return list2.contains(newSection);
+		if(list1 != null && list2 != null )
+			return list1.contains(section);
 		
 		return hasConflictsNoCache(newSection, section);
 	}
