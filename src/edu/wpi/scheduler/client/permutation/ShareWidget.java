@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
+import edu.wpi.scheduler.client.storage.StorageSharing;
 
 public class ShareWidget extends ComplexPanel {
 	
@@ -15,7 +16,7 @@ public class ShareWidget extends ComplexPanel {
 		getElement().getStyle().setWidth(200, Unit.PX);
 		
 		TextBox textbox = new TextBox();
-		textbox.setValue(Document.get().getURL());
+		textbox.setValue(Document.get().getURL() + "#share/" + StorageSharing.getShareCode(permutation));
 		textbox.getElement().getStyle().setWidth(95, Unit.PCT);
 		
 		add(textbox, getElement());

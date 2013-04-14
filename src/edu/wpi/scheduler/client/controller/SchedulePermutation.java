@@ -12,6 +12,11 @@ public class SchedulePermutation {
 	public final List<Section> sections;
 	public final List<AbstractProblem> solutions;
 	
+	public SchedulePermutation(){
+		sections = new ArrayList<Section>();
+		solutions = new ArrayList<AbstractProblem>();
+	}
+	
 	public SchedulePermutation(SearchState state){
 		sections = new ArrayList<Section>(state.sections);
 		solutions = new ArrayList<AbstractProblem>(state.solutions);
