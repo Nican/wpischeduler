@@ -60,4 +60,13 @@ public enum DayOfWeek implements IsSerializable {
 		}
 		throw new IllegalStateException("Non-existent day of the week name: " + day );
 	}
+	
+	public static DayOfWeek getByName(String day){
+		for( DayOfWeek dayOfWeek : DayOfWeek.values() ){
+			if( dayOfWeek.getName().toLowerCase().equals(day.toLowerCase()) ){
+				return dayOfWeek;
+			}			
+		}
+		throw new IllegalStateException("Non-existent day of the week name: " + day );
+	}
 }

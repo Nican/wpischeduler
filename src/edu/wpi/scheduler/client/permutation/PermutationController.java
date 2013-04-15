@@ -1,9 +1,7 @@
 package edu.wpi.scheduler.client.permutation;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
@@ -18,15 +16,14 @@ import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.controller.StudentScheduleEvent;
 import edu.wpi.scheduler.client.controller.StudentScheduleEventHandler;
 import edu.wpi.scheduler.client.generator.ProducerUpdateEvent;
-import edu.wpi.scheduler.client.generator.ScheduleProducer;
 import edu.wpi.scheduler.client.generator.ProducerUpdateEvent.UpdateType;
+import edu.wpi.scheduler.client.generator.ScheduleProducer;
 import edu.wpi.scheduler.client.generator.ScheduleProducer.ProducerEventHandler;
 import edu.wpi.scheduler.client.permutation.view.PeriodDescriptionDialogBox;
 import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.DayOfWeek;
 import edu.wpi.scheduler.shared.model.Period;
 import edu.wpi.scheduler.shared.model.Section;
-import edu.wpi.scheduler.shared.model.Term;
 
 public class PermutationController implements HasHandlers, StudentScheduleEventHandler {
 
@@ -64,8 +61,6 @@ public class PermutationController implements HasHandlers, StudentScheduleEventH
 			generateSchedules();
 		}
 	};
-
-	public final Map<Term, String> termColor = new HashMap<Term, String>();
 
 	public final String[] colors = new String[] {
 			"rgb(172, 114, 94)", "rgb(250, 87, 60)", "rgb(255, 173, 70)",

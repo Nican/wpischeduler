@@ -11,8 +11,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 
-import edu.wpi.scheduler.client.CourseDescription;
-import edu.wpi.scheduler.client.Scheduler;
 import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.Period;
 import edu.wpi.scheduler.shared.model.Section;
@@ -47,13 +45,7 @@ public class CourseDescriptionInfo extends Composite {
 	}
 
 	public void setCourse(Course course) {
-		CourseDescription info = Scheduler.getDescription().getDescription(course);
-
-		if (info != null) {
-			description.setInnerText(info.getDescription());
-		} else {
-			description.setInnerText("");
-		}
+		description.setInnerText(course.description);
 		
 		List<String> professors = new ArrayList<String>();
 		

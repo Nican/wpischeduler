@@ -8,8 +8,6 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
-import edu.wpi.scheduler.client.CourseDescription;
-import edu.wpi.scheduler.client.Scheduler;
 import edu.wpi.scheduler.client.controller.ConflictController.ConflictedList;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.permutation.PeriodSelectList;
@@ -70,18 +68,12 @@ public class PeriodDescriptionDialogBox extends DialogBox {
 		}
 
 		dockPanel.add(this.periodInfo, DockPanel.SOUTH);
-		dockPanel.add(new Label(getDescription()), DockPanel.CENTER);
+		dockPanel.add(new Label(section.course.description), DockPanel.CENTER);
 		
 		dockPanel.setCellVerticalAlignment(periodInfo, DockPanel.ALIGN_BOTTOM);
 		dockPanel.setWidth(dialogWidth);
 
 		add(dockPanel);
-	}
-	
-	private String getDescription(){
-		CourseDescription description = Scheduler.getDescription().getDescription(section.course);
-
-		return description != null ? description.getDescription() : "No description available";
 	}
 
 	public void setGlassEnabled(boolean enabled) {

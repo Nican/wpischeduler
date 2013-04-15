@@ -33,7 +33,6 @@ public class CourseSelectorView extends Composite implements
 			UiBinder<DockLayoutPanel, CourseSelectorView> {
 	}
 
-	final StudentSchedule studentSchedule;
 	final CourseSelectionController selectionController;
 
 	@UiField(provided = true)
@@ -66,8 +65,6 @@ public class CourseSelectorView extends Composite implements
 		courseList = new CourseList(selectionController);
 
 		initWidget(uiBinder.createAndBindUi(this));
-
-		this.studentSchedule = studentSchedule;
 
 		getElement().getStyle().setLeft(0, Unit.PX);
 		getElement().getStyle().setRight(0, Unit.PX);

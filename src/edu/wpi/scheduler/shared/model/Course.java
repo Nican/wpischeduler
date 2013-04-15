@@ -18,6 +18,7 @@ public class Course implements Serializable {
 	public String number;
 	/** List of sections available for this course */
 	public List<Section> sections = new ArrayList<Section>();
+	public String description;
 	
 	/**
 	 * Constructs a course with a reference to the department it is apart of

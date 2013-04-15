@@ -32,8 +32,6 @@ public class PermutationChooserView extends Composite implements FavoriteEventHa
 	@UiField(provided = true)
 	public StudentCourseList courseList;
 
-	boolean initalized = false;
-
 	private final StudentSchedule studentSchedule;
 	public final PermutationController permutationController;
 

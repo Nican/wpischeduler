@@ -145,10 +145,6 @@ public class PermutationCanvasList extends FlowPanel implements
 		updateThumbnails();
 	}
 
-	public int childCount() {
-		return this.getChildren().size();
-	}
-
 	@Override
 	protected void onLoad() {
 		controller.addTimeChangeListner(this);
