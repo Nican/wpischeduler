@@ -235,6 +235,9 @@ public class LoadSchedule extends ComplexPanel implements ReadyStateChangeHandle
 		int minute = (int) (value % 100.0);
 		int hour = (int) (value / 100.0);
 		
+		if( hour == 0 )
+			hour = 12;
+		
 		return new Time(hour, minute);		
 	}
 
