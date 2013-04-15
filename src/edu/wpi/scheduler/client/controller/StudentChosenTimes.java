@@ -11,8 +11,8 @@ import edu.wpi.scheduler.shared.model.TimeCell;
 public class StudentChosenTimes 
 {
 	// Terms of chosen times
-	private final HashMap<DayOfWeek, List<Time>> termTimes = new HashMap<DayOfWeek, List<Time>>();
-	public final StudentSchedule studentSchedule;
+	private HashMap<DayOfWeek, List<Time>> termTimes = new HashMap<DayOfWeek, List<Time>>();
+	public StudentSchedule studentSchedule;
 
 	/**
 	 * Constructs beginning chosen times
@@ -67,7 +67,6 @@ public class StudentChosenTimes
 		return times;
 	}
 	
-	
 	@Override
 	public String toString()
 	{
@@ -85,5 +84,10 @@ public class StudentChosenTimes
 			out += "\n";
 		}
 		return out;
+	}
+	
+	public void set(HashMap<DayOfWeek, List<Time>> termTimes)
+	{
+		this.termTimes = termTimes;
 	}
 }

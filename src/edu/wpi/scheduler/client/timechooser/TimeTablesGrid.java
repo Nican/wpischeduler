@@ -10,7 +10,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.RequiresResize;
 
 import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.shared.model.Term;
