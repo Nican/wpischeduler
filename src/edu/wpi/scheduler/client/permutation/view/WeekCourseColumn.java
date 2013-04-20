@@ -93,10 +93,9 @@ public class WeekCourseColumn extends ComplexPanel implements PermutationSelectE
 			Style periodStyle = item.getElement().getStyle();
 
 			periodStyle.setPosition(Position.ABSOLUTE);
-			periodStyle.setTop(getTimeProgress(item.period.startTime) * height, Unit.PX);
-			periodStyle.setHeight((getTimeProgress(item.period.endTime) - getTimeProgress(item.period.startTime)) * height, Unit.PX);
+			periodStyle.setTop(timeProgress(item.period.startTime) * height, Unit.PX);
+			item.setHeight((timeProgress(item.period.endTime) - timeProgress(item.period.startTime)) * height);
 			periodStyle.setBackgroundColor(controller.getCourseColor(item.period.section.course));
-			//periodStyle.setZIndex(item.term.ordinal());
 			
 			if( selectedSection == null || item.period.section.equals(selectedSection) ){
 				periodStyle.setOpacity(1.0f);
@@ -120,7 +119,7 @@ public class WeekCourseColumn extends ComplexPanel implements PermutationSelectE
 		return item;
 	}
 
-	private double getTimeProgress(Time time) {
+	private double timeProgress(Time time) {
 		StudentSchedule schedule = controller.getStudentSchedule();
 		return (time.getValue() - schedule.getStartHour()) / (schedule.getEndHour() - schedule.getStartHour());
 	}
