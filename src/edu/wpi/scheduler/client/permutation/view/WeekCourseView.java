@@ -100,8 +100,8 @@ public class WeekCourseView extends CellPanel implements ResizeHandler, TimeRang
 		hourMarkers.getStyle().setWidth(100, Unit.PCT);
 		hourMarkers.getStyle().setTop(0.0, Unit.PX);
 
-		double start = controller.getStartHour();
-		double end = controller.getEndHour();
+		double start = controller.getStudentSchedule().getStartHour();
+		double end = controller.getStudentSchedule().getEndHour();
 		double totalHeight = this.getElement().getClientHeight() - weekdayHeight;
 		double heightPerHour = totalHeight / (end - start);
 
@@ -161,7 +161,7 @@ public class WeekCourseView extends CellPanel implements ResizeHandler, TimeRang
 	@Override
 	protected void onLoad() {
 		resizeHandle = Window.addResizeHandler(this);
-		controller.addTimeChangeListner(this);
+		controller.getStudentSchedule().addTimeChangeListner(this);
 		
 		new Timer(){
 			public void run() {
@@ -174,7 +174,7 @@ public class WeekCourseView extends CellPanel implements ResizeHandler, TimeRang
 	protected void onUnload() {
 		resizeHandle.removeHandler();
 		resizeHandle = null;
-		controller.removeTimeChangeListner(this);
+		controller.getStudentSchedule().removeTimeChangeListner(this);
 	}
 
 	private WeekCourseColumn addColumn(DayOfWeek day) {

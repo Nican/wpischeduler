@@ -22,6 +22,7 @@ import edu.wpi.scheduler.client.IncomingAnimation;
 import edu.wpi.scheduler.client.controller.FavoriteEvent;
 import edu.wpi.scheduler.client.controller.FavoriteEventHandler;
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
+import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.generator.ProducerUpdateEvent.UpdateType;
 import edu.wpi.scheduler.client.generator.ScheduleProducer;
 import edu.wpi.scheduler.client.generator.ScheduleProducer.ProducerEventHandler;
@@ -79,13 +80,14 @@ public class PermutationCanvasList extends FlowPanel implements
 		canvas.setCoordinateSpaceHeight(background.getCoordinateSpaceHeight());
 		canvas.setCoordinateSpaceWidth(background.getCoordinateSpaceWidth());
 		canvas.setStyleName("permutationCanvas");
+		StudentSchedule schedule = controller.getStudentSchedule();
 
 		Context2d context = canvas.getContext2d();
 
 		double columnWidth = ((double) canvas.getCoordinateSpaceWidth())
 				/ controller.getValidDaysOfWeek().size();
 		double hourHeight = ((double) canvas.getCoordinateSpaceHeight())
-				/ (controller.getEndHour() - controller.getStartHour());
+				/ (schedule.getEndHour() - schedule.getStartHour());
 		List<DayOfWeek> daysOfWeek = controller.getValidDaysOfWeek();
 
 		// context.setFillStyle("black");
@@ -128,7 +130,7 @@ public class PermutationCanvasList extends FlowPanel implements
 	}
 
 	private double getDayProgress(Time time) {
-		return ((double) time.hour) - controller.getStartHour()
+		return ((double) time.hour) - controller.getStudentSchedule().getStartHour()
 				+ ((double) time.minutes) / 60.0;
 	}
 
@@ -147,9 +149,11 @@ public class PermutationCanvasList extends FlowPanel implements
 
 	@Override
 	protected void onLoad() {
-		controller.addTimeChangeListner(this);
+		StudentSchedule schedule = controller.getStudentSchedule();
+		
+		schedule.addTimeChangeListner(this);
+		schedule.addFavoriteHandler(this);
 		controller.addProduceHandler(this);
-		controller.getStudentSchedule().addFavoriteHandler(this);
 		updateBackground();
 		scheduleList.clear();
 		updateThumbnails();
@@ -158,9 +162,11 @@ public class PermutationCanvasList extends FlowPanel implements
 
 	@Override
 	protected void onUnload() {
-		controller.removeTimeChangeListner(this);
+		StudentSchedule schedule = controller.getStudentSchedule();
+		
+		schedule.removeTimeChangeListner(this);
+		schedule.removeFavoriteHandler(this);
 		controller.removeProduceHandler(this);
-		controller.getStudentSchedule().removeFavoriteHandler(this);
 	}
 
 	@Override
@@ -174,16 +180,18 @@ public class PermutationCanvasList extends FlowPanel implements
 		background.getElement().setAttribute("width", "150px");
 		background.getElement().setAttribute("height", "150px");
 		Context2d context = background.getContext2d();
-		double heightPerHour = 150.0 / (controller.getEndHour() - controller
+		StudentSchedule schedule = controller.getStudentSchedule();
+		
+		double heightPerHour = 150.0 / (schedule.getEndHour() - schedule
 				.getStartHour());
 
 		context.setLineWidth(1.0);
 
-		for (double hour = controller.getStartHour(); hour <= controller
+		for (double hour = schedule.getStartHour(); hour <= schedule
 				.getEndHour(); hour += 1.0) {
 			// Draw in the middle:
 			// http://stackoverflow.com/questions/9311428/draw-single-pixel-line-in-html5-canvas
-			double yValue = Math.floor((hour - controller.getStartHour())
+			double yValue = Math.floor((hour - schedule.getStartHour())
 					* heightPerHour) + 0.5;
 
 			if (hour == 12.0) {

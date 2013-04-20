@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.controller.SchedulePermutation;
+import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.permutation.PermutationController;
 import edu.wpi.scheduler.client.permutation.PermutationSelectEvent;
 import edu.wpi.scheduler.client.permutation.PermutationSelectEventHandler;
@@ -120,7 +121,8 @@ public class WeekCourseColumn extends ComplexPanel implements PermutationSelectE
 	}
 
 	private double getTimeProgress(Time time) {
-		return (time.getValue() - controller.getStartHour()) / (controller.getEndHour() - controller.getStartHour());
+		StudentSchedule schedule = controller.getStudentSchedule();
+		return (time.getValue() - schedule.getStartHour()) / (schedule.getEndHour() - schedule.getStartHour());
 	}
 
 	@Override

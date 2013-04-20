@@ -19,8 +19,11 @@ import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.Scheduler;
 import edu.wpi.scheduler.client.controller.FavoriteEvent.FavoriteEventType;
+import edu.wpi.scheduler.client.permutation.TimeRangeChangEventHandler;
+import edu.wpi.scheduler.client.permutation.TimeRangeChangeEvent;
 import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.Department;
+import edu.wpi.scheduler.shared.model.Period;
 import edu.wpi.scheduler.shared.model.Section;
 
 // FIXME should we put this in the model somewhere? It's confusing me that it's in the controller folder
@@ -38,6 +41,9 @@ public class StudentSchedule implements HasHandlers
 	private HandlerManager handlerManager = new HandlerManager(this);
 	
 	public StudentTermTimes studentTermTimes = new StudentTermTimes(this);
+	
+	protected double startTime = 8.0;
+	protected double endTime = 16.0;
 
 	public StudentSchedule() {
 
@@ -148,8 +154,56 @@ public class StudentSchedule implements HasHandlers
 	}
 
 	public void courseUpdated(Course course) {
+		updateTimeRange();
 		this.fireEvent(new StudentScheduleEvent(course, StudentScheduleEvents.UPDATE));
 		saveSchedule();
+	}
+	
+
+	public double getStartHour() {
+		return startTime;
+	}
+
+	public double getEndHour() {
+		return endTime;
+	}
+	
+	public void setTimeRange(double startTime, double endTime) {
+
+		startTime = Math.floor(startTime);
+		endTime = Math.ceil(endTime);
+
+		if (this.startTime == startTime && this.endTime == endTime)
+			return;
+
+		this.startTime = startTime;
+		this.endTime = endTime;
+
+		this.fireEvent(new TimeRangeChangeEvent());
+	}
+
+	private void updateTimeRange() {
+		double startTime = 10.0;
+		double endTime = 16.0;
+
+		for (SectionProducer producer : sectionProducers) {
+			for (Section section : producer.getCourse().sections) {
+				for (Period period : section.periods) {
+					startTime = Math.min(period.startTime.getValue(), startTime);
+					endTime = Math.max(period.endTime.getValue(), endTime);
+				}
+			}
+		}
+
+		setTimeRange(startTime, endTime);
+	}
+	
+	public HandlerRegistration addTimeChangeListner(TimeRangeChangEventHandler handler) {
+		return handlerManager.addHandler(TimeRangeChangeEvent.TYPE, handler);
+	}
+
+	public void removeTimeChangeListner(TimeRangeChangEventHandler handler) {
+		handlerManager.removeHandler(TimeRangeChangeEvent.TYPE, handler);
 	}
 
 	private static class SectionProducerData extends JavaScriptObject {

@@ -22,7 +22,6 @@ import edu.wpi.scheduler.client.generator.ScheduleProducer.ProducerEventHandler;
 import edu.wpi.scheduler.client.permutation.view.PeriodDescriptionDialogBox;
 import edu.wpi.scheduler.shared.model.Course;
 import edu.wpi.scheduler.shared.model.DayOfWeek;
-import edu.wpi.scheduler.shared.model.Period;
 import edu.wpi.scheduler.shared.model.Section;
 
 public class PermutationController implements HasHandlers, StudentScheduleEventHandler {
@@ -30,9 +29,6 @@ public class PermutationController implements HasHandlers, StudentScheduleEventH
 	private HandlerManager handlerManager = new HandlerManager(this);
 
 	public final StudentSchedule studentSchedule;
-
-	protected double startTime = 8.0;
-	protected double endTime = 16.0;
 
 	protected List<DayOfWeek> validDayOfWeek =
 			Arrays.asList(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY);
@@ -75,7 +71,6 @@ public class PermutationController implements HasHandlers, StudentScheduleEventH
 		updateProducer();
 
 		studentSchedule.addStudentScheduleHandler(this);
-		updateTimeRange();
 	}
 
 	public String getCourseColor(Course course) {
@@ -99,14 +94,6 @@ public class PermutationController implements HasHandlers, StudentScheduleEventH
 		return studentSchedule;
 	}
 
-	public HandlerRegistration addTimeChangeListner(TimeRangeChangEventHandler handler) {
-		return handlerManager.addHandler(TimeRangeChangeEvent.TYPE, handler);
-	}
-
-	public void removeTimeChangeListner(TimeRangeChangEventHandler handler) {
-		handlerManager.removeHandler(TimeRangeChangeEvent.TYPE, handler);
-	}
-
 	public HandlerRegistration addSelectListner(PermutationSelectEventHandler handler) {
 		return handlerManager.addHandler(PermutationSelectEvent.TYPE, handler);
 	}
@@ -125,47 +112,12 @@ public class PermutationController implements HasHandlers, StudentScheduleEventH
 
 
 
-	public double getStartHour() {
-		return startTime;
-	}
-
-	public double getEndHour() {
-		return endTime;
-	}
 
 	public List<DayOfWeek> getValidDaysOfWeek() {
 		return validDayOfWeek;
 	}
 
-	public void setTimeRange(double startTime, double endTime) {
-
-		startTime = Math.floor(startTime);
-		endTime = Math.ceil(endTime);
-
-		if (this.startTime == startTime && this.endTime == endTime)
-			return;
-
-		this.startTime = startTime;
-		this.endTime = endTime;
-
-		this.fireEvent(new TimeRangeChangeEvent());
-	}
-
-	private void updateTimeRange() {
-		double startTime = 10.0;
-		double endTime = 16.0;
-
-		for (SectionProducer producer : studentSchedule.sectionProducers) {
-			for (Section section : producer.getCourse().sections) {
-				for (Period period : section.periods) {
-					startTime = Math.min(period.startTime.getValue(), startTime);
-					endTime = Math.max(period.endTime.getValue(), endTime);
-				}
-			}
-		}
-
-		setTimeRange(startTime, endTime);
-	}
+	
 
 	public void selectPermutation(SchedulePermutation permutation) {
 
@@ -197,7 +149,6 @@ public class PermutationController implements HasHandlers, StudentScheduleEventH
 	@Override
 	public void onCoursesChanged(StudentScheduleEvent studentScheduleEvent) {
 		updateProducer();
-		updateTimeRange();
 	}
 	
 	public ConflictController getConflictController(){
