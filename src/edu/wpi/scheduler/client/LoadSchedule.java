@@ -24,7 +24,7 @@ import edu.wpi.scheduler.shared.model.Time;
 
 public class LoadSchedule extends ComplexPanel implements ReadyStateChangeHandler{
 
-	public final XMLHttpRequest xmlHttpRequest;
+	private XMLHttpRequest xmlHttpRequest;
 	
 	public final Label loadingLabel = new Label();
 	public final Label loadingBytes = new Label();
@@ -75,6 +75,9 @@ public class LoadSchedule extends ComplexPanel implements ReadyStateChangeHandle
 	
 	private void loadingFinished(){
 		
+		if( xmlHttpRequest == null )
+			return;
+		
 		if( xmlHttpRequest.getStatus() != 200 ){
 			//Uh oh... It failed to load
 			Window.alert(xmlHttpRequest.getStatusText());
@@ -88,6 +91,7 @@ public class LoadSchedule extends ComplexPanel implements ReadyStateChangeHandle
 		ScheduleDB db = parseDB(jsonDocument.get("departments").isArray());
 		Scheduler.loadScheduler(db);
 		
+		xmlHttpRequest = null;
 	}
 
 	/**
