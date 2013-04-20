@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.xhr.client.XMLHttpRequest;
 
 import edu.wpi.scheduler.client.controller.StudentSchedule;
+import edu.wpi.scheduler.client.storage.StorageStudentSchedule;
 import edu.wpi.scheduler.shared.model.ScheduleDB;
 
 /**
@@ -51,7 +52,7 @@ public class Scheduler implements EntryPoint {
 	static void loadScheduler(ScheduleDB db) {
 		scheduleDB = db;
 		final StudentSchedule studentSchedule = new StudentSchedule();
-		studentSchedule.loadSchedule();
+		StorageStudentSchedule.loadSchedule(studentSchedule);
 
 		RootPanel.get().clear();
 		RootPanel.get().add(new MainView(studentSchedule));

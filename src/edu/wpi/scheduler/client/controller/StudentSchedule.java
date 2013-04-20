@@ -4,25 +4,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.JsArrayString;
-import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.storage.client.Storage;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 
-import edu.wpi.scheduler.client.Scheduler;
 import edu.wpi.scheduler.client.controller.FavoriteEvent.FavoriteEventType;
 import edu.wpi.scheduler.client.permutation.TimeRangeChangEventHandler;
 import edu.wpi.scheduler.client.permutation.TimeRangeChangeEvent;
+import edu.wpi.scheduler.client.storage.StorageStudentSchedule;
 import edu.wpi.scheduler.shared.model.Course;
-import edu.wpi.scheduler.shared.model.Department;
 import edu.wpi.scheduler.shared.model.Period;
 import edu.wpi.scheduler.shared.model.Section;
 
@@ -66,11 +59,7 @@ public class StudentSchedule implements HasHandlers
 		conflicts.addCourse(course);
 		sectionProducers.add(producer);
 		
-		StudentScheduleEvent event = new StudentScheduleEvent(course, StudentScheduleEvents.ADD);
-		event.setWidgetSource(source);
-
-		this.fireEvent(event);
-		saveSchedule();
+		courseUpdated(course, StudentScheduleEvents.ADD, source);
 
 		return producer;
 	}
@@ -91,9 +80,8 @@ public class StudentSchedule implements HasHandlers
 
 		if (course != null)
 			sectionProducers.remove(producer);
-
-		this.fireEvent(new StudentScheduleEvent(course, StudentScheduleEvents.REMOVE));
-		saveSchedule();
+		
+		courseUpdated(course, StudentScheduleEvents.REMOVE, null);
 	}
 
 	/*
@@ -154,9 +142,17 @@ public class StudentSchedule implements HasHandlers
 	}
 
 	public void courseUpdated(Course course) {
+		courseUpdated(course, StudentScheduleEvents.UPDATE, null);
+	}
+	
+	public void courseUpdated(Course course, StudentScheduleEvents eventType, Widget source) {
 		updateTimeRange();
-		this.fireEvent(new StudentScheduleEvent(course, StudentScheduleEvents.UPDATE));
-		saveSchedule();
+		StudentScheduleEvent event = new StudentScheduleEvent(course, eventType);
+		event.setWidgetSource(source);
+		
+		this.fireEvent(event);
+		
+		StorageStudentSchedule.saveSchedule(this);
 	}
 	
 
@@ -206,125 +202,4 @@ public class StudentSchedule implements HasHandlers
 		handlerManager.removeHandler(TimeRangeChangeEvent.TYPE, handler);
 	}
 
-	private static class SectionProducerData extends JavaScriptObject {
-		protected SectionProducerData() {
-		}
-
-		public final native void setDepartment(String dept) /*-{
-			this.dept = dept;
-		}-*/;
-
-		public final native String getDepartment() /*-{
-			return this.dept;
-		}-*/;
-
-		public final native void setName(String course) /*-{
-			this.name = course;
-		}-*/;
-
-		public final native String getName() /*-{
-			return this.name;
-		}-*/;
-
-		public final native void setSections(JsArrayString sections) /*-{
-			this.sections = sections;
-		}-*/;
-
-		public final native JsArrayString getSections() /*-{
-			return this.sections;
-		}-*/;
-
-		public final native boolean hasSections(String sectionName) /*-{
-			return this.sections.indexOf(sectionName) != -1;
-		}-*/;
-	}
-	
-	boolean coursesLoaded = false;
-
-	private void saveSchedule() {
-		if( coursesLoaded == false ){
-			Window.alert("Saving courses before loading!");
-		}
-		
-		JsArray<SectionProducerData> sections = JavaScriptObject.createArray().cast();
-
-		for (SectionProducer producer : sectionProducers) {
-			SectionProducerData data = JavaScriptObject.createObject().cast();
-			JsArrayString arr = JavaScriptObject.createArray().cast();
-
-			for (Section section : producer.deniedSections) {
-				arr.push(section.number);
-			}
-
-			data.setDepartment(producer.getCourse().department.abbreviation);
-			data.setName(producer.getCourse().number);
-			data.setSections(arr);
-
-			sections.push(data);
-		}
-
-		Storage localStorage = Storage.getLocalStorageIfSupported();
-
-		if (localStorage != null) {
-			JSONArray jsonArr = new JSONArray(sections);
-			localStorage.setItem("savedCourse", jsonArr.toString());
-		}
-	}
-
-	private Course getCourse(SectionProducerData data) {
-		String department = data.getDepartment();
-		String courseName = data.getName();
-
-		for (Department dept : Scheduler.getDatabase().departments) {
-			if (department.equals(dept.abbreviation)) {
-				for (Course course : dept.courses) {
-					if (courseName.equals(course.number))
-						return course;
-				}
-			}
-		}
-		return null;
-
-	}
-
-	public void loadSchedule() {
-		coursesLoaded = true;
-		Storage localStorage = Storage.getLocalStorageIfSupported();
-
-		if (localStorage == null)
-			return;
-
-		String depList = localStorage.getItem("savedCourse");
-
-		if (depList == null)
-			return;
-
-		sectionProducers.clear();
-
-		try {
-			JsArray<SectionProducerData> sections = JsonUtils.unsafeEval(depList).cast();
-
-			for (int i = 0; i < sections.length(); i++) {
-				SectionProducerData data = sections.get(i);
-				Course course = getCourse(data);
-
-				if (course == null)
-					continue;
-
-				SectionProducer producer = addCourse(course, null);
-
-				if (producer == null)
-					continue;
-
-				for (Section section : course.sections) {
-					if (data.hasSections(section.number))
-						producer.denySection(section);
-				}
-			}
-
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		}
-
-	}
 }
