@@ -84,13 +84,6 @@ public class StudentSchedule implements HasHandlers
 		courseUpdated(course, StudentScheduleEvents.REMOVE, null);
 	}
 
-	/*
-	 * public List<SchedulePermutation> getSchedulePermutations(){
-	 * 
-	 * SchedulePermutationController producer = new
-	 * SchedulePermutationController(this); return producer.getPermutations(); }
-	 */
-
 	@Override
 	public void fireEvent(GwtEvent<?> event) {
 		handlerManager.fireEvent(event);
