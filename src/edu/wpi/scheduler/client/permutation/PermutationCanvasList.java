@@ -6,6 +6,7 @@ import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
@@ -69,6 +70,8 @@ public class PermutationCanvasList extends FlowPanel implements
 		scrollStyle.setRight(0.0, Unit.PX);
 		scrollStyle.setTop(favoriteButtonSize + 8, Unit.PX);
 		scrollStyle.setBottom(0.0, Unit.PX);
+		scrollStyle.setOverflowX(Overflow.HIDDEN);
+		scrollStyle.setOverflowY(Overflow.SCROLL);
 
 		scroll.addScrollHandler(this);
 	}
