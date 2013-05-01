@@ -142,7 +142,7 @@ public class ConflictResolverWidget extends FlowPanel implements
 			producer.step();
 
 		if (!producer.canGenerate()) {
-			if (producer.getPermutations().size() == 0 && producer.maxSolutions < 6 ) {
+			if (producer.getPermutations().size() == 0 && producer.maxSolutions < 10 ) {
 				ScheduleProducer oldProducer = producer;
 
 				producer = new ScheduleProducer(oldProducer);

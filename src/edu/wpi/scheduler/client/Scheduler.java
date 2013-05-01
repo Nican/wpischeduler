@@ -41,8 +41,8 @@ public class Scheduler implements EntryPoint {
 			Window.alert(e.getMessage());
 		}
 
-		RootPanel.get().getElement().setInnerHTML("");
-		RootPanel.get().add(load);
+		RootPanel.get("loadingText").getElement().setInnerHTML("");
+		RootPanel.get("loadingText").add(load);
 
 		Window.enableScrolling(false);
 		Window.setMargin("0px");
