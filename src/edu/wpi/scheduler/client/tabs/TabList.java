@@ -15,6 +15,7 @@ import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.courseselection.CourseSelectionTab;
 import edu.wpi.scheduler.client.permutation.PermutationTab;
 import edu.wpi.scheduler.client.timechooser.TimeTab;
+import edu.wpi.scheduler.client.welcome.WelcomeTab;
 
 public class TabList extends Composite {
 
@@ -28,6 +29,7 @@ public class TabList extends Composite {
 	
 	final MainView mainView;
 	
+	final WelcomeTab welcome;
 	final CourseSelectionTab courseSelection;
 	final TimeTab timeChooser;
 	
@@ -38,16 +40,18 @@ public class TabList extends Composite {
 		
 		this.mainView = mainView;
 		
+		welcome = new WelcomeTab(studentSchedule);
 		courseSelection = new CourseSelectionTab(studentSchedule);
 		timeChooser = new TimeTab(studentSchedule);
 		
+		addTab( welcome );
 		addTab( courseSelection  );
-		addTab(  timeChooser );
+		addTab( timeChooser );
 		addTab( new PermutationTab(studentSchedule)  );		
 	}
 	
 	public Widget getHomeView(){
-		return courseSelection.getBody();
+		return welcome.getBody();
 	}
 	
 	public void addTab( final BaseTab baseTab ){
