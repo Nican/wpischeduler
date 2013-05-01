@@ -20,7 +20,7 @@ import edu.wpi.scheduler.client.permutation.PermutationTab;
 import edu.wpi.scheduler.client.timechooser.TimeTab;
 import edu.wpi.scheduler.client.welcome.WelcomeTab;
 
-public class TabList extends Composite implements StudentScheduleEventHandler {
+public class TabList extends Composite{
 
 	private static TabListUiBinder uiBinder = GWT.create(TabListUiBinder.class);
 
@@ -119,12 +119,5 @@ public class TabList extends Composite implements StudentScheduleEventHandler {
 			widget.setStyleName( i == count-1 ? "sched-TopButton" : "sched-TopButton-notLast");
 		}
 		*/
-	}
-
-	@Override
-	public void onCoursesChanged(StudentScheduleEvent studentScheduleEvent) 
-	{
-		this.update();
-		System.err.println("UPDATE");
 	}
 }
