@@ -7,17 +7,20 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.MainView;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
+import edu.wpi.scheduler.client.controller.StudentScheduleEvent;
+import edu.wpi.scheduler.client.controller.StudentScheduleEventHandler;
 import edu.wpi.scheduler.client.courseselection.CourseSelectionTab;
 import edu.wpi.scheduler.client.permutation.PermutationTab;
 import edu.wpi.scheduler.client.timechooser.TimeTab;
 import edu.wpi.scheduler.client.welcome.WelcomeTab;
 
-public class TabList extends Composite {
+public class TabList extends Composite implements StudentScheduleEventHandler {
 
 	private static TabListUiBinder uiBinder = GWT.create(TabListUiBinder.class);
 
@@ -78,18 +81,21 @@ public class TabList extends Composite {
 	
 	public void update(){
 		int count = horizontalPanel.getWidgetCount();
-		String useClass = "sched-TopButtonSelected";
+		String useClass;
 		
 		for( int i = 0; i < count; i++ ){
 			Widget widget = horizontalPanel.getWidget(i);
 			Style style = widget.getElement().getStyle();
 			
 			style.setZIndex(count-i);
+			
+			useClass = (lastSelected == widget) 
+					? "sched-TopButtonSelected" : "sched-TopButton";
 			widget.setStyleName(useClass);
 			
-			if( lastSelected == widget){
-				useClass = "sched-TopButton";
-			}	
+			useClass = (((FocusWidget) widget).isEnabled())
+					? "sched-TopButtonEnabled" : "sched-TopButtonDisabled";
+			widget.addStyleName(useClass);
 		}
 		
 		/*
@@ -113,5 +119,12 @@ public class TabList extends Composite {
 			widget.setStyleName( i == count-1 ? "sched-TopButton" : "sched-TopButton-notLast");
 		}
 		*/
+	}
+
+	@Override
+	public void onCoursesChanged(StudentScheduleEvent studentScheduleEvent) 
+	{
+		this.update();
+		System.err.println("UPDATE");
 	}
 }

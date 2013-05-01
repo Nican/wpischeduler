@@ -9,8 +9,18 @@ h1 {
 }
 
 .sched-TopButtonSelected {
-	background-color: #c41230;
 	color: white;
+	box-shadow: inset -20px 0px 10px -10px white;
+}
+
+.sched-TopButtonEnabled {
+	background-color: #c41230;
+}
+
+.sched-TopButtonDisabled {
+	background-color: #A9B0B7;
+	color: gray;
+	box-shadow: inset -10px 0px 10px -10px gray;
 }
 
 .sched-TopButton, .sched-TopButtonSelected {
@@ -26,17 +36,18 @@ h1 {
 	border-left: 0px;
 	border-bottom: 0px;
 	border-top: 0px;
+	border-radius: 0px 75px 0px 0px;
+}
+
+.sched-TopButton
+{
 	box-shadow: inset -10px 0px 10px -10px black;
-	border-radius: 0px 50px 0px 0px;
 }
 
-.sched-TopButtonSelected:hover {
-	background-color: #c92240;
+.sched-TopButtonEnabled:hover {
+	background-color: #e62341;
 }
 
-.sched-TopButton:hover {
-	background-color: #CCCCCC;
-}
 
 .sendButton {
 	display: block;
