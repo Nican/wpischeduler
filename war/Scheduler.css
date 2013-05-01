@@ -42,7 +42,7 @@ h1 {
 	border-radius: 0px 75px 0px 0px;
 }
 
-.sched-TopEnabled:hover {
+.sched-TopButton:enabled:hover {
 	background-color: #e62341;
 }
 
