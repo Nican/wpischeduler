@@ -12,7 +12,7 @@ import edu.wpi.scheduler.client.storage.StorageSharing;
 public class ShareWidget extends ComplexPanel {
 	
 	public ShareWidget( SchedulePermutation permutation ){
-		setElement(DOM.createDiv());
+		setElement(Document.get().createDivElement());
 		getElement().getStyle().setWidth(200, Unit.PX);
 		
 		TextBox textbox = new TextBox();

@@ -2,12 +2,13 @@ package edu.wpi.scheduler.client.permutation.view;
 
 import java.util.List;
 
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -29,7 +30,7 @@ public class WeekCourseColumn extends ComplexPanel implements PermutationSelectE
 	private List<Term> allowedTerms = null;
 
 	public WeekCourseColumn(PermutationController controller, DayOfWeek day, List<Term> terms) {
-		this.setElement(DOM.createTD());
+		this.setElement(Document.get().createTDElement());
 
 		this.controller = controller;
 		this.day = day;

@@ -2,6 +2,7 @@ package edu.wpi.scheduler.client.courseselection;
 
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.core.client.Duration;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.Overflow;
@@ -51,7 +52,7 @@ public class CourseSelection extends ComplexPanel implements StudentScheduleEven
 		Element div = DOM.createDiv();
 
 		public UndoRemoveWidget(Course course){
-			setElement(DOM.createTR());
+			setElement(Document.get().createTRElement());
 			this.course = course;
 			
 			Element td = DOM.createTD();
@@ -94,7 +95,7 @@ public class CourseSelection extends ComplexPanel implements StudentScheduleEven
 	public CourseSelection(final CourseSelectionController selectionController) {
 		this.selectionController = selectionController;
 
-		this.setElement(DOM.createTable());
+		this.setElement(Document.get().createTableElement());
 
 		this.setStyleName("courseList");
 
@@ -102,7 +103,7 @@ public class CourseSelection extends ComplexPanel implements StudentScheduleEven
 
 	@Override
 	public void add(Widget child) {
-		this.add(child, this.getElement());
+		this.add(child, getElement());
 	}
 
 	/**

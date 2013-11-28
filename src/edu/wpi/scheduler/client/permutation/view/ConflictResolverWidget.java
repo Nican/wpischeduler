@@ -3,6 +3,7 @@ package edu.wpi.scheduler.client.permutation.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Overflow;
@@ -39,7 +40,7 @@ public class ConflictResolverWidget extends FlowPanel implements
 		final Element descriptionelem = DOM.createDiv();
 
 		public ConflictWidget(SchedulePermutation permutation) {
-			setElement(DOM.createDiv());
+			setElement(Document.get().createDivElement());
 			this.permutation = permutation;
 
 			String title = "";

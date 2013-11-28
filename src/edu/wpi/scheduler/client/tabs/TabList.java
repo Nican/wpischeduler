@@ -13,8 +13,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.client.MainView;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
-import edu.wpi.scheduler.client.controller.StudentScheduleEvent;
-import edu.wpi.scheduler.client.controller.StudentScheduleEventHandler;
 import edu.wpi.scheduler.client.courseselection.CourseSelectionTab;
 import edu.wpi.scheduler.client.permutation.PermutationTab;
 import edu.wpi.scheduler.client.timechooser.TimeTab;

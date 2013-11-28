@@ -1,9 +1,8 @@
 package edu.wpi.scheduler.client;
 
-import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -21,7 +20,7 @@ public class LoadSchedule extends ComplexPanel implements ReadyStateChangeHandle
 	public final Label loadingBytes = new Label();
 
 	public LoadSchedule(XMLHttpRequest request) {
-		setElement(DOM.createDiv());
+		setElement(Document.get().createDivElement());
 		xmlHttpRequest = request;
 		
 		add(new Label("Loading scheduler database..."), getElement());

@@ -9,19 +9,19 @@ import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.Context2d.TextAlign;
 import com.google.gwt.canvas.dom.client.Context2d.TextBaseline;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RequiresResize;
 
-import edu.wpi.scheduler.client.generator.ScheduleProducer;
 import edu.wpi.scheduler.client.generator.ProducerUpdateEvent.UpdateType;
+import edu.wpi.scheduler.client.generator.ScheduleProducer;
 import edu.wpi.scheduler.client.generator.ScheduleProducer.ProducerEventHandler;
 import edu.wpi.scheduler.client.permutation.PermutationController;
 import edu.wpi.scheduler.shared.model.Course;
@@ -53,7 +53,7 @@ public class CanvasProgress extends ComplexPanel implements ProducerEventHandler
 	protected List<CanvasProgressSection> sections = new ArrayList<CanvasProgressSection>();
 
 	public CanvasProgress(PermutationController controller) {
-		setElement(DOM.createDiv());
+		setElement(Document.get().createDivElement());
 		this.controller = controller;
 
 		this.getElement().getStyle().setHeight(100.0, Unit.PCT);
@@ -191,7 +191,7 @@ public class CanvasProgress extends ComplexPanel implements ProducerEventHandler
 	public void execute(double timestamp) {
 		updateSize();
 
-		ScheduleProducer producer = controller.getProducer();
+		//ScheduleProducer producer = controller.getProducer();
 		Context2d context = canvas.getContext2d();
 		int width = canvas.getCoordinateSpaceWidth();
 		int height = canvas.getCoordinateSpaceHeight();
