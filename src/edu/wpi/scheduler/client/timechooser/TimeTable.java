@@ -1,5 +1,7 @@
 package edu.wpi.scheduler.client.timechooser;
 
+import com.google.gwt.dom.client.Style.Cursor;
+import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -114,6 +116,7 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 			{
 				// Create the cell and set it to the proper values
 				TimeElement cell = DOM.createDiv().cast();
+				cell.getStyle().setCursor(Cursor.POINTER);
 				cell.setTime(y);
 				cell.setDay(x);
 				// cell.setInnerHTML(x + " " + y);
@@ -200,6 +203,8 @@ public class TimeTable extends Widget implements MouseDownHandler, MouseUpHandle
 				TimeElement cell = row.getChild(x).cast();
 				cell.getStyle().setWidth(cellWidth - 1.0, Unit.PX);
 				cell.getStyle().setHeight(cellHeight - 1.0, Unit.PX);
+				cell.getStyle().setLineHeight(cellHeight - 1.0, Unit.PX);
+				cell.getStyle().setTextAlign(TextAlign.CENTER);
 			}
 		}
 	}

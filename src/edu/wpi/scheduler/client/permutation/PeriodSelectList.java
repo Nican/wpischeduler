@@ -95,7 +95,7 @@ public class PeriodSelectList extends FlowPanel implements PermutationSelectEven
 			if (permutation != null && permutation.sections.contains(section)) {
 				this.getElement().getStyle().setBackgroundColor(controller.getCourseColor(section.course));
 			} else {
-				this.getElement().getStyle().setBackgroundColor(null);
+				this.getElement().getStyle().setBackgroundColor("");
 			}
 		}
 

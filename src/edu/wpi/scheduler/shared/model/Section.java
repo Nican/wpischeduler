@@ -38,6 +38,10 @@ public class Section implements Serializable {
 	/** List of class periods; lecture, lab, etc */
 	public List<Period> periods = new ArrayList<Period>();
 
+	public int actualWaitlist;
+
+	public int maxWaitlist;
+
 	public List<Term> getTerms() {
 		ArrayList<Term> terms = new ArrayList<Term>();
 

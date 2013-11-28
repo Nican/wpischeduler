@@ -31,7 +31,7 @@ public class Scheduler implements EntryPoint {
 	public void onModuleLoad() {
 
 		XMLHttpRequest xmlHttpRequest = XMLHttpRequest.create();
-		xmlHttpRequest.open("GET", "schedb.json");
+		xmlHttpRequest.open("GET", "new.schedb");
 
 		LoadSchedule load = new LoadSchedule(xmlHttpRequest);
 
