@@ -2,8 +2,8 @@ package edu.wpi.scheduler.client.courseselection;
 
 import java.util.Comparator;
 
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.regexp.shared.RegExp;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.WidgetCollection;
 
@@ -30,7 +30,7 @@ public class CourseList extends ComplexPanel {
 	public static final CourseComparator comparator = new CourseComparator();
 
 	public CourseList(CourseSelectionController selectionController) {
-		this.setElement(DOM.createTable());
+		this.setElement(Document.get().createTableElement());
 		this.selectionController = selectionController;
 
 		this.setStyleName("courseList");

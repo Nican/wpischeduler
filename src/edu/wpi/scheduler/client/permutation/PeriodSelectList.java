@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -13,7 +14,6 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -30,11 +30,13 @@ import edu.wpi.scheduler.shared.model.Section;
  * @author Nican
  * 
  */
-public class PeriodSelectList extends FlowPanel implements PermutationSelectEventHandler {
+public class PeriodSelectList extends FlowPanel implements
+		PermutationSelectEventHandler {
 
 	public final PermutationController controller;
 
-	public class PeriodProfessorLabel extends Label implements MouseOverHandler, MouseOutHandler, ClickHandler {
+	public class PeriodProfessorLabel extends Label implements
+			MouseOverHandler, MouseOutHandler, ClickHandler {
 
 		private Section section;
 
@@ -57,43 +59,53 @@ public class PeriodSelectList extends FlowPanel implements PermutationSelectEven
 
 		@Override
 		public void onMouseOut(MouseOutEvent event) {
-			this.setText(getName());
+			updateText(false);
 		}
 
 		@Override
 		public void onMouseOver(MouseOverEvent event) {
-			this.setText(getName() + "→");
+			updateText(true);
 		}
 
 		@Override
 		public void onClick(ClickEvent event) {
 			controller.displayDescription(section);
+			updateText(false);
+		}
+
+		public void updateText(boolean displaySymbol) {
+			this.setText(getName() + (displaySymbol ? "→" : ""));
 		}
 
 	}
 
-	public class PeriodListItem extends ComplexPanel implements MouseOverHandler, MouseOutHandler {
+	public class PeriodListItem extends ComplexPanel implements
+			MouseOverHandler, MouseOutHandler {
 
 		public final Section section;
 
 		public PeriodListItem(Section section) {
-			setElement(DOM.createDiv());
+			setElement(Document.get().createDivElement());
 			this.section = section;
+			SectionCheckbox checkbox = new SectionCheckbox(controller.getStudentSchedule(), section);
+			PeriodProfessorLabel label = new PeriodProfessorLabel(section);
 
 			this.addDomHandler(this, MouseOverEvent.getType());
 			this.addDomHandler(this, MouseOutEvent.getType());
-			this.add(new SectionCheckbox(controller.getStudentSchedule(), section), this.getElement());
-			this.add(new PeriodProfessorLabel(section), this.getElement());
+			this.add(checkbox, this.getElement());
+			this.add(label, this.getElement());
 			update();
 		}
 
-
-
 		public void update() {
-			SchedulePermutation permutation = controller.getSelectedPermutation();
+			SchedulePermutation permutation = controller
+					.getSelectedPermutation();
 
 			if (permutation != null && permutation.sections.contains(section)) {
-				this.getElement().getStyle().setBackgroundColor(controller.getCourseColor(section.course));
+				this.getElement()
+						.getStyle()
+						.setBackgroundColor(
+								controller.getCourseColor(section.course));
 			} else {
 				this.getElement().getStyle().setBackgroundColor("");
 			}
@@ -121,10 +133,12 @@ public class PeriodSelectList extends FlowPanel implements PermutationSelectEven
 		HashMap<Course, List<Section>> conflictMap = new HashMap<Course, List<Section>>();
 
 		for (Section section : conflictList) {
-			//If the section is no longer in the student section, we do not care about it.
-			if( controller.getStudentSchedule().getSectionProducer(section.course) == null )
+			// If the section is no longer in the student section, we do not
+			// care about it.
+			if (controller.getStudentSchedule().getSectionProducer(
+					section.course) == null)
 				continue;
-			
+
 			if (!conflictMap.containsKey(section.course))
 				conflictMap.put(section.course, new ArrayList<Section>());
 
@@ -132,7 +146,8 @@ public class PeriodSelectList extends FlowPanel implements PermutationSelectEven
 		}
 
 		for (Entry<Course, List<Section>> entry : conflictMap.entrySet()) {
-			Label label = new Label(courseSimpleName ? entry.getKey().name : entry.getKey().toString());
+			Label label = new Label(courseSimpleName ? entry.getKey().name
+					: entry.getKey().toString());
 			label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 			label.getElement().getStyle().setMarginLeft(4.0, Unit.PX);
 			this.add(label);

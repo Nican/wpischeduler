@@ -3,8 +3,9 @@ package edu.wpi.scheduler.client.courseselection;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.wpi.scheduler.shared.model.Course;
@@ -18,7 +19,7 @@ public class TermView extends Widget {
 
 	public TermView(Course course) {
 		this.course = course;
-		setElement(DOM.createDiv());
+		setElement(Document.get().createDivElement());
 	
 		for (Term term : Term.values())
 			this.addTerm(term);
