@@ -151,7 +151,7 @@ public class SchedJSONParser {
 	private static Period readPeriodNode(Section section, JSONObject node) {
 		Period period = new Period(section);
 
-		period.type = getPeriodType(node.get("type").isString().stringValue());
+		period.type = node.get("type").isString().stringValue();
 		period.professor = node.get("professor").isString().stringValue();
 		period.startTime = readTime(node.get("starts").isNumber());
 		period.endTime = readTime(node.get("ends").isNumber());

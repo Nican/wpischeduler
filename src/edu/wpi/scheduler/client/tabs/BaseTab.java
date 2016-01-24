@@ -8,6 +8,11 @@ import edu.wpi.scheduler.client.controller.StudentSchedule;
 public abstract class BaseTab extends Button {
 
 	public final StudentSchedule studentSchedule;
+	
+	public BaseTab(StudentSchedule studentSchedule, String name, String description) {
+		this(studentSchedule, name);
+		setTitle(description);
+	}
 
 	public BaseTab(StudentSchedule studentSchedule, String name) {
 		super(name);

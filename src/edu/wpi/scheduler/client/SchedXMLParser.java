@@ -135,7 +135,8 @@ public class SchedXMLParser {
 	private Period readPeriodNode(Section section, Element node) {
 		Period period = new Period(section);
 
-		period.type = getPeriodType(node.getAttribute("type"));
+		//period.type = getPeriodType(node.getAttribute("type"));
+		period.type = node.getAttribute("type");
 		period.professor = node.getAttribute("professor");
 		period.startTime = new Time(node.getAttribute("starts"));
 		period.endTime = new Time(node.getAttribute("ends"));

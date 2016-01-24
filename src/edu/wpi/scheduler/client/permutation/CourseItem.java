@@ -27,7 +27,7 @@ public class CourseItem extends CellPanel implements ClickHandler {
 
 	private Element periodsRow = null;
 	private PeriodSelectList itemPeriods = null;
-	protected Button collapseButton = new Button(">");
+	protected Button collapseButton = new Button("&#9654;");
 	boolean isHidden = true;
 
 	public CourseItem(PermutationController permutationController, SectionProducer producer) {
@@ -90,13 +90,13 @@ public class CourseItem extends CellPanel implements ClickHandler {
 		if( isHidden ){
 			isHidden = false;
 			periodsRow.getStyle().setProperty("display", "");
-			collapseButton.setText("\\/");
+			collapseButton.setHTML("&#9660;"); //Arrow down
 			
 			//new IncomingAnimation(itemPeriods.getElement(), false).run();
 		} else {
 			isHidden = true;
 			periodsRow.getStyle().setDisplay(Display.NONE);
-			collapseButton.setText(">");
+			collapseButton.setHTML("&#9654;"); //Arrow right
 			
 			//new IncomingAnimation(itemPeriods.getElement(), false, true).run();
 		}

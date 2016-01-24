@@ -11,7 +11,7 @@ public class WelcomeTab extends BaseTab
 	
 	public WelcomeTab(StudentSchedule studentSchedule) 
 	{
-		super(studentSchedule, "Home");
+		super(studentSchedule, "Home", "Description on how to use the scheduler");
 		this.setEnabled(true);
 		welcomeView = new WelcomeView();
 	}

@@ -10,7 +10,7 @@ public class CourseSelectionTab extends BaseTab {
 	final CourseSelectorView selectorView;
 
 	public CourseSelectionTab(StudentSchedule studentSchedule) {
-		super(studentSchedule, "Courses");
+		super(studentSchedule, "Courses", "Browse and choose courses that you wish to attend");
 		
 		this.selectorView = new CourseSelectorView(studentSchedule);
 	}

@@ -13,7 +13,7 @@ public class Period implements Serializable{
 	/** Section this period is apart of */
 	public Section section;
 	/** Period type; e.g. lecture, lab */
-	public PeriodType type;
+	public String type;
 	/** Professor of this period */
 	public String professor;
 	/** Days of the week this period is scheduled for */

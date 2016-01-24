@@ -1,5 +1,6 @@
 package edu.wpi.scheduler.client;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
@@ -95,6 +96,8 @@ public class LoadSchedule extends ComplexPanel implements ReadyStateChangeHandle
 				return; 
 			} catch(Exception e2){
 			}
+			
+			GWT.log(e.toString());
 		}
 		
 		//Try loading as JSON

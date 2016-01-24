@@ -8,6 +8,7 @@ import edu.wpi.scheduler.client.controller.SectionProducer;
 import edu.wpi.scheduler.client.controller.StudentSchedule;
 import edu.wpi.scheduler.client.controller.StudentScheduleEvent;
 import edu.wpi.scheduler.client.controller.StudentScheduleEventHandler;
+import edu.wpi.scheduler.client.courseselection.CourseList;
 import edu.wpi.scheduler.shared.model.Section;
 
 public class SectionCheckbox extends CheckBox implements StudentScheduleEventHandler, ValueChangeHandler<Boolean> {
@@ -19,7 +20,12 @@ public class SectionCheckbox extends CheckBox implements StudentScheduleEventHan
 		this.schedule = schedule;
 		this.section = section;
 		
-		setText(section.number);
+		String html = section.number;
+		
+		if(!section.hasAvailableSats())
+			html += " " + CourseList.NoSeatWarning;
+		
+		setHTML(html);
 		addValueChangeHandler(this);
 		update();
 	}

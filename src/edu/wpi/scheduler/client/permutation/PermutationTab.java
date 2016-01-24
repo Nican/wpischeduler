@@ -12,7 +12,7 @@ public class PermutationTab extends BaseTab implements StudentScheduleEventHandl
 	private PermutationChooserView permutationView;
 	
 	public PermutationTab(StudentSchedule studentSchedule) {
-		super(studentSchedule, "Schedules");
+		super(studentSchedule, "Schedules", "List of available courses");
 		
 		studentSchedule.addStudentScheduleHandler(this);
 		
@@ -40,6 +40,4 @@ public class PermutationTab extends BaseTab implements StudentScheduleEventHandl
 	public void updateView() {
 		permutationView.update();
 	}
-	
-
 }

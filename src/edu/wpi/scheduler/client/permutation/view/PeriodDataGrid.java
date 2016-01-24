@@ -31,7 +31,7 @@ public class PeriodDataGrid extends CellTable<Period> {
 		addColumn(new TextColumn<Period>() {
 			@Override
 			public String getValue(Period period) {
-				return period.type.getName();
+				return period.type;
 			}
 		}, "Type");
 

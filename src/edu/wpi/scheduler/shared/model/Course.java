@@ -42,4 +42,12 @@ public class Course implements Serializable {
 	public String toAbbreviation(){
 		return this.department.abbreviation + this.number;
 	}
+	
+	public boolean hasAvailableSeats(){
+		for (Section section : sections) {
+			if(section.hasAvailableSats())
+				return true;
+		}
+		return false;
+	}
 }

@@ -24,21 +24,22 @@ import edu.wpi.scheduler.shared.model.Section;
  */
 public class CourseDescriptionInfo extends Composite {
 
-	private static CourseDescriptionUiBinder uiBinder = GWT
-			.create(CourseDescriptionUiBinder.class);
+	private static CourseDescriptionUiBinder uiBinder = GWT.create(CourseDescriptionUiBinder.class);
 
-	interface CourseDescriptionUiBinder extends
-			UiBinder<Widget, CourseDescriptionInfo> {
+	interface CourseDescriptionUiBinder extends UiBinder<Widget, CourseDescriptionInfo> {
 	}
-	
+
 	@UiField
 	DivElement title;
-	
+
 	@UiField
 	DivElement description;
-	
+
 	@UiField
 	SpanElement professorList;
+
+	@UiField
+	DivElement seatsList;
 
 	public CourseDescriptionInfo() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -46,28 +47,48 @@ public class CourseDescriptionInfo extends Composite {
 
 	public void setCourse(Course course) {
 		description.setInnerText(course.description);
-		
+
 		List<String> professors = new ArrayList<String>();
-		
-		for( Section section : course.sections ){
-			for( Period period : section.periods ){
-				if(!professors.contains(period.professor))
+		int seats = 0;
+		int seatsAvailable = 0;
+		int waitlist = 0;
+		int waitlistAvailable = 0;
+
+		for (Section section : course.sections) {
+			for (Period period : section.periods) {
+				if (!professors.contains(period.professor))
 					professors.add(period.professor);
 			}
+
+			seats += section.seats;
+			seatsAvailable += section.seatsAvailable;
+			waitlist += section.maxWaitlist;
+			waitlistAvailable += section.actualWaitlist;
 		}
-		
-		if( professors.size() > 0 ){
+
+		if (professors.size() > 0) {
 			String names = professors.get(0);
-			
-			for( int i = 1; i < professors.size(); i++ ){
+
+			for (int i = 1; i < professors.size(); i++) {
 				names += ", " + professors.get(i);
 			}
-			
+
 			professorList.setInnerHTML(names);
 		} else {
 			professorList.setInnerHTML("<i>N/A</i>");
 		}
-		
+
+		String seatsHTML = "<b>Seats available: </b>";
+
+		if (!course.hasAvailableSeats())
+			seatsHTML += CourseList.NoSeatWarning;
+
+		seatsHTML += " " + seatsAvailable + "/" + seats;
+		seatsHTML += "<br>";
+		seatsHTML += "<b>Waitlist</b>: " + waitlistAvailable + "/" + waitlist;
+
+		seatsList.setInnerHTML(seatsHTML);
+
 		title.setInnerText(course.name);
 	}
 

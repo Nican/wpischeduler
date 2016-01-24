@@ -10,5 +10,4 @@ public interface SelectionResources extends ClientBundle {
 
 	@Source("remove.png")
 	ImageResource removeIcon();
-
 }

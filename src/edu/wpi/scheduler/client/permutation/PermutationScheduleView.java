@@ -77,6 +77,7 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 		});
 		singleButton.getElement().getStyle().setFloat(Float.LEFT);
 		
+		/*
 		Button shareButton = new Button("Share", new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -97,6 +98,7 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 		});
 		shareButton.getElement().getStyle().setFloat(Float.RIGHT);
 		shareButton.setStyleName("sched-Button");
+		*/
 
 		favoriteButton = new ToggleButton("Favorite", new ClickHandler() {
 			@Override
@@ -118,7 +120,7 @@ public class PermutationScheduleView extends ComplexPanel implements Permutation
 		add(gridButton, header);
 		add(singleButton, header);
 		add(favoriteButton, header);
-		add(shareButton, header );
+		//add(shareButton, header );
 		
 		getElement().appendChild(header);
 		getElement().appendChild(body);

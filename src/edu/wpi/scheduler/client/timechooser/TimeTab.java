@@ -14,7 +14,7 @@ public class TimeTab extends BaseTab implements StudentScheduleEventHandler
 	
 	public TimeTab(StudentSchedule studentSchedule) 
 	{
-		super(studentSchedule, "Times");
+		super(studentSchedule, "Times", "Choose times to disallow courses");
 		studentSchedule.addStudentScheduleHandler(this);
 		this.updateEnabled();
 	}

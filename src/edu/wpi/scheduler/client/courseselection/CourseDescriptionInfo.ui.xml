@@ -14,5 +14,6 @@
 		<div ui:field="title" class="{style.title}"></div>
 		<div ui:field="description"></div>
 		<div style="margin-top: 15px"><b>Professors: </b><span ui:field="professorList"></span></div>
+		<div><div ui:field="seatsList"></div></div>
 	</g:HTMLPanel>
 </ui:UiBinder> 

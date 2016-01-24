@@ -68,4 +68,13 @@ public class Section implements Serializable {
 	public Section() {
 	}
 	
+	public boolean hasAvailableSats(){
+		if (seatsAvailable > 0) 
+			return true;
+		
+		if(seatsAvailable == 0 && seats == 0)
+			return true;
+		
+		return false;		
+	}	
 }
